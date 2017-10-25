@@ -24,6 +24,11 @@
   },
   "homepage": "https://github.com/servocoder/RichFilemanager#readme",
   "devDependencies": {
+    "@types/alertify": "^0.3.30",
+    "@types/jquery": "^3.2.15",
+    "@types/jquery-mousewheel": "^3.1.8",
+    "@types/knockout": "^3.4.46",
+    "@types/purl": "^2.3.30",
     "grunt": "^1.0.1",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-cssmin": "^1.0.1",
