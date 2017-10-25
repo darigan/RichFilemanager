@@ -10,26 +10,30 @@
  *    @copyright    Authors
  */
 
-(function($) {
+module fm {
 
-	$.richFilemanagerPlugin = function(element, pluginOptions) {
+	// todo: Temporary
+	const element;
+	const pluginOptions;
+
+	// $.richFilemanagerPlugin = function (element, pluginOptions) {
 		/**
 		 * Plugin's default options
 		 */
-		var defaults = {
+		const defaults = {
 			baseUrl: '.',	// relative path to the FM plugin folder
 			config: {},		// configuration options
 			callbacks: {
-				beforeCreateImageUrl: function(resourceObject, url) {
+				beforeCreateImageUrl: function (resourceObject, url) {
 					return url;
 				},
-				beforeCreatePreviewUrl: function(resourceObject, url) {
+				beforeCreatePreviewUrl: function (resourceObject, url) {
 					return url;
 				},
-				beforeSelectItem: function(resourceObject, url) {
+				beforeSelectItem: function (resourceObject, url) {
 					return url;
 				},
-				afterSelectItem: function(resourceObject, url, contextWindow) {
+				afterSelectItem: function (resourceObject, url, contextWindow) {
 				}
 			}
 		};
@@ -37,39 +41,39 @@
 		/**
 		 * The reference the current instance of the object
 		 */
-		var fm = this;
+		/*const fm = this;*/
 
 		/**
 		 * Private properties accessible only from inside the plugin
 		 */
-		var $container = $(element);	// reference to the jQuery version of DOM element the plugin is attached to
-		var $wrapper = $container.children('.fm-wrapper');
-		var $header = $wrapper.find('.fm-header');
-		var $uploader = $header.find('.fm-uploader');
-		var $splitter = $wrapper.children('.fm-splitter');
-		var $footer = $wrapper.children('.fm-footer');
-		var $fileinfo = $splitter.children('.fm-fileinfo');
-		var $filetree = $splitter.children('.fm-filetree');
-		var $viewItemsWrapper = $fileinfo.find('.view-items-wrapper');
-		var $previewWrapper = $fileinfo.find('.fm-preview-wrapper');
-		var $viewItems = $viewItemsWrapper.find('.view-items');
-		var $uploadButton = $uploader.children('.fm-upload');
+		const $container = $(element);	// reference to the jQuery version of DOM element the plugin is attached to
+		const $wrapper = $container.children('.fm-wrapper');
+		const $header = $wrapper.find('.fm-header');
+		const $uploader = $header.find('.fm-uploader');
+		const $splitter = $wrapper.children('.fm-splitter');
+		const $footer = $wrapper.children('.fm-footer');
+		const $fileinfo = $splitter.children('.fm-fileinfo');
+		const $filetree = $splitter.children('.fm-filetree');
+		const $viewItemsWrapper = $fileinfo.find('.view-items-wrapper');
+		const $previewWrapper = $fileinfo.find('.fm-preview-wrapper');
+		const $viewItems = $viewItemsWrapper.find('.view-items');
+		const $uploadButton = $uploader.children('.fm-upload');
 
-		var config = null;				// configuration options
-		var fileRoot = '/';				// relative files root, may be changed with some query params
-		var apiConnector = null;		// API connector URL to perform requests to server
-		var capabilities = [];			// allowed actions to perform in FM
-		var configSortField = null;		// items sort field name
-		var configSortOrder = null;		// items sort order 'asc'/'desc'
-		var fmModel = null;				// filemanager knockoutJS model
-		var langModel = null;			// language model
+		let config = null;				// configuration options
+		let fileRoot = '/';				// relative files root, may be changed with some query params
+		let apiConnector = null;		// API connector URL to perform requests to server
+		let capabilities = [];			// allowed actions to perform in FM
+		let configSortField = null;		// items sort field name
+		let configSortOrder = null;		// items sort order 'asc'/'desc'
+		let fmModel = null;				// filemanager knockoutJS model
+		let langModel = null;			// language model
 
-			/** variables to keep request options data **/
-		var fullexpandedFolder = null;	// path to be automatically expanded by filetree plugin
+		/** variables to keep request options data **/
+		let fullexpandedFolder = null;	// path to be automatically expanded by filetree plugin
 
-			/** service variables **/
-		var _url_ = purl();
-		var timeStart = new Date().getTime();
+		/** service variables **/
+		const _url_ = purl();
+		const timeStart = new Date().getTime();
 
 		/**
 		 * This holds the merged default and user-provided options.
@@ -80,18 +84,17 @@
 		 */
 
 		// The plugin's final settings, contains the merged default and user-provided options (if any)
-		fm.settings = $.extend(true, defaults, pluginOptions);
+		export const settings = $.extend(true, defaults, pluginOptions);
 
 		/*--------------------------------------------------------------------------------------------------------------
-	 Public methods
-	 Can be called like:
-	 - fm.methodName(arg1, arg2, ... argn) from inside the plugin
-	 - element.data('richFilemanager').publicMethod(arg1, arg2, ... argn) from outside the plugin,
-	   where "element" is the element the plugin is attached to
-	--------------------------------------------------------------------------------------------------------------*/
+ Public methods
+ Can be called like:
+ - fm.methodName(arg1, arg2, ... argn) from inside the plugin
+ - element.data('richFilemanager').publicMethod(arg1, arg2, ... argn) from outside the plugin,
+   where "element" is the element the plugin is attached to
+--------------------------------------------------------------------------------------------------------------*/
 
-		fm.write = write;
-		function write(message, obj) {
+		export function write(message, obj) {
 			var log = alertify;
 			var options = $.extend({}, {
 				reset: true,
@@ -120,40 +123,35 @@
 			return log;
 		}
 
-		fm.error = error;
-		function error(message, options) {
+		export function error(message, options) {
 			return fm.write(message, $.extend({}, {
 				type: 'error',
 				delay: 10000
 			}, options));
 		}
 
-		fm.warning = warning;
-		function warning(message, options) {
+		export function warning(message, options) {
 			return fm.write(message, $.extend({}, {
 				type: 'warning',
 				delay: 10000
 			}, options));
 		}
 
-		fm.success = success;
-		function success(message, options) {
+		export function success(message, options) {
 			return fm.write(message, $.extend({}, {
 				type: 'success',
 				delay: 6000
 			}, options));
 		}
 
-		fm.alert = alert;
-		function alert(message) {
+		export function alert(message) {
 			alertify
 				.reset()
 				.dialogContainerClass('fm-popup')
 				.alert(message);
 		}
 
-		fm.confirm = confirm;
-		function confirm(obj) {
+		export function confirm(obj) {
 			alertify
 				.reset()
 				.dialogWidth(obj.width)
@@ -162,8 +160,7 @@
 				.confirm(obj.message, obj.okBtn, obj.cancelBtn);
 		}
 
-		fm.prompt = prompt;
-		function prompt(obj) {
+		export function prompt(obj) {
 			alertify
 				.reset()
 				.dialogWidth(obj.width)
@@ -173,8 +170,7 @@
 				.prompt(obj.message, obj.value || '', obj.okBtn, obj.cancelBtn);
 		}
 
-		fm.dialog = dialog;
-		function dialog(obj) {
+		export function dialog(obj) {
 			alertify
 				.reset()
 				.dialogWidth(obj.width)
@@ -185,8 +181,7 @@
 
 		// Forces columns to fill the layout vertically.
 		// Called on initial page load and on resize.
-		fm.setDimensions = setDimensions;
-		function setDimensions() {
+		export function setDimensions() {
 			var padding = $wrapper.outerHeight(true) - $wrapper.height(),
 				newH = $(window).height() - $header.height() - $footer.height() - padding,
 				newW = $splitter.width() - $splitter.children(".splitter-bar-vertical").outerWidth() - $filetree.outerWidth();
@@ -195,8 +190,7 @@
 			$fileinfo.width(newW);
 		}
 
-		fm.log = log;
-		function log() {
+		export function log() {
 			if(config.options.logger && arguments) {
 				[].unshift.call(arguments, new Date().getTime());
 				console.log.apply(this, arguments);
@@ -204,9 +198,9 @@
 		}
 
 		/*--------------------------------------------------------------------------------------------------------------
-	 Private methods
-	 These methods can be called only from inside the plugin like: methodName(arg1, arg2, ... argn)
-	--------------------------------------------------------------------------------------------------------------*/
+ Private methods
+ These methods can be called only from inside the plugin like: methodName(arg1, arg2, ... argn)
+--------------------------------------------------------------------------------------------------------------*/
 
 		/**
 		 * The "constructor" method that gets called when the object is created
@@ -215,20 +209,20 @@
 			var deferred = $.Deferred();
 
 			deferred
-				.then(function() {
+				.then(function () {
 					return configure();
 				})
-				.then(function() {
+				.then(function () {
 					return localize();
 				})
-				.then(function(conf_d, conf_u) {
+				.then(function (conf_d, conf_u) {
 					return performInitialRequest();
 				})
-				.then(function() {
+				.then(function () {
 					return includeTemplates();
 				})
-				.then(function() {
-					includeAssets(function() {
+				.then(function () {
+					includeAssets(function () {
 						initialize();
 					});
 				});
@@ -237,7 +231,7 @@
 		}
 
 		function configure() {
-			return $.when(loadConfigFile('default'), loadConfigFile('user')).done(function(confd, confu) {
+			return $.when(loadConfigFile('default'), loadConfigFile('user')).done(function (confd, confu) {
 				var config_default = confd[ 0 ];
 				var config_user = confu[ 0 ];
 
@@ -268,12 +262,12 @@
 		function performInitialRequest() {
 			return buildAjaxRequest('GET', {
 				mode: 'initiate'
-			}).done(function(response) {
+			}).done(function (response) {
 				if(response.data) {
 					var serverConfig = response.data.attributes.config;
 					// configuration options retrieved from the server
-					$.each(serverConfig, function(section, options) {
-						$.each(options, function(param, value) {
+					$.each(serverConfig, function (section, options) {
+						$.each(options, function (param, value) {
 							if(config[ section ] === undefined) {
 								config[ section ] = [];
 							}
@@ -287,9 +281,9 @@
 					}
 				}
 				handleAjaxResponseErrors(response);
-			}).fail(function() {
+			}).fail(function () {
 				fm.error('Unable to perform initial request to server.');
-			}).then(function(response) {
+			}).then(function (response) {
 				if(response.errors) {
 					return $.Deferred().reject();
 				}
@@ -301,16 +295,16 @@
 			langModel = new LangModel();
 
 			return $.ajax()
-				.then(function() {
+				.then(function () {
 					var urlLangCode = _url_.param('langCode');
 					if(urlLangCode) {
 						// try to load lang file based on langCode in query params
 						return file_exists(langModel.buildLangFileUrl(urlLangCode))
-							.done(function() {
+							.done(function () {
 								langModel.setLang(urlLangCode);
 							})
-							.fail(function() {
-								setTimeout(function() {
+							.fail(function () {
+								setTimeout(function () {
 									fm.error('Given language file (' + langModel.buildLangFileUrl(urlLangCode) + ') does not exist!');
 								}, 500);
 							});
@@ -318,19 +312,19 @@
 						langModel.setLang(config.language.default);
 					}
 				})
-				.then(function() {
+				.then(function () {
 					return $.ajax({
 						type: 'GET',
 						url: langModel.buildLangFileUrl(langModel.getLang()),
 						dataType: 'json'
-					}).done(function(jsonTrans) {
+					}).done(function (jsonTrans) {
 						langModel.setTranslations(jsonTrans);
 					});
 				});
 		}
 
 		function includeTemplates() {
-			return $.when(loadTemplate('upload-container'), loadTemplate('upload-item')).done(function(uc, ui) {
+			return $.when(loadTemplate('upload-container'), loadTemplate('upload-item')).done(function (uc, ui) {
 				var tmpl_upload_container = uc[ 0 ];
 				var tmpl_upload_item = ui[ 0 ];
 
@@ -438,23 +432,23 @@
 			fmModel.filterModel.setName(_url_.param('filter'));
 
 			ko.bindingHandlers.toggleNodeVisibility = {
-				init: function(element, valueAccessor) {
+				init: function (element, valueAccessor) {
 					var node = valueAccessor();
 					$(element).toggle(node.isExpanded());
 				},
-				update: function(element, valueAccessor) {
+				update: function (element, valueAccessor) {
 					var node = valueAccessor();
 					if(node.isSliding() === false) {
 						return false;
 					}
 					if(node.isExpanded() === false) {
-						$(element).slideDown(config.filetree.expandSpeed, function() {
+						$(element).slideDown(config.filetree.expandSpeed, function () {
 							node.isSliding(false);
 							node.isExpanded(true);
 						});
 					}
 					if(node.isExpanded() === true) {
-						$(element).slideUp(config.filetree.expandSpeed, function() {
+						$(element).slideUp(config.filetree.expandSpeed, function () {
 							node.isSliding(false);
 							node.isExpanded(false);
 						});
@@ -463,30 +457,30 @@
 			};
 
 			ko.bindingHandlers.draggableView = {
-				init: function(element, valueAccessor, allBindingsAccessor) {
+				init: function (element, valueAccessor, allBindingsAccessor) {
 					fmModel.ddModel.makeDraggable(valueAccessor(), element);
 				}
 			};
 
 			ko.bindingHandlers.droppableView = {
-				init: function(element, valueAccessor, allBindingsAccessor) {
+				init: function (element, valueAccessor, allBindingsAccessor) {
 					fmModel.ddModel.makeDroppable(valueAccessor(), element);
 				}
 			};
 
 			ko.bindingHandlers.draggableTree = {
-				init: function(element, valueAccessor, allBindingsAccessor) {
+				init: function (element, valueAccessor, allBindingsAccessor) {
 					fmModel.ddModel.makeDraggable(valueAccessor(), element);
 				}
 			};
 
 			ko.bindingHandlers.droppableTree = {
-				init: function(element, valueAccessor, allBindingsAccessor) {
+				init: function (element, valueAccessor, allBindingsAccessor) {
 					fmModel.ddModel.makeDroppable(valueAccessor(), element);
 				}
 			};
 
-			$wrapper.mousewheel(function(e) {
+			$wrapper.mousewheel(function (e) {
 				if(!fmModel.ddModel.dragHelper) {
 					return true;
 				}
@@ -500,7 +494,7 @@
 					$panes = $splitter.children('.splitter-pane');
 				}
 
-				$panes.each(function(i) {
+				$panes.each(function (i) {
 					var $pane = $(this),
 						top = $pane.offset().top,
 						left = $pane.offset().left;
@@ -535,7 +529,7 @@
 
 						fmModel.ddModel.isScrolling = true;
 						scrollOffset = (scrollOffset < 0) ? 0 : scrollOffset;
-						$obstacle.stop().animate({ scrollTop: scrollOffset }, 100, 'linear', function() {
+						$obstacle.stop().animate({scrollTop: scrollOffset}, 100, 'linear', function () {
 							fmModel.ddModel.isScrolling = false;
 							fmModel.ddModel.isScrolled = true;
 						});
@@ -548,18 +542,18 @@
 				cancel: ".directory-parent, thead",
 				disabled: !config.manager.selection.enabled,
 				appendTo: $viewItems,
-				start: function(event, ui) {
+				start: function (event, ui) {
 					clearSelection();
 					fmModel.itemsModel.isSelecting(true);
 				},
-				stop: function(event, ui) {
+				stop: function (event, ui) {
 					fmModel.itemsModel.isSelecting(false);
 				},
-				selected: function(event, ui) {
+				selected: function (event, ui) {
 					var koItem = ko.dataFor(ui.selected);
 					koItem.selected(true);
 				},
-				unselected: function(event, ui) {
+				unselected: function (event, ui) {
 					var koItem = ko.dataFor(ui.unselected);
 					koItem.selected(false);
 				}
@@ -569,7 +563,7 @@
 				selector: '.view-items',
 				zIndex: 10,
 				// wrap options with "build" allows to get item element
-				build: function($triggerElement, e) {
+				build: function ($triggerElement, e) {
 					var contextMenuItems = {
 						createFolder: {
 							name: lg('create_folder'),
@@ -578,7 +572,7 @@
 						paste: {
 							name: lg('clipboard_paste'),
 							className: 'paste',
-							disabled: function(key, options) {
+							disabled: function (key, options) {
 								return fmModel.clipboardModel.isEmpty();
 							}
 						}
@@ -592,7 +586,7 @@
 						appendTo: '.fm-container',
 						items: contextMenuItems,
 						reposition: false,
-						callback: function(itemKey, options) {
+						callback: function (itemKey, options) {
 							switch(itemKey) {
 								case 'createFolder':
 									fmModel.headerModel.createFolder();
@@ -621,13 +615,13 @@
 			// adding a close button triggering callback function if CKEditorCleanUpFuncNum passed
 			if(_url_.param('CKEditorCleanUpFuncNum')) {
 				fmModel.headerModel.closeButton(true);
-				fmModel.headerModel.closeButtonOnClick = function() {
+				fmModel.headerModel.closeButtonOnClick = function () {
 					parent.CKEDITOR.tools.callFunction(_url_.param('CKEditorCleanUpFuncNum'));
 				};
 			}
 
 			// input file replacement
-			$("#newfile").change(function() {
+			$("#newfile").change(function () {
 				$("#filepath").val($(this).val().replace(/.+[\\\/]/, ""));
 			});
 
@@ -647,10 +641,10 @@
 						updateOnContentResize: true
 					},
 					callbacks: {
-						onScrollStart: function() {
+						onScrollStart: function () {
 							fmModel.ddModel.isScrolling = true;
 						},
-						onScroll: function() {
+						onScroll: function () {
 							fmModel.ddModel.isScrolling = false;
 						}
 					},
@@ -680,18 +674,18 @@
 						updateOnSelectorChange: '.grid, .list'
 					},
 					callbacks: {
-						onScrollStart: function() {
+						onScrollStart: function () {
 							if(!fmModel.itemsModel.continiousSelection()) {
 								this.yStartPosition = this.mcs.top;
 								this.yStartTime = (new Date()).getTime();
 							}
 							fmModel.ddModel.isScrolling = true;
 						},
-						onScroll: function() {
+						onScroll: function () {
 							fmModel.ddModel.isScrolling = false;
 							fmModel.ddModel.isScrolled = true;
 						},
-						whileScrolling: function() {
+						whileScrolling: function () {
 							if(config.manager.selection.enabled) {
 								// would prefer to get scroll position from [onScrollStart],
 								// but the [onScroll] should fire first, which happens with a big lag
@@ -733,7 +727,7 @@
 
 			var $loading = $container.find('.fm-loading-wrap');
 			// remove loading screen div
-			$loading.fadeOut(800, function() {
+			$loading.fadeOut(800, function () {
 				fm.setDimensions();
 			});
 			fm.setDimensions();
@@ -748,27 +742,27 @@
 				translationsHash = {},
 				translationsPath = fm.settings.baseUrl + '/languages/';
 
-			this.buildLangFileUrl = function(code) {
+			this.buildLangFileUrl = function (code) {
 				return translationsPath + code + '.json';
 			};
 
-			this.setLang = function(code) {
+			this.setLang = function (code) {
 				currentLang = code;
 			};
 
-			this.getLang = function() {
+			this.getLang = function () {
 				return currentLang;
 			};
 
-			this.setTranslations = function(json) {
+			this.setTranslations = function (json) {
 				translationsHash = json;
 			};
 
-			this.getTranslations = function() {
+			this.getTranslations = function () {
 				return translationsHash;
 			};
 
-			this.translate = function(key) {
+			this.translate = function (key) {
 				return translationsHash[ key ];
 			};
 		}
@@ -789,7 +783,7 @@
 			this.currentLang = langModel.getLang();
 			this.lg = langModel.getTranslations();
 
-			this.previewFile.subscribe(function(enabled) {
+			this.previewFile.subscribe(function (enabled) {
 				if(!enabled) {
 					// close editor upon disabling preview
 					model.previewModel.closeEditor();
@@ -801,7 +795,7 @@
 				}
 			});
 
-			this.addItem = function(resourceObject, targetPath) {
+			this.addItem = function (resourceObject, targetPath) {
 				// handle tree nodes
 				var targetNode = fmModel.treeModel.findByParam('id', targetPath);
 				if(targetNode) {
@@ -815,7 +809,7 @@
 				}
 			};
 
-			this.removeItem = function(resourceObject) {
+			this.removeItem = function (resourceObject) {
 				// handle tree nodes
 				var treeNode = fmModel.treeModel.findByParam('id', resourceObject.id);
 				if(treeNode) {
@@ -830,7 +824,7 @@
 			};
 
 			// fetch selected view items OR tree nodes
-			this.fetchSelectedItems = function(instanceName) {
+			this.fetchSelectedItems = function (instanceName) {
 				var selectedNodes, selectedItems;
 
 				if(instanceName === ItemObject.name) {
@@ -849,9 +843,9 @@
 			};
 
 			// fetch resource objects out of the selected items
-			this.fetchSelectedObjects = function(item) {
+			this.fetchSelectedObjects = function (item) {
 				var objects = [];
-				$.each(model.fetchSelectedItems(item.constructor.name), function(i, itemObject) {
+				$.each(model.fetchSelectedItems(item.constructor.name), function (i, itemObject) {
 					objects.push(itemObject.rdo);
 				});
 				return objects;
@@ -872,7 +866,7 @@
 				return true;
 			}
 
-			var PreviewModel = function() {
+			var PreviewModel = function () {
 				var preview_model = this,
 					clipboard = null;
 
@@ -893,7 +887,7 @@
 				this.renderer = new RenderModel();
 				this.editor = new EditorModel();
 
-				this.rdo.subscribe(function(resourceObject) {
+				this.rdo.subscribe(function (resourceObject) {
 					preview_model.cdo({
 						isFolder: (resourceObject.type === 'folder'),
 						sizeFormatted: formatBytes(resourceObject.attributes.size),
@@ -902,14 +896,14 @@
 					});
 				});
 
-				this.editor.content.subscribe(function(content) {
+				this.editor.content.subscribe(function (content) {
 					if(preview_model.editor.isInteractive()) {
 						// instantly render changes of editor content
 						preview_model.renderer.render(content);
 					}
 				});
 
-				this.applyObject = function(resourceObject) {
+				this.applyObject = function (resourceObject) {
 					if(clipboard) {
 						clipboard.destroy();
 					}
@@ -987,7 +981,7 @@
 					preview_model.editor.isInteractive(editorObject.interactive);
 
 					if(viewerObject.type === 'renderer' || preview_model.viewer.isEditable()) {
-						previewItem(resourceObject).then(function(response) {
+						previewItem(resourceObject).then(function (response) {
 							if(response.data) {
 								var content = response.data.attributes.content;
 								preview_model.viewer.content(content);
@@ -999,18 +993,18 @@
 					}
 				};
 
-				this.afterRender = function() {
+				this.afterRender = function () {
 					preview_model.renderer.render(preview_model.viewer.content());
 
 					var copyBtnEl = $previewWrapper.find('.btn-copy-url')[ 0 ];
 					clipboard = new Clipboard(copyBtnEl);
 
-					clipboard.on('success', function(e) {
+					clipboard.on('success', function (e) {
 						fm.success(lg('copied'));
 					});
 				};
 
-				this.initiateEditor = function(elements) {
+				this.initiateEditor = function (elements) {
 					var textarea = $previewWrapper.find('.fm-cm-editor-content')[ 0 ];
 					preview_model.editor.createInstance(preview_model.cdo().extension, textarea, {
 						readOnly: false,
@@ -1019,13 +1013,13 @@
 				};
 
 				// fires specific action by clicking toolbar buttons in detail view
-				this.bindToolbar = function(action) {
+				this.bindToolbar = function (action) {
 					if(has_capability(preview_model.rdo(), action)) {
 						performAction(action, {}, preview_model.rdo());
 					}
 				};
 
-				this.previewIconClass = ko.pureComputed(function() {
+				this.previewIconClass = ko.pureComputed(function () {
 					var cssClass = [],
 						extraClass = [ 'ico' ];
 					if(preview_model.viewer.type() === 'default' || !preview_model.viewer.url()) {
@@ -1049,23 +1043,23 @@
 					return cssClass.join(' ');
 				}, this);
 
-				this.editFile = function() {
+				this.editFile = function () {
 					var content = preview_model.viewer.content();
 					preview_model.renderer.render(content);
 					preview_model.editor.render(content);
 				};
 
-				this.saveFile = function() {
+				this.saveFile = function () {
 					saveItem(preview_model.rdo());
 				};
 
-				this.closeEditor = function() {
+				this.closeEditor = function () {
 					preview_model.editor.enabled(false);
 					// re-render viewer content
 					preview_model.renderer.render(preview_model.viewer.content());
 				};
 
-				this.buttonVisibility = function(action) {
+				this.buttonVisibility = function (action) {
 					switch(action) {
 						case 'select':
 							return (has_capability(preview_model.rdo(), action) && hasContext());
@@ -1078,7 +1072,7 @@
 				};
 			};
 
-			var TreeModel = function() {
+			var TreeModel = function () {
 				var tree_model = this;
 				this.selectedNode = ko.observable(null);
 
@@ -1088,18 +1082,18 @@
 					children: ko.observableArray([])
 				};
 
-				this.treeData.children.subscribe(function(value) {
+				this.treeData.children.subscribe(function (value) {
 					tree_model.arrangeNode(tree_model.treeData);
 				});
 
-				var expandFolderDefault = function(parentNode) {
+				var expandFolderDefault = function (parentNode) {
 					if(fullexpandedFolder !== null) {
 						if(!parentNode) {
 							parentNode = tree_model.treeData
 						}
 
 						// looking for node that starts with specified path
-						var node = tree_model.findByFilter(function(node) {
+						var node = tree_model.findByFilter(function (node) {
 							return (fullexpandedFolder.indexOf(node.id) === 0);
 						}, parentNode);
 
@@ -1113,7 +1107,7 @@
 					}
 				};
 
-				this.mapNodes = function(filter, contextNode) {
+				this.mapNodes = function (filter, contextNode) {
 					if(!contextNode) {
 						contextNode = tree_model.treeData;
 					}
@@ -1131,7 +1125,7 @@
 					}
 				};
 
-				this.findByParam = function(key, value, contextNode) {
+				this.findByParam = function (key, value, contextNode) {
 					if(!contextNode) {
 						contextNode = tree_model.treeData;
 						if(contextNode[ key ] === value) {
@@ -1152,7 +1146,7 @@
 					return null;
 				};
 
-				this.findByFilter = function(filter, contextNode) {
+				this.findByFilter = function (filter, contextNode) {
 					if(!contextNode) {
 						contextNode = tree_model.treeData;
 						if(filter(contextNode)) {
@@ -1173,7 +1167,7 @@
 					return null;
 				};
 
-				this.getSelected = function() {
+				this.getSelected = function () {
 					var selectedItems = [];
 					if(tree_model.selectedNode()) {
 						selectedItems.push(tree_model.selectedNode());
@@ -1181,7 +1175,7 @@
 					return selectedItems;
 				};
 
-				this.loadNodes = function(targetNode, refresh) {
+				this.loadNodes = function (targetNode, refresh) {
 					var path = targetNode ? targetNode.id : tree_model.treeData.id;
 					if(targetNode) {
 						targetNode.isLoaded(false);
@@ -1192,10 +1186,10 @@
 						path: path
 					};
 
-					buildAjaxRequest('GET', queryParams).done(function(response) {
+					buildAjaxRequest('GET', queryParams).done(function (response) {
 						if(response.data) {
 							var nodes = [];
-							$.each(response.data, function(i, resourceObject) {
+							$.each(response.data, function (i, resourceObject) {
 								var nodeObject = tree_model.createNode(resourceObject);
 								nodes.push(nodeObject);
 							});
@@ -1214,13 +1208,13 @@
 					}).fail(handleAjaxError);
 				};
 
-				this.createNode = function(resourceObject) {
+				this.createNode = function (resourceObject) {
 					var node = new TreeNodeModel(resourceObject);
 					fmModel.filterModel.filterItem(node);
 					return node;
 				};
 
-				this.addNodes = function(targetNode, newNodes) {
+				this.addNodes = function (targetNode, newNodes) {
 					if(!$.isArray(newNodes)) {
 						newNodes = [ newNodes ];
 					}
@@ -1229,18 +1223,18 @@
 					}
 					// list only folders in tree
 					if(config.filetree.foldersOnly) {
-						newNodes = $.grep(newNodes, function(node) {
+						newNodes = $.grep(newNodes, function (node) {
 							return (node.cdo.isFolder);
 						});
 					}
-					$.each(newNodes, function(i, node) {
+					$.each(newNodes, function (i, node) {
 						node.parentNode(targetNode);
 					});
 					var allNodes = targetNode.children().concat(newNodes);
 					targetNode.children(sortItems(allNodes));
 				};
 
-				this.expandNode = function(node) {
+				this.expandNode = function (node) {
 					if(node.isExpanded() === false && node.isLoaded() === true) {
 						node.isSliding(true);
 						return true;
@@ -1248,7 +1242,7 @@
 					return false;
 				};
 
-				this.collapseNode = function(node) {
+				this.collapseNode = function (node) {
 					if(node.isExpanded() === true) {
 						node.isSliding(true);
 						return true;
@@ -1256,34 +1250,34 @@
 					return false;
 				};
 
-				this.toggleNode = function(node) {
+				this.toggleNode = function (node) {
 					if(!tree_model.collapseNode(node)) {
 						tree_model.expandNode(node);
 					}
 				};
 
-				this.arrangeNode = function(node) {
+				this.arrangeNode = function (node) {
 					var childrenLength = node.children().length;
-					$.each(node.children(), function(index, cNode) {
+					$.each(node.children(), function (index, cNode) {
 						cNode.level(node.level() + 1);
 						cNode.isFirstNode(index === 0);
 						cNode.isLastNode(index === (childrenLength - 1));
 					});
 				};
 
-				this.nodeRendered = function(elements, node) {
+				this.nodeRendered = function (elements, node) {
 					// attach context menu
 					$(elements[ 1 ]).contextMenu({
 						selector: '.file, .directory',
 						zIndex: 100,
 						// wrap options with "build" allows to get item element
-						build: function($triggerElement, e) {
+						build: function ($triggerElement, e) {
 							node.selected(true);
 
 							return {
 								appendTo: '.fm-container',
 								items: getContextMenuItems(node.rdo),
-								callback: function(itemKey, options) {
+								callback: function (itemKey, options) {
 									performAction(itemKey, options, node.rdo, model.fetchSelectedObjects(node));
 								}
 							}
@@ -1291,7 +1285,7 @@
 					});
 				};
 
-				this.actualizeNodeObject = function(node, oldFolder, newFolder) {
+				this.actualizeNodeObject = function (node, oldFolder, newFolder) {
 					var search = new RegExp('^' + oldFolder);
 					var oldPath = node.rdo.id;
 					var newPath = oldPath.replace(search, newFolder);
@@ -1300,14 +1294,14 @@
 					node.rdo.attributes.path = node.rdo.attributes.path.replace(new RegExp(oldPath + '$'), newPath);
 
 					if(node.children().length) {
-						$.each(node.children(), function(index, cNode) {
+						$.each(node.children(), function (index, cNode) {
 							tree_model.actualizeNodeObject(cNode, oldFolder, newFolder);
 						});
 					}
 				};
 			};
 
-			var TreeNodeModel = function(resourceObject) {
+			var TreeNodeModel = function (resourceObject) {
 				var tree_node = this;
 				this.id = resourceObject.id;
 				this.rdo = resourceObject;
@@ -1335,19 +1329,19 @@
 				this.isFirstNode = ko.observable(false);
 				this.isLastNode = ko.observable(false);
 
-				this.nodeTitle.subscribe(function(value) {
+				this.nodeTitle.subscribe(function (value) {
 					tree_node.rdo.attributes.name = value;
 				});
 
-				this.children.subscribe(function(value) {
+				this.children.subscribe(function (value) {
 					model.treeModel.arrangeNode(tree_node);
 				});
 
-				this.isLoaded.subscribe(function(value) {
+				this.isLoaded.subscribe(function (value) {
 					tree_node.isLoading(!value);
 				});
 
-				this.selected.subscribe(function(value) {
+				this.selected.subscribe(function (value) {
 					if(value) {
 						if(model.treeModel.selectedNode() !== null) {
 							model.treeModel.selectedNode().selected(false);
@@ -1359,7 +1353,7 @@
 					}
 				});
 
-				this.switchNode = function(node) {
+				this.switchNode = function (node) {
 					if(!node.cdo.isFolder) {
 						return false;
 					}
@@ -1374,23 +1368,23 @@
 					}
 				};
 
-				this.mouseDown = function(node, e) {
+				this.mouseDown = function (node, e) {
 					node.selected(true);
 				};
 
-				this.nodeClick = function(node, e) {
+				this.nodeClick = function (node, e) {
 					if(!config.manager.dblClickOpen) {
 						tree_node.openNode(node);
 					}
 				};
 
-				this.nodeDblClick = function(node, e) {
+				this.nodeDblClick = function (node, e) {
 					if(config.manager.dblClickOpen) {
 						tree_node.openNode(node);
 					}
 				};
 
-				this.openNode = function(node, e) {
+				this.openNode = function (node, e) {
 					if(node.rdo.type === 'file') {
 						getDetailView(node.rdo);
 					}
@@ -1404,7 +1398,7 @@
 							fmModel.currentPath(node.id);
 							fmModel.breadcrumbsModel.splitCurrent();
 							var dataObjects = [];
-							$.each(node.children(), function(i, cnode) {
+							$.each(node.children(), function (i, cnode) {
 								dataObjects.push(cnode.rdo);
 							});
 							model.itemsModel.setList(dataObjects);
@@ -1412,19 +1406,19 @@
 					}
 				};
 
-				this.remove = function() {
+				this.remove = function () {
 					tree_node.parentNode().children.remove(tree_node);
 				};
 
-				this.isRoot = function() {
+				this.isRoot = function () {
 					return tree_node.level() === model.treeModel.treeData.id;
 				};
 
-				this.title = ko.pureComputed(function() {
+				this.title = ko.pureComputed(function () {
 					return (config.options.showTitleAttr) ? this.rdo.id : null;
 				}, this);
 
-				this.itemClass = ko.pureComputed(function() {
+				this.itemClass = ko.pureComputed(function () {
 					var cssClass = [];
 					if(this.selected() && config.manager.selection.enabled) {
 						cssClass.push('ui-selected');
@@ -1435,7 +1429,7 @@
 					return cssClass.join(' ');
 				}, this);
 
-				this.iconClass = ko.pureComputed(function() {
+				this.iconClass = ko.pureComputed(function () {
 					var cssClass,
 						extraClass = [ 'ico' ];
 					if(this.cdo.isFolder === true) {
@@ -1461,7 +1455,7 @@
 					return cssClass + ' ' + extraClass.join('_');
 				}, this);
 
-				this.switcherClass = ko.pureComputed(function() {
+				this.switcherClass = ko.pureComputed(function () {
 					var cssClass = [];
 					if(config.filetree.showLine) {
 						if(this.level() === 0 && this.isFirstNode() && this.isLastNode()) {
@@ -1485,12 +1479,12 @@
 					return cssClass.join('_');
 				}, this);
 
-				this.clusterClass = ko.pureComputed(function() {
+				this.clusterClass = ko.pureComputed(function () {
 					return (config.filetree.showLine && !this.isLastNode()) ? 'line' : '';
 				}, this);
 			};
 
-			var ItemsModel = function() {
+			var ItemsModel = function () {
 				var items_model = this;
 				this.objects = ko.observableArray([]);
 				this.objectsSize = ko.observable(0);
@@ -1503,20 +1497,20 @@
 				this.descriptivePanel = new RenderModel();
 				this.lazyLoad = null;
 
-				this.isSelecting.subscribe(function(state) {
+				this.isSelecting.subscribe(function (state) {
 					if(!state) {
 						// means selection lasso has been dropped
 						items_model.continiousSelection(false);
 					}
 				});
 
-				this.createObject = function(resourceObject) {
+				this.createObject = function (resourceObject) {
 					var item = new ItemObject(resourceObject);
 					fmModel.filterModel.filterItem(item);
 					return item;
 				};
 
-				this.addNew = function(dataObjects) {
+				this.addNew = function (dataObjects) {
 					// use underlying array for better performance
 					// http://www.knockmeout.net/2012/04/knockoutjs-performance-gotcha.html
 					var items = model.itemsModel.objects();
@@ -1525,7 +1519,7 @@
 						dataObjects = [ dataObjects ];
 					}
 
-					$.each(dataObjects, function(i, resourceObject) {
+					$.each(dataObjects, function (i, resourceObject) {
 						items.push(items_model.createObject(resourceObject));
 					});
 
@@ -1533,7 +1527,7 @@
 					model.itemsModel.objects.valueHasMutated();
 				};
 
-				this.loadList = function(path) {
+				this.loadList = function (path) {
 					model.loadingView(true);
 
 					var queryParams = {
@@ -1544,7 +1538,7 @@
 						queryParams.type = _url_.param('type');
 					}
 
-					buildAjaxRequest('GET', queryParams).done(function(response) {
+					buildAjaxRequest('GET', queryParams).done(function (response) {
 						if(response.data) {
 							model.currentPath(path);
 							model.breadcrumbsModel.splitCurrent();
@@ -1558,7 +1552,7 @@
 					}).fail(handleAjaxError);
 				};
 
-				this.setList = function(dataObjects) {
+				this.setList = function (dataObjects) {
 					var objects = [];
 					// add parent folder object
 					if(!isFile(model.currentPath()) && model.currentPath() !== fileRoot) {
@@ -1576,13 +1570,13 @@
 							dragHovered: ko.observable(false)
 						};
 
-						parentItem.open = function(item, e) {
+						parentItem.open = function (item, e) {
 							if(isItemOpenable(e)) {
 								items_model.loadList(parentItem.id);
 							}
 						};
 
-						parentItem.itemClass = ko.pureComputed(function() {
+						parentItem.itemClass = ko.pureComputed(function () {
 							var cssClass = [];
 							if(parentItem.dragHovered()) {
 								cssClass.push(model.ddModel.hoveredCssClass);
@@ -1596,13 +1590,13 @@
 					// clear previously rendered content
 					items_model.descriptivePanel.content(null);
 
-					$.each(dataObjects, function(i, resourceObject) {
+					$.each(dataObjects, function (i, resourceObject) {
 						if(config.manager.renderer.position && typeof config.manager.renderer.indexFile === 'string' &&
 							resourceObject.attributes.name.toLowerCase() === config.manager.renderer.indexFile.toLowerCase()
 						) {
 							items_model.descriptivePanel.setRenderer(resourceObject);
 							// load and render index file content
-							previewItem(items_model.descriptivePanel.rdo()).then(function(response) {
+							previewItem(items_model.descriptivePanel.rdo()).then(function (response) {
 								if(response.data) {
 									items_model.descriptivePanel.render(response.data.attributes.content);
 								}
@@ -1615,13 +1609,13 @@
 					model.loadingView(false);
 				};
 
-				this.findByParam = function(key, value) {
-					return ko.utils.arrayFirst(model.itemsModel.objects(), function(object) {
+				this.findByParam = function (key, value) {
+					return ko.utils.arrayFirst(model.itemsModel.objects(), function (object) {
 						return object[ key ] === value;
 					});
 				};
 
-				this.findByFilter = function(filter, allMatches) {
+				this.findByFilter = function (filter, allMatches) {
 					var firstMatch = !(allMatches || false);
 
 					var resultItems = [],
@@ -1641,30 +1635,30 @@
 					return firstMatch ? null : resultItems;
 				};
 
-				this.sortObjects = function() {
+				this.sortObjects = function () {
 					var sortedList = sortItems(items_model.objects());
 					items_model.objects(sortedList);
 				};
 
-				this.getSelected = function() {
-					var selectedItems = items_model.findByFilter(function(item) {
+				this.getSelected = function () {
+					var selectedItems = items_model.findByFilter(function (item) {
 						return item.rdo.type !== "parent" && item.selected();
 					}, true);
 					items_model.selectedNumber(selectedItems.length);
 					return selectedItems;
 				};
 
-				this.unselectItems = function(ctrlKey) {
+				this.unselectItems = function (ctrlKey) {
 					var appendSelection = (config.manager.selection.enabled && config.manager.selection.useCtrlKey && ctrlKey === true);
 					if(!appendSelection) {
 						// drop selection from selected items
-						$.each(items_model.getSelected(), function(i, itemObject) {
+						$.each(items_model.getSelected(), function (i, itemObject) {
 							itemObject.selected(false);
 						});
 					}
 				};
 
-				this.initiateLazyLoad = function() {
+				this.initiateLazyLoad = function () {
 					// not configured or already initiated
 					if(config.viewer.image.lazyLoad !== true || items_model.lazyLoad) {
 						return;
@@ -1672,23 +1666,23 @@
 
 					items_model.lazyLoad = new LazyLoad({
 						container: $fileinfo[ 0 ], // work only for default scrollbar
-						callback_load: function(element) {
+						callback_load: function (element) {
 							fm.log("LOADED", element.getAttribute('data-original'));
 						},
-						callback_set: function(element) {
+						callback_set: function (element) {
 							fm.log("SET", element.getAttribute('data-original'));
 						},
-						callback_processed: function(elementsLeft) {
+						callback_processed: function (elementsLeft) {
 							fm.log("PROCESSED", elementsLeft + " images left");
 						}
 					});
 				};
 
-				this.objects.subscribe(function(items) {
+				this.objects.subscribe(function (items) {
 					var totalNumber = 0,
 						totalSize = 0;
 
-					$.each(items, function(i, item) {
+					$.each(items, function (i, item) {
 						if(item.rdo.type !== 'parent') {
 							totalNumber++;
 						}
@@ -1702,7 +1696,7 @@
 
 					// update
 					if(items_model.lazyLoad) {
-						setTimeout(function() {
+						setTimeout(function () {
 							items_model.lazyLoad.update();
 						}, 50);
 					}
@@ -1712,7 +1706,7 @@
 						selector: '.file, .directory',
 						zIndex: 100,
 						// wrap options with "build" allows to get item element
-						build: function($triggerElement, e) {
+						build: function ($triggerElement, e) {
 							var koItem = ko.dataFor($triggerElement[ 0 ]);
 							if(!koItem.selected()) {
 								model.itemsModel.unselectItems(false);
@@ -1722,7 +1716,7 @@
 							return {
 								appendTo: '.fm-container',
 								items: getContextMenuItems(koItem.rdo),
-								callback: function(itemKey, options) {
+								callback: function (itemKey, options) {
 									performAction(itemKey, options, koItem.rdo, model.fetchSelectedObjects(koItem));
 								}
 							}
@@ -1731,7 +1725,7 @@
 				});
 			};
 
-			var ItemObject = function(resourceObject) {
+			var ItemObject = function (resourceObject) {
 				var item_object = this,
 					previewWidth = config.viewer.image.thumbMaxWidth;
 
@@ -1757,17 +1751,17 @@
 				this.dragHovered = ko.observable(false);
 				this.lazyPreview = (config.viewer.image.lazyLoad && this.cdo.imageUrl);
 
-				this.selected.subscribe(function(value) {
+				this.selected.subscribe(function (value) {
 					if(value && model.treeModel.selectedNode() !== null) {
 						model.treeModel.selectedNode().selected(false);
 					}
 				});
 
-				this.title = ko.pureComputed(function() {
+				this.title = ko.pureComputed(function () {
 					return (config.options.showTitleAttr) ? this.rdo.id : null;
 				}, this);
 
-				this.itemClass = ko.pureComputed(function() {
+				this.itemClass = ko.pureComputed(function () {
 					var cssClass = [];
 					if(this.selected() && config.manager.selection.enabled) {
 						cssClass.push('ui-selected');
@@ -1778,7 +1772,7 @@
 					return this.cdo.cssItemClass + ' ' + cssClass.join(' ');
 				}, this);
 
-				this.listIconClass = ko.pureComputed(function() {
+				this.listIconClass = ko.pureComputed(function () {
 					var cssClass,
 						extraClass = [ 'ico' ];
 					if(this.cdo.isFolder === true) {
@@ -1798,7 +1792,7 @@
 					return cssClass + ' ' + extraClass.join('_');
 				}, this);
 
-				this.gridIconClass = ko.pureComputed(function() {
+				this.gridIconClass = ko.pureComputed(function () {
 					var cssClass = [],
 						extraClass = [ 'ico' ];
 					if(!this.cdo.imageUrl) {
@@ -1822,7 +1816,7 @@
 					return cssClass.join(' ');
 				}, this);
 
-				this.mouseDown = function(item, e) {
+				this.mouseDown = function (item, e) {
 					// case: previously selected items are dragged instead of a newly one
 					// unselect if currently clicked item is not the one of selected items
 					if(!item.selected()) {
@@ -1833,7 +1827,7 @@
 					item.selected(true);
 				};
 
-				this.open = function(item, e) {
+				this.open = function (item, e) {
 					if(model.selectionModel.unselect) {
 						// case: click + ctrlKey on selected item
 						if(e.ctrlKey) {
@@ -1855,18 +1849,18 @@
 					}
 				};
 
-				this.remove = function() {
+				this.remove = function () {
 					model.itemsModel.objects.remove(this);
 				};
 			};
 
-			var TableViewModel = function() {
-				var SortableHeader = function(name) {
+			var TableViewModel = function () {
+				var SortableHeader = function (name) {
 					var thead = this;
 					this.column = ko.observable(name);
 					this.order = ko.observable(model.itemsModel.listSortOrder());
 
-					this.sortClass = ko.pureComputed(function() {
+					this.sortClass = ko.pureComputed(function () {
 						var cssClass;
 						if(model.itemsModel.listSortField() === thead.column()) {
 							cssClass = 'sorted sorted-' + this.order();
@@ -1874,7 +1868,7 @@
 						return cssClass;
 					}, this);
 
-					this.sort = function() {
+					this.sort = function () {
 						var isAscending = thead.order() === 'asc';
 						var isSameColumn = model.itemsModel.listSortField() === thead.column();
 						thead.order(isSameColumn ? (isAscending ? 'desc' : 'asc') : model.itemsModel.listSortOrder());
@@ -1891,22 +1885,22 @@
 				this.thModified = new SortableHeader('modified');
 			};
 
-			var HeaderModel = function() {
+			var HeaderModel = function () {
 				var header_model = this;
 
 				this.closeButton = ko.observable(false);
 				this.langSwitcher = $.isArray(config.language.available) && config.language.available.length > 0;
 
-				this.closeButtonOnClick = function() {
+				this.closeButtonOnClick = function () {
 					fm.log("CLOSE button is clicked");
 				};
 
-				this.navHome = function() {
+				this.navHome = function () {
 					model.previewFile(false);
 					model.itemsModel.loadList(fileRoot);
 				};
 
-				this.navLevelUp = function() {
+				this.navLevelUp = function () {
 					var parentFolder = model.previewFile()
 						? getDirname(model.previewModel.rdo().id)
 						: getParentDirname(model.currentPath());
@@ -1920,7 +1914,7 @@
 					}
 				};
 
-				this.navRefresh = function() {
+				this.navRefresh = function () {
 					if(model.previewFile()) {
 						model.previewFile(false);
 						model.previewFile(true);
@@ -1929,7 +1923,7 @@
 					}
 				};
 
-				this.displayGrid = function() {
+				this.displayGrid = function () {
 					model.viewMode('grid');
 					model.previewFile(false);
 
@@ -1938,12 +1932,12 @@
 					}
 				};
 
-				this.displayList = function() {
+				this.displayList = function () {
 					model.viewMode('list');
 					model.previewFile(false);
 				};
 
-				this.switchLang = function(e) {
+				this.switchLang = function (e) {
 					var langNew = e.target.value,
 						langCurrent = langModel.getLang();
 
@@ -1960,8 +1954,8 @@
 					}
 				};
 
-				this.createFolder = function() {
-					var makeFolder = function(e, ui) {
+				this.createFolder = function () {
+					var makeFolder = function (e, ui) {
 						var folderName = ui.getInputValue();
 						if(!folderName) {
 							fm.error(lg('no_foldername'));
@@ -1972,7 +1966,7 @@
 							mode: 'addfolder',
 							path: fmModel.currentPath(),
 							name: folderName
-						}).done(function(response) {
+						}).done(function (response) {
 							if(response.data) {
 								fmModel.addItem(response.data, fmModel.currentPath());
 
@@ -2000,22 +1994,22 @@
 				};
 			};
 
-			var SummaryModel = function() {
+			var SummaryModel = function () {
 				this.files = ko.observable(null);
 				this.folders = ko.observable(null);
 				this.size = ko.observable(null);
 				this.enabled = ko.observable(false);
 
-				this.doSummarize = function() {
+				this.doSummarize = function () {
 					summarizeItems();
 				};
 			};
 
-			var FilterModel = function() {
+			var FilterModel = function () {
 				var filter_model = this;
 				this.name = ko.observable(null);
 
-				this.setName = function(filterName) {
+				this.setName = function (filterName) {
 					if(filterName &&
 						config.filter &&
 						$.isArray(config.filter[ filterName ])
@@ -2025,7 +2019,7 @@
 				};
 
 				// return extensions which are match a filter name
-				this.getExtensions = function() {
+				this.getExtensions = function () {
 					if(filter_model.name()) {
 						return config.filter[ filter_model.name() ];
 					}
@@ -2033,7 +2027,7 @@
 				};
 
 				// check whether file item should be filtered out of the output based on it's extension
-				this.filterItem = function(itemObject) {
+				this.filterItem = function (itemObject) {
 					if(itemObject.rdo.type === 'parent') {
 						return;
 					}
@@ -2051,15 +2045,15 @@
 					itemObject.visible(visibility);
 				};
 
-				this.filter = function(filterName) {
+				this.filter = function (filterName) {
 					model.searchModel.reset();
 					filter_model.setName(filterName);
 
-					$.each(model.itemsModel.objects(), function(i, itemObject) {
+					$.each(model.itemsModel.objects(), function (i, itemObject) {
 						filter_model.filterItem(itemObject);
 					});
 
-					model.treeModel.mapNodes(function(node) {
+					model.treeModel.mapNodes(function (node) {
 						filter_model.filterItem(node);
 					});
 
@@ -2068,26 +2062,26 @@
 					}
 				};
 
-				this.reset = function() {
+				this.reset = function () {
 					filter_model.name(null);
 					filter_model.filter(null);
 				};
 			};
 
-			var SearchModel = function() {
+			var SearchModel = function () {
 				var search_model = this;
 				this.value = ko.observable('');
 
-				this.findAll = function(data, event) {
+				this.findAll = function (data, event) {
 					var delay = 200,
 						insensitive = true;
 
 					search_model.value(event.target.value);
 
-					delayCallback(function() {
+					delayCallback(function () {
 						var searchString = insensitive ? search_model.value().toLowerCase() : search_model.value();
 
-						$.each(model.itemsModel.objects(), function(i, itemObject) {
+						$.each(model.itemsModel.objects(), function (i, itemObject) {
 							if(itemObject.rdo.type === 'parent' || itemObject.cdo.hiddenByType) {
 								return;
 							}
@@ -2103,9 +2097,9 @@
 					}, delay);
 				};
 
-				this.reset = function(data, event) {
+				this.reset = function (data, event) {
 					search_model.value('');
-					$.each(model.itemsModel.objects(), function(i, itemObject) {
+					$.each(model.itemsModel.objects(), function (i, itemObject) {
 						if(itemObject.rdo.type === 'parent') {
 							return;
 						}
@@ -2115,7 +2109,7 @@
 				};
 			};
 
-			var ClipboardModel = function() {
+			var ClipboardModel = function () {
 				var cbMode = null,
 					cbObjects = [],
 					clipboard_model = this,
@@ -2124,7 +2118,7 @@
 				this.itemsNum = ko.observable(0);
 				this.enabled = ko.observable(model.config().clipboard.enabled && active);
 
-				this.copy = function() {
+				this.copy = function () {
 					if(!clipboard_model.hasCapability('copy')) {
 						return;
 					}
@@ -2133,7 +2127,7 @@
 					clipboard_model.itemsNum(cbObjects.length);
 				};
 
-				this.cut = function() {
+				this.cut = function () {
 					if(!clipboard_model.hasCapability('cut')) {
 						return;
 					}
@@ -2142,7 +2136,7 @@
 					clipboard_model.itemsNum(cbObjects.length);
 				};
 
-				this.paste = function() {
+				this.paste = function () {
 					if(!clipboard_model.hasCapability('paste') || clipboard_model.isEmpty()) {
 						return;
 					}
@@ -2153,7 +2147,7 @@
 
 					var targetPath = model.currentPath();
 
-					processMultipleActions(cbObjects, function(i, itemObject) {
+					processMultipleActions(cbObjects, function (i, itemObject) {
 						if(cbMode === 'cut') {
 							return moveItem(itemObject, targetPath);
 						}
@@ -2163,7 +2157,7 @@
 					}, clearClipboard);
 				};
 
-				this.clear = function() {
+				this.clear = function () {
 					if(!clipboard_model.hasCapability('clear') || clipboard_model.isEmpty()) {
 						return;
 					}
@@ -2171,11 +2165,11 @@
 					fm.success(lg('clipboard_cleared'));
 				};
 
-				this.isEmpty = function() {
+				this.isEmpty = function () {
 					return cbObjects.length === 0;
 				};
 
-				this.hasCapability = function(capability) {
+				this.hasCapability = function (capability) {
 					if(!clipboard_model.enabled) {
 						return false;
 					}
@@ -2197,16 +2191,16 @@
 				}
 			};
 
-			var BreadcrumbsModel = function() {
+			var BreadcrumbsModel = function () {
 				var bc_model = this;
 
 				this.items = ko.observableArray([]);
 
-				this.add = function(path, label) {
+				this.add = function (path, label) {
 					bc_model.items.push(new BcItem(path, label));
 				};
 
-				this.splitCurrent = function() {
+				this.splitCurrent = function () {
 					var path = fileRoot,
 						cPath = model.currentPath(),
 						chunks = cPath.replace(new RegExp('^' + fileRoot), '').split('/');
@@ -2225,14 +2219,14 @@
 					}
 				};
 
-				var BcItem = function(path, label) {
+				var BcItem = function (path, label) {
 					var bc_item = this;
 					this.path = path;
 					this.label = label;
 					this.isRoot = (path === fileRoot);
 					this.active = (path === model.currentPath());
 
-					this.itemClass = function() {
+					this.itemClass = function () {
 						var cssClass = [ 'nav-item' ];
 						if(bc_item.isRoot) {
 							cssClass.push('root');
@@ -2243,7 +2237,7 @@
 						return cssClass.join(' ');
 					};
 
-					this.goto = function(item, e) {
+					this.goto = function (item, e) {
 						if(!item.active) {
 							model.itemsModel.loadList(item.path);
 						}
@@ -2251,7 +2245,7 @@
 				};
 			};
 
-			var RenderModel = function() {
+			var RenderModel = function () {
 				var $containerElement,
 					render_model = this;
 
@@ -2259,13 +2253,13 @@
 				this.content = ko.observable(null);
 				this.renderer = ko.observable(null);
 
-				this.render = function(data) {
+				this.render = function (data) {
 					if(render_model.renderer()) {
 						render_model.renderer().processContent(data);
 					}
 				};
 
-				this.setRenderer = function(resourceObject) {
+				this.setRenderer = function (resourceObject) {
 					render_model.rdo(resourceObject);
 
 					if(isMarkdownFile(resourceObject.attributes.name)) {
@@ -2277,8 +2271,8 @@
 					}
 				};
 
-				this.setContainer = function(templateElements) {
-					$.each(templateElements, function() {
+				this.setContainer = function (templateElements) {
+					$.each(templateElements, function () {
 						if($(this).hasClass('fm-renderer-container')) {
 							$containerElement = $(this);
 							return false;
@@ -2288,18 +2282,18 @@
 					render_model.renderer().processDomElements($containerElement);
 				};
 
-				var CodeMirrorRenderer = function() {
+				var CodeMirrorRenderer = function () {
 					this.name = 'codeMirror';
 					this.interactive = false;
 
 					var instance = new EditorModel();
 
-					this.processContent = function(data) {
+					this.processContent = function (data) {
 						instance.render(data);
 						render_model.content(data);
 					};
 
-					this.processDomElements = function($container) {
+					this.processDomElements = function ($container) {
 						if(!instance.instance) {
 							var textarea = $container.find('.fm-cm-renderer-content')[ 0 ],
 								extension = getExtension(render_model.rdo().id);
@@ -2313,7 +2307,7 @@
 					};
 				};
 
-				var MarkdownRenderer = function() {
+				var MarkdownRenderer = function () {
 					this.name = 'markdown';
 					this.interactive = true;
 
@@ -2324,7 +2318,7 @@
 						typographer: true,
 
 						// Custom highlight function to apply CSS class `highlight`:
-						highlight: function(str, lang) {
+						highlight: function (str, lang) {
 							if(lang && hljs.getLanguage(lang)) {
 								try {
 									return '<pre class="highlight"><code>' +
@@ -2337,7 +2331,7 @@
 						},
 
 						// custom link function to enable <img ...> and file d/ls:
-						replaceLink: function(link, env) {
+						replaceLink: function (link, env) {
 
 							// do not change if link as http:// or ftp:// or mailto: etc.
 							if(link.search("://") != -1 || startsWith(link, 'mailto:')) {
@@ -2361,18 +2355,18 @@
 						}
 					}).use(window.markdownitReplaceLink);
 
-					this.processContent = function(data) {
+					this.processContent = function (data) {
 						var result = instance.render(data);
 						render_model.content(result);
 						setLinksBehavior();
 					};
 
-					this.processDomElements = function($container) {
+					this.processDomElements = function ($container) {
 					};
 
 					function setLinksBehavior() {
 						// add onClick events to local .md file links (to perform AJAX previews)
-						$containerElement.find("a").each(function() {
+						$containerElement.find("a").each(function () {
 							var href = $(this).attr("href"),
 								editor = fmModel.previewModel.editor;
 
@@ -2380,7 +2374,7 @@
 								// prevent user from losing unsaved changes in preview mode
 								// in case of clicking on a link that jumps off the page
 								$(this).off("click");
-								$(this).on("click", function() {
+								$(this).on("click", function () {
 									return false; // prevent onClick event
 								});
 							} else {
@@ -2390,8 +2384,8 @@
 
 								if(isMarkdownFile(href)) {
 									// open file in preview mode for clicked link
-									$(this).on("click", function(e) {
-										getItemInfo(href).then(function(response) {
+									$(this).on("click", function (e) {
+										getItemInfo(href).then(function (response) {
 											if(response.data) {
 												getDetailView(response.data);
 											}
@@ -2406,7 +2400,7 @@
 				};
 			};
 
-			var EditorModel = function() {
+			var EditorModel = function () {
 				var editor_model = this,
 					delayedContent = null;
 
@@ -2416,7 +2410,7 @@
 				this.mode = ko.observable(null);
 				this.isInteractive = ko.observable(false);
 
-				this.mode.subscribe(function(mode) {
+				this.mode.subscribe(function (mode) {
 					if(mode) {
 						editor_model.instance.setOption('mode', mode);
 						if(delayedContent) {
@@ -2426,7 +2420,7 @@
 					}
 				});
 
-				this.render = function(content) {
+				this.render = function (content) {
 					if(editor_model.mode()) {
 						drawContent(content);
 					} else {
@@ -2434,7 +2428,7 @@
 					}
 				};
 
-				this.createInstance = function(extension, element, options) {
+				this.createInstance = function (extension, element, options) {
 					var cm,
 						defaults = {
 							readOnly: 'nocursor',
@@ -2445,10 +2439,10 @@
 							theme: config.editor.theme,
 							matchBrackets: config.editor.matchBrackets,
 							extraKeys: {
-								"F11": function(cm) {
+								"F11": function (cm) {
 									cm.setOption("fullScreen", !cm.getOption("fullScreen"));
 								},
-								"Esc": function(cm) {
+								"Esc": function (cm) {
 									if(cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
 								}
 							}
@@ -2456,7 +2450,7 @@
 
 					cm = CodeMirror.fromTextArea(element, $.extend({}, defaults, options));
 
-					cm.on("changes", function(cm, change) {
+					cm.on("changes", function (cm, change) {
 						editor_model.content(cm.getValue());
 					});
 
@@ -2469,7 +2463,7 @@
 					editor_model.enabled(true);
 					editor_model.instance.setValue(content);
 					// to make sure DOM is ready to render content
-					setTimeout(function() {
+					setTimeout(function () {
 						editor_model.instance.refresh();
 					}, 0);
 				}
@@ -2541,7 +2535,7 @@
 					}
 
 					if(assets.length) {
-						assets.push(function() {
+						assets.push(function () {
 							// after all required assets are loaded
 							editor_model.mode(currentMode);
 						});
@@ -2552,7 +2546,7 @@
 				}
 			};
 
-			var DragAndDropModel = function() {
+			var DragAndDropModel = function () {
 				var drag_model = this,
 					restrictedCssClass = 'drop-restricted',
 					$dragHelperTemplate = $('#drag-helper-template');
@@ -2564,7 +2558,7 @@
 				this.isScrolled = false;
 				this.hoveredCssClass = 'drop-hover';
 
-				this.makeDraggable = function(item, element) {
+				this.makeDraggable = function (item, element) {
 					if(item.rdo.type === "file" || item.rdo.type === "folder") {
 						$(element).draggable({
 							distance: 3,
@@ -2577,7 +2571,7 @@
 							appendTo: $wrapper,
 							containment: $container,
 							refreshPositions: false,
-							helper: function() {
+							helper: function () {
 								var $cloned,
 									iconClass;
 
@@ -2595,14 +2589,14 @@
 								drag_model.dragHelper = $cloned;
 								return $cloned;
 							},
-							start: function(event, ui) {
+							start: function (event, ui) {
 								drag_model.items = model.fetchSelectedItems(item.constructor.name);
 							},
-							drag: function(event, ui) {
+							drag: function (event, ui) {
 								$(this).draggable('option', 'refreshPositions', drag_model.isScrolling || drag_model.isScrolled);
 								drag_model.isScrolled = false;
 							},
-							stop: function(event, ui) {
+							stop: function (event, ui) {
 								drag_model.items = [];
 								drag_model.dragHelper = null;
 							}
@@ -2610,21 +2604,21 @@
 					}
 				};
 
-				this.makeDroppable = function(targetItem, element) {
+				this.makeDroppable = function (targetItem, element) {
 					if(targetItem.rdo.type === "folder" || targetItem.rdo.type === "parent") {
 						$(element).droppable({
 							tolerance: "pointer",
 							enableExtendedEvents: targetItem instanceof ItemObject,
-							accept: function($draggable) {
+							accept: function ($draggable) {
 								var dragItem = ko.dataFor($draggable[ 0 ]),
 									type = dragItem ? dragItem.rdo.type : null;
 
 								return (type === "file" || type === "folder");
 							},
-							over: function(event, ui) {
+							over: function (event, ui) {
 								// prevent "over" event fire before "out" event
 								// http://stackoverflow.com/a/28457286/7095038
-								setTimeout(function() {
+								setTimeout(function () {
 									markHovered(null);
 									markRestricted(ui.helper, false);
 
@@ -2634,18 +2628,18 @@
 									markHovered(targetItem);
 								}, 0);
 							},
-							out: function(event, ui) {
+							out: function (event, ui) {
 								markHovered(null);
 								markRestricted(ui.helper, false);
 							},
-							drop: function(event, ui) {
+							drop: function (event, ui) {
 								markHovered(null);
 
 								if(!isDropAllowed(targetItem)) {
 									return false;
 								}
 
-								processMultipleActions(drag_model.items, function(i, itemObject) {
+								processMultipleActions(drag_model.items, function (i, itemObject) {
 									return moveItem(itemObject.rdo, targetItem.id);
 								});
 							}
@@ -2655,7 +2649,7 @@
 
 				// check whether draggable items can be accepted by target item
 				function isDropAllowed(targetItem) {
-					var matches = $.grep(drag_model.items, function(itemObject, i) {
+					var matches = $.grep(drag_model.items, function (itemObject, i) {
 						if(targetItem.rdo.type === "folder" || targetItem.rdo.type === "parent") {
 							// drop folder inside descending folders (filetree)
 							if(startsWith(targetItem.rdo.id, itemObject.rdo.id)) {
@@ -2694,7 +2688,7 @@
 				}
 			};
 
-			var SelectionModel = function() {
+			var SelectionModel = function () {
 				this.unselect = false;
 			};
 
@@ -2713,8 +2707,8 @@
 		}
 
 		/*---------------------------------------------------------
-	 Helper functions
-	 ---------------------------------------------------------*/
+ Helper functions
+ ---------------------------------------------------------*/
 
 		// Wrapper for translate method
 		function lg(key) {
@@ -2735,7 +2729,7 @@
 				parentItem = items.shift();
 			}
 
-			items.sort(function(a, b) {
+			items.sort(function (a, b) {
 				var sortReturnNumber,
 					aa = getSortSubject(a),
 					bb = getSortSubject(b);
@@ -2890,7 +2884,7 @@
 				url: url,
 				dataType: "json",
 				cache: false,
-				error: function(response) {
+				error: function (response) {
 					fm.error('Given config file (' + url + ') does not exist!');
 				}
 			});
@@ -2942,7 +2936,7 @@
 			// look for message in case an error CODE is provided
 			if(langModel.getLang() && lg(errorObject.message)) {
 				message = lg(errorObject.message);
-				$.each(errorObject.arguments, function(i, argument) {
+				$.each(errorObject.arguments, function (i, argument) {
 					message = message.replace('%s', argument);
 				});
 			} else {
@@ -2962,7 +2956,7 @@
 		function handleAjaxResponseErrors(response) {
 			if(response.errors) {
 				fm.log(response.errors);
-				$.each(response.errors, function(i, errorObject) {
+				$.each(response.errors, function (i, errorObject) {
 					fm.error(formatServerError(errorObject));
 
 					if(errorObject.arguments.redirect) {
@@ -2991,7 +2985,7 @@
 		}
 
 		// http://stackoverflow.com/questions/3390930/any-way-to-make-jquery-inarray-case-insensitive
-		(function($) {
+		(function ($) {
 			$.extend({
 				// Case insensative $.inArray (http://api.jquery.com/jquery.inarray/)
 				// $.inArrayInsensitive(value, array [, fromIndex])
@@ -3002,7 +2996,7 @@
 				//  fromIndex (type: Number)
 				//    The index of the array at which to begin the search.
 				//    The default is 0, which will search the whole array.
-				inArrayInsensitive: function(elem, arr, i) {
+				inArrayInsensitive: function (elem, arr, i) {
 					// not looking for a string anyways, use default method
 					if(typeof elem !== 'string') {
 						return $.inArray.apply(this, arguments);
@@ -3077,7 +3071,7 @@
 
 		function encodePath(path) {
 			var parts = [];
-			$.each(path.split('/'), function(i, part) {
+			$.each(path.split('/'), function (i, part) {
 				parts.push(encodeURIComponent(part));
 			});
 			return parts.join('/');
@@ -3191,7 +3185,7 @@
 
 					// append params to serialized form
 					if(method === 'POST' && $.isArray(parameters)) {
-						$.each(extendParams, function(key, value) {
+						$.each(extendParams, function (key, value) {
 							parameters.push({
 								name: key,
 								value: value
@@ -3265,7 +3259,7 @@
 				if(config.viewer.absolutePath && !thumbnail && resourceObject.attributes.path) {
 					imageUrl = buildAbsolutePath(encodePath(resourceObject.attributes.path), disableCache);
 				} else {
-					var queryParams = { path: resourceObject.id };
+					var queryParams = {path: resourceObject.id};
 					if(getExtension(resourceObject.id) === 'svg') {
 						queryParams.mode = 'readfile';
 					} else {
@@ -3320,7 +3314,7 @@
 		// Delays execution of function that is passed as argument
 		(function delayCallback() {
 			var timer = 0;
-			return function(callback, ms) {
+			return function (callback, ms) {
 				clearTimeout(timer);
 				timer = setTimeout(callback, ms);
 			};
@@ -3332,10 +3326,10 @@
 				totalCounter = items.length,
 				deferred = $.Deferred().resolve();
 
-			$.each(items, function(i, item) {
-				deferred = deferred.then(function() {
+			$.each(items, function (i, item) {
+				deferred = deferred.then(function () {
 					return callbackFunction(i, item);
-				}).then(function(result) {
+				}).then(function (result) {
 					if(result && result.data) {
 						successCounter++;
 					}
@@ -3343,12 +3337,12 @@
 			});
 
 			if(totalCounter > 1) {
-				deferred.then(function() {
+				deferred.then(function () {
 					fm.write(lg('successful_processed').replace('%s', successCounter).replace('%s', totalCounter));
 				});
 			}
 
-			deferred.then(function() {
+			deferred.then(function () {
 				if(typeof finishCallback === 'function') {
 					finishCallback();
 				}
@@ -3399,8 +3393,8 @@
 		}
 
 		/*---------------------------------------------------------
-	 Item Actions
-	 ---------------------------------------------------------*/
+ Item Actions
+ ---------------------------------------------------------*/
 
 		// Triggered by clicking the "Select" button in detail views
 		// or choosing the "Select" contextual menu option in list views.
@@ -3512,7 +3506,7 @@
 		// Called by clicking the "Rename" button in detail views
 		// or choosing the "Rename" contextual menu option in list views.
 		function renameItem(resourceObject) {
-			var doRename = function(e, ui) {
+			var doRename = function (e, ui) {
 				var oldPath = resourceObject.id;
 				var givenName = ui.getInputValue();
 				if(!givenName) {
@@ -3546,7 +3540,7 @@
 					mode: 'rename',
 					old: oldPath,
 					new: givenName
-				}).done(function(response) {
+				}).done(function (response) {
 					if(response.data) {
 						var newItem = response.data;
 
@@ -3615,7 +3609,7 @@
 		// Called by clicking the "Move" button in de tail views
 		// or choosing the "Move" contextual menu option in list views.
 		function moveItemPrompt(objects, successCallback) {
-			var doMove = function(e, ui) {
+			var doMove = function (e, ui) {
 				var targetPath = ui.getInputValue();
 				if(!targetPath) {
 					fm.error(lg('prompt_foldername'));
@@ -3654,7 +3648,7 @@
 				mode: 'copy',
 				source: resourceObject.id,
 				target: targetPath
-			}).done(function(response) {
+			}).done(function (response) {
 				if(response.data) {
 					var newItem = response.data;
 
@@ -3677,7 +3671,7 @@
 				mode: 'move',
 				old: resourceObject.id,
 				new: targetPath
-			}).done(function(response) {
+			}).done(function (response) {
 				if(response.data) {
 					var newItem = response.data;
 
@@ -3711,7 +3705,7 @@
 				message: message,
 				okBtn: {
 					label: lg('yes'),
-					click: function(e, ui) {
+					click: function (e, ui) {
 						successCallback();
 					}
 				},
@@ -3726,7 +3720,7 @@
 			return buildAjaxRequest('GET', {
 				mode: 'delete',
 				path: path
-			}).done(function(response) {
+			}).done(function (response) {
 				if(response.data) {
 					var targetItem = response.data;
 
@@ -3754,7 +3748,7 @@
 				path: resourceObject.id
 			};
 
-			return buildAjaxRequest('GET', queryParams).done(function(response) {
+			return buildAjaxRequest('GET', queryParams).done(function (response) {
 				if(response.data) {
 					//window.location = buildConnectorUrl(queryParams);
 					$.fileDownload(buildConnectorUrl(queryParams));
@@ -3768,7 +3762,7 @@
 			return buildAjaxRequest('GET', {
 				mode: 'editfile',
 				path: resourceObject.id
-			}).done(function(response) {
+			}).done(function (response) {
 				handleAjaxResponseErrors(response);
 			}).fail(handleAjaxError);
 		}
@@ -3777,7 +3771,7 @@
 		function saveItem(resourceObject) {
 			var formParams = $('#fm-js-editor-form').serializeArray();
 
-			buildAjaxRequest('POST', formParams).done(function(response) {
+			buildAjaxRequest('POST', formParams).done(function (response) {
 				if(response.data) {
 					var dataObject = response.data,
 						preview_model = fmModel.previewModel,
@@ -3805,7 +3799,7 @@
 			return buildAjaxRequest('GET', {
 				mode: 'getfile',
 				path: targetPath
-			}).done(function(response) {
+			}).done(function (response) {
 				handleAjaxResponseErrors(response);
 			}).fail(handleAjaxError);
 		}
@@ -3814,7 +3808,7 @@
 		function summarizeItems() {
 			return buildAjaxRequest('GET', {
 				mode: 'summarize'
-			}).done(function(response) {
+			}).done(function (response) {
 				if(response.data) {
 					var data = response.data.attributes,
 						size = formatBytes(data.size, true);
@@ -3842,7 +3836,7 @@
 
 		// Prompts for confirmation, then extracts the current archive.
 		function extractItemPrompt(resourceObject) {
-			var doExtract = function(e, ui) {
+			var doExtract = function (e, ui) {
 				var targetPath = ui.getInputValue();
 				if(!targetPath) {
 					fm.error(lg('prompt_foldername'));
@@ -3874,10 +3868,10 @@
 				mode: 'extract',
 				source: resourceObject.id,
 				target: targetPath
-			}).done(function(response) {
+			}).done(function (response) {
 				if(response.data) {
 					// TODO: implement "addItems", add in batches
-					$.each(response.data, function(i, resourceObject) {
+					$.each(response.data, function (i, resourceObject) {
 						fmModel.addItem(resourceObject, targetPath);
 					});
 
@@ -3891,8 +3885,8 @@
 		}
 
 		/*---------------------------------------------------------
-	 Functions to Retrieve File and Folder Details
-	 ---------------------------------------------------------*/
+ Functions to Retrieve File and Folder Details
+ ---------------------------------------------------------*/
 
 		// Retrieves file or folder info based on the path provided.
 		function getDetailView(resourceObject) {
@@ -3913,16 +3907,16 @@
 		function getContextMenuItems(resourceObject) {
 			var clipboardDisabled = !fmModel.clipboardModel.enabled(),
 				contextMenuItems = {
-					select: { name: lg('action_select'), className: 'select' },
-					download: { name: lg('action_download'), className: 'download' },
-					rename: { name: lg('action_rename'), className: 'rename' },
-					move: { name: lg('action_move'), className: 'move' },
+					select: {name: lg('action_select'), className: 'select'},
+					download: {name: lg('action_download'), className: 'download'},
+					rename: {name: lg('action_rename'), className: 'rename'},
+					move: {name: lg('action_move'), className: 'move'},
 					separator1: "-----",
-					copy: { name: lg('clipboard_copy'), className: 'copy' },
-					cut: { name: lg('clipboard_cut'), className: 'cut' },
-					delete: { name: lg('action_delete'), className: 'delete' },
-					extract: { name: lg('action_extract'), className: 'extract' },
-					copyUrl: { name: lg('copy_to_clipboard'), className: 'copy-url' }
+					copy: {name: lg('clipboard_copy'), className: 'copy'},
+					cut: {name: lg('clipboard_cut'), className: 'cut'},
+					delete: {name: lg('action_delete'), className: 'delete'},
+					extract: {name: lg('action_extract'), className: 'extract'},
+					copyUrl: {name: lg('copy_to_clipboard'), className: 'copy-url'}
 				};
 
 			if(!has_capability(resourceObject, 'download')) delete contextMenuItems.download;
@@ -3950,7 +3944,7 @@
 					break;
 
 				case 'download':
-					$.each(objects, function(i, itemObject) {
+					$.each(objects, function (i, itemObject) {
 						downloadItem(itemObject);
 					});
 					break;
@@ -3960,16 +3954,16 @@
 					break;
 
 				case 'move':
-					moveItemPrompt(objects, function(targetPath) {
-						processMultipleActions(objects, function(i, itemObject) {
+					moveItemPrompt(objects, function (targetPath) {
+						processMultipleActions(objects, function (i, itemObject) {
 							return moveItem(itemObject, targetPath);
 						});
 					});
 					break;
 
 				case 'delete':
-					deleteItemPrompt(objects, function() {
-						processMultipleActions(objects, function(i, itemObject) {
+					deleteItemPrompt(objects, function () {
+						processMultipleActions(objects, function (i, itemObject) {
 							return deleteItem(itemObject.id);
 						});
 					});
@@ -3989,12 +3983,12 @@
 
 				case 'copyUrl':
 					var clipboard = new Clipboard(options.$selected[ 0 ], {
-						text: function(trigger) {
+						text: function (trigger) {
 							return createCopyUrl(targetObject);
 						}
 					});
 
-					clipboard.on('success', function(e) {
+					clipboard.on('success', function (e) {
 						fm.success(lg('copied'));
 						clipboard.destroy();
 					});
@@ -4013,7 +4007,7 @@
 				// remove simple file upload element
 				$('#file-input-container').remove();
 
-				$uploadButton.unbind().click(function() {
+				$uploadButton.unbind().click(function () {
 					if(capabilities.indexOf('upload') === -1) {
 						fm.error(lg('NOT_ALLOWED'));
 						return false;
@@ -4038,7 +4032,7 @@
 							type: "ok",
 							label: lg('action_upload'),
 							autoClose: false,
-							click: function(e, ui) {
+							click: function (e, ui) {
 								if($dropzone.children('.upload-item').length > 0) {
 									$dropzone.find('.button-start').trigger('click');
 								} else {
@@ -4048,7 +4042,7 @@
 						}, {
 							label: lg('action_select'),
 							closeOnClick: false,
-							click: function(e, ui) {
+							click: function (e, ui) {
 								$('#fileupload', $uploadContainer).trigger('click');
 							}
 						}, {
@@ -4073,12 +4067,12 @@
 								updateOnContentResize: true
 							},
 							callbacks: {
-								onOverflowY: function() {
+								onOverflowY: function () {
 									$dropzoneWrapper.find('.mCSB_container').css({
 										'margin-right': $dropzoneWrapper.find('.mCSB_scrollTools').width()
 									});
 								},
-								onOverflowYNone: function() {
+								onOverflowYNone: function () {
 									$dropzoneWrapper.find('.mCSB_container').css({
 										'margin-right': 'auto'
 									});
@@ -4088,7 +4082,7 @@
 						});
 					}
 
-					$dropzoneWrapper.on("click", function(e) {
+					$dropzoneWrapper.on("click", function (e) {
 						if(e.target === this || $(e.target).parent()[ 0 ] === this || e.target === $dropzone[ 0 ] || $(e.target).parent().hasClass('default-message')) {
 							$('#fileupload', $uploadContainer).trigger('click');
 						}
@@ -4097,7 +4091,7 @@
 					/**
 					 * Start uploading process.
 					 */
-					$dropzone.on('click', '.button-start', function(e) {
+					$dropzone.on('click', '.button-start', function (e) {
 						var $target = $(this);
 						var $buttons = $target.parent().parent();
 						var data = $buttons.data();
@@ -4109,7 +4103,7 @@
 					/**
 					 * Abort uploading process.
 					 */
-					$dropzone.on('click', '.button-abort', function(e) {
+					$dropzone.on('click', '.button-abort', function (e) {
 						var $target = $(this),
 							$buttons = $target.parent().parent(),
 							data = $buttons.data(),
@@ -4124,7 +4118,7 @@
 					 * Resume uploading if at least one chunk was uploaded.
 					 * Otherwise start upload from the very beginning of file.
 					 */
-					$dropzone.on('click', '.button-resume', function(e) {
+					$dropzone.on('click', '.button-resume', function (e) {
 						var $target = $(this),
 							$buttons = $target.parent().parent(),
 							data = $buttons.data(),
@@ -4137,7 +4131,7 @@
 
 						if(file.chunkUploaded) {
 							var targetPath = currentPath + file.serverName;
-							getItemInfo(targetPath).then(function(response) {
+							getItemInfo(targetPath).then(function (response) {
 								if(response.data) {
 									data.uploadedBytes = Number(response.data.attributes.size);
 									if(!data.uploadedBytes) {
@@ -4155,7 +4149,7 @@
 					 * Remove file from upload query.
 					 * Also remove uploaded file chunks if were uploaded.
 					 */
-					$dropzone.on('click', '.button-remove', function(e) {
+					$dropzone.on('click', '.button-remove', function (e) {
 						var $target = $(this),
 							$buttons = $target.parent().parent(),
 							data = $buttons.data(),
@@ -4169,7 +4163,7 @@
 						updateDropzoneView();
 					});
 
-					$dropzone.on('click', '.button-info', function(e) {
+					$dropzone.on('click', '.button-info', function (e) {
 						var $target = $(this);
 						var $node = $target.closest('.upload-item');
 
@@ -4179,7 +4173,7 @@
 						}
 					});
 
-					var updateDropzoneView = function() {
+					var updateDropzoneView = function () {
 						if($dropzone.children('.upload-item').length > 0) {
 							$dropzone.addClass('started');
 						} else {
@@ -4189,7 +4183,7 @@
 
 					var shownExtensions = fmModel.filterModel.getExtensions();
 					if(shownExtensions) {
-						$('#fileupload').attr('accept', shownExtensions.map(function(el) {
+						$('#fileupload').attr('accept', shownExtensions.map(function (el) {
 							return '.' + el;
 						}).join());
 					}
@@ -4224,9 +4218,9 @@
 							previewCrop: true
 						})
 
-						.on('fileuploadadd', function(e, data) {
+						.on('fileuploadadd', function (e, data) {
 							var $items = $dropzone.children('.upload-item');
-							$.each(data.files, function(index, file) {
+							$.each(data.files, function (index, file) {
 								// skip selected files if total files number exceed "maxNumberOfFiles"
 								if($items.length >= config.upload.maxNumberOfFiles) {
 									fm.error(lg('upload_files_number_limit').replace('%s', config.upload.maxNumberOfFiles), {
@@ -4249,8 +4243,8 @@
 							updateDropzoneView();
 						})
 
-						.on('fileuploadsend', function(e, data) {
-							$.each(data.files, function(index, file) {
+						.on('fileuploadsend', function (e, data) {
+							$.each(data.files, function (index, file) {
 								var $node = file.context;
 								$node.removeClass('added aborted error').addClass('process');
 
@@ -4262,17 +4256,17 @@
 							});
 						})
 
-						.on('fileuploadfail', function(e, data) {
-							$.each(data.files, function(index, file) {
+						.on('fileuploadfail', function (e, data) {
+							$.each(data.files, function (index, file) {
 								file.error = lg('upload_failed');
 								var $node = file.context;
 								$node.removeClass('added process').addClass('error');
 							});
 						})
 
-						.on('fileuploaddone', function(e, data) {
+						.on('fileuploaddone', function (e, data) {
 							var response = data.result;
-							$.each(data.files, function(index, file) {
+							$.each(data.files, function (index, file) {
 								var $node = file.context;
 								// handle server-side errors
 								if(response && response.errors) {
@@ -4286,9 +4280,9 @@
 							});
 						})
 
-						.on('fileuploadalways', function(e, data) {
+						.on('fileuploadalways', function (e, data) {
 							var response = data.result;
-							$.each(data.files, function(index, file) {
+							$.each(data.files, function (index, file) {
 								if(response && response.data && response.data[ index ]) {
 									var resourceObject = response.data[ index ];
 									fmModel.removeItem(resourceObject);
@@ -4315,9 +4309,9 @@
 							updateDropzoneView();
 						})
 
-						.on('fileuploadchunkdone', function(e, data) {
+						.on('fileuploadchunkdone', function (e, data) {
 							var response = data.result;
-							$.each(data.files, function(index, file) {
+							$.each(data.files, function (index, file) {
 								if(response.data && response.data[ index ]) {
 									var resourceObject = response.data[ index ];
 									fmModel.removeItem(resourceObject);
@@ -4331,8 +4325,8 @@
 							});
 						})
 
-						.on('fileuploadprocessalways', function(e, data) {
-							$.each(data.files, function(index, file) {
+						.on('fileuploadprocessalways', function (e, data) {
+							$.each(data.files, function (index, file) {
 								var $node = file.context;
 								// file wasn't added to queue (due to config.upload.maxNumberOfFiles limit e.g.)
 								if(typeof $node === 'undefined') {
@@ -4352,8 +4346,8 @@
 							});
 						})
 
-						.on('fileuploadprogress', function(e, data) {
-							$.each(data.files, function(index, file) {
+						.on('fileuploadprogress', function (e, data) {
+							$.each(data.files, function (index, file) {
 								// fill progress bar for single item
 								var $node = file.context,
 									progress = parseInt(data.loaded / data.total * 100, 10);
@@ -4361,7 +4355,7 @@
 							});
 						})
 
-						.on('fileuploadprogressall', function(e, data) {
+						.on('fileuploadprogressall', function (e, data) {
 							// fill total progress bar
 							var progress = parseInt(data.loaded / data.total * 100, 10);
 							$totalProgressBar.css('width', progress + '%');
@@ -4371,7 +4365,7 @@
 				// Simple Upload
 			} else {
 
-				$uploadButton.click(function() {
+				$uploadButton.click(function () {
 					if(capabilities.indexOf('upload') === -1) {
 						fm.error(lg('NOT_ALLOWED'));
 						return false;
@@ -4394,11 +4388,11 @@
 						maxChunkSize: config.upload.chunkSize
 					})
 
-					.on('fileuploadadd', function(e, data) {
+					.on('fileuploadadd', function (e, data) {
 						$uploadButton.data(data);
 					})
 
-					.on('fileuploadsubmit', function(e, data) {
+					.on('fileuploadsubmit', function (e, data) {
 						data.formData = extendRequestParams('POST', {
 							mode: 'upload',
 							path: fmModel.currentPath()
@@ -4407,7 +4401,7 @@
 						$uploadButton.children('span').text(lg('loading_data'));
 					})
 
-					.on('fileuploadalways', function(e, data) {
+					.on('fileuploadalways', function (e, data) {
 						$("#filepath").val('');
 						$uploadButton.removeData().removeClass('loading').prop('disabled', false);
 						$uploadButton.children('span').text(lg('action_upload'));
@@ -4428,7 +4422,7 @@
 						}
 					})
 
-					.on('fileuploadchunkdone', function(e, data) {
+					.on('fileuploadchunkdone', function (e, data) {
 						var response = data.result;
 						if(response.data && response.data[ 0 ]) {
 							var resourceObject = response.data[ 0 ];
@@ -4437,7 +4431,7 @@
 						}
 					})
 
-					.on('fileuploadfail', function(e, data) {
+					.on('fileuploadfail', function (e, data) {
 						// server error 500, etc.
 						fm.error(lg('upload_failed'));
 					});
@@ -4447,13 +4441,12 @@
 		// call the "constructor" method
 		construct();
 
-		$(window).resize(fm.setDimensions);
-	};
-})(jQuery);
+		$(window).resize(setDimensions);
+	// };
 
 // add the plugin to the jQuery.fn object
 // REMOVE: jQuery function
-/*$.fn.richFilemanager = function(options) {
+	/*$.fn.richFilemanager = function(options) {
 
 	// iterate through the DOM elements we are attaching the plugin to
 	return this.each(function() {
@@ -4480,10 +4473,11 @@
 
 // add location.origin for IE
 // REMOVE: Supporting IE 11+
-/*
+	/*
 if(!window.location.origin) {
 	window.location.origin = window.location.protocol + "//"
 		+ window.location.hostname
 		+ (window.location.port ? ':' + window.location.port : '');
 }
 */
+}
