@@ -25,8 +25,13 @@
   "homepage": "https://github.com/servocoder/RichFilemanager#readme",
   "devDependencies": {
     "@types/alertify": "^0.3.30",
+    "@types/clipboard-js": "^0.3.2",
+    "@types/codemirror": "0.0.50",
     "@types/jquery": "^3.2.15",
     "@types/jquery-mousewheel": "^3.1.8",
+    "@types/jquery.contextmenu": "^1.7.33",
+    "@types/jquery.fileupload": "^5.40.36",
+    "@types/jqueryui": "^1.11.37",
     "@types/knockout": "^3.4.46",
     "@types/purl": "^2.3.30",
     "grunt": "^1.0.1",
@@ -42,5 +47,7 @@
     "uglify:3": "uglifyjs ./scripts/jquery.fileDownload/jquery.fileDownload.js -c -m -o ./scripts/jquery.fileDownload/jquery.fileDownload.min.js",
     "uglify:4": "uglifyjs ./scripts/lazyload/dist/lazyload.js -c -m -o ./scripts/lazyload/dist/lazyload.min.js",
     "uglify:5": "uglifyjs ./scripts/purl/purl.js -c -m -o ./scripts/purl/purl.min.js"
+  },
+  "dependencies": {
   }
 }
