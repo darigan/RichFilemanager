@@ -684,7 +684,7 @@ class PreviewModel {
 	renderer;
 	editor;
 	previewIconClass;
-	constructor(private fm) {
+	constructor(fm) {
 		let preview_model = this;
 
 		this.rdo = ko.observable({});
@@ -1980,105 +1980,143 @@ let SearchModel = function () {
 	};
 };
 
-let ClipboardModel = function () {
-	let cbMode = null;
-	let cbObjects = [];
-	let clipboard_model = this;
-	let active = capabilities.indexOf('copy') > -1 || capabilities.indexOf('move') > -1;
+class ClipboardModel {
+	// let clipboard_model = this;
+    cbMode;
+    cbObjects;
+    active;
+    itemsNum;
+    enabled;
 
-	this.itemsNum = ko.observable(0);
-	this.enabled = ko.observable(model.config().clipboard.enabled && active);
+	constructor(private rfp: richFilemanagerPlugin) {
+        this.cbMode = null;
+        this.cbObjects = [];
+        let active = this.active = rfp.capabilities.indexOf('copy') > -1 || rfp.capabilities.indexOf('move') > -1;
+        let model = rfp.fmModel;
 
-	this.copy = function () {
+        this.itemsNum = ko.observable(0);
+        this.enabled = ko.observable(model.config().clipboard.enabled && active);
+	}
+
+	copy() {
+        let clipboard_model = this;
+        let model = this.rfp.fmModel;
+
 		if(!clipboard_model.hasCapability('copy'))
 			return;
 
-		cbMode = 'copy';
-		cbObjects = model.fetchSelectedItems();
-		clipboard_model.itemsNum(cbObjects.length);
-	};
+		this.cbMode = 'copy';
+		this.cbObjects = model.fetchSelectedItems();
+		clipboard_model.itemsNum(this.cbObjects.length);
+	}
 
-	this.cut = function () {
+	cut() {
+        let clipboard_model = this;
+        let model = this.rfp.fmModel;
+
 		if(!clipboard_model.hasCapability('cut'))
 			return;
 
-		cbMode = 'cut';
-		cbObjects = model.fetchSelectedItems();
-		clipboard_model.itemsNum(cbObjects.length);
-	};
+		this.cbMode = 'cut';
+		this.cbObjects = model.fetchSelectedItems();
+		clipboard_model.itemsNum(this.cbObjects.length);
+	}
 
-	this.paste = function () {
+	paste() {
+        let clipboard_model = this;
+        let model = this.rfp.fmModel;
+        let rfp = this.rfp;
+
 		if(!clipboard_model.hasCapability('paste') || clipboard_model.isEmpty())
 			return;
 
-		if(cbMode === null || cbObjects.length === 0) {
-			fm.warning(lg('clipboard_empty'));
+		if(this.cbMode === null || this.cbObjects.length === 0) {
+			model.warning(rfp.lg('clipboard_empty'));
 			return;
 		}
 
 		let targetPath = model.currentPath();
 
-		processMultipleActions(cbObjects, (i, itemObject) => {
-			if(cbMode === 'cut')
-				return moveItem(itemObject, targetPath);
+		rfp.processMultipleActions(this.cbObjects, (i, itemObject) => {
+			if(this.cbMode === 'cut')
+				return rfp.moveItem(itemObject, targetPath);
 
-			if(cbMode === 'copy')
-				return copyItem(itemObject, targetPath);
+			if(this.cbMode === 'copy')
+				return rfp.copyItem(itemObject, targetPath);
 
-		}, clearClipboard);
-	};
+		}, this.clearClipboard.bind(this));
+	}
 
-	this.clear = function () {
+	clear() {
+        let clipboard_model = this;
+        let model = this.rfp.fmModel;
+        let rfp = this.rfp;
+
 		if(!clipboard_model.hasCapability('clear') || clipboard_model.isEmpty())
 			return;
 
-		clearClipboard();
-		fm.success(lg('clipboard_cleared'));
-	};
+		this.clearClipboard();
+		model.success(rfp.lg('clipboard_cleared'));
+	}
 
-	this.isEmpty = function () {
-		return cbObjects.length === 0;
-	};
+	isEmpty() {
+		return this.cbObjects.length === 0;
+	}
 
-	this.hasCapability = function (capability) {
-		if(!clipboard_model.enabled)
+	hasCapability(capability) {
+        let clipboard_model = this;
+        let rfp = this.rfp;
+
+        if(!clipboard_model.enabled)
 			return false;
 
 		switch(capability) {
 			case 'copy':
-				return capabilities.indexOf('copy') > -1;
+				return rfp.capabilities.indexOf('copy') > -1;
 			case 'cut':
-				return capabilities.indexOf('move') > -1;
+				return rfp.capabilities.indexOf('move') > -1;
 			default:
 				return true;
 		}
-	};
+	}
 
-	function clearClipboard() {
-		cbObjects = [];
-		cbMode = null;
+	clearClipboard() {
+		let clipboard_model = this;
+
+		this.cbObjects = [];
+		this.cbMode = null;
 		clipboard_model.itemsNum(0);
 	}
-};
+}
 
-let BreadcrumbsModel = function () {
-	let bc_model: BreadcrumbsModel = this;
+class BreadcrumbsModel {
+	// let bc_model = this;
+    items;
 
-	this.items = ko.observableArray([]);
+	constructor(private rfp) {
+        this.items = ko.observableArray([]);
+	}
 
-	this.add = function (path, label) {
-		bc_model.items.push(<BcItem>new BcItem(path, label));
-	};
+	add(path, label) {
+        let bc_model = this;
+        let rfp = this.rfp;
 
-	this.splitCurrent = function () {
-		let path = fileRoot,
-			cPath = model.currentPath(),
-			chunks = cPath.replace(new RegExp('^' + fileRoot), '').split('/');
+		bc_model.items.push(<BcItem>new BcItem(rfp, path, label));
+	}
+
+	splitCurrent() {
+        let bc_model = this;
+        let model = this.rfp.fmModel;
+        let rfp = this.rfp;
+
+		let path = rfp.fileRoot;
+		let cPath = model.currentPath();
+		let chunks = cPath.replace(new RegExp('^' + rfp.fileRoot), '').split('/');
 
 		// reset breadcrumbs
 		bc_model.items([]);
 		// push root node
-		bc_model.add(fileRoot, '');
+		bc_model.add(rfp.fileRoot, '');
 
 		while(chunks.length > 0) {
 			let chunk = chunks.shift();
@@ -2088,215 +2126,271 @@ let BreadcrumbsModel = function () {
 				bc_model.add(path, chunk);
 			}
 		}
-	};
+	}
+}
 
-	let BcItem = function (path, label) {
-		let bc_item = this;
+class BcItem {
+    // let bc_item = this;
+    isRoot;
+    active;
 
-		this.path = path;
-		this.label = label;
-		this.isRoot = (path === fileRoot);
-		this.active = (path === model.currentPath());
+    constructor(private rfp: richFilemanagerPlugin, public path, public label) {
+        this.isRoot = (path === rfp.fileRoot);
+        this.active = (path === rfp.fmModel.currentPath());
+	}
 
-		this.itemClass = function () {
-			let cssClass = [ 'nav-item' ];
+    itemClass() {
+        let bc_item = this;
+        let cssClass = [ 'nav-item' ];
 
-			if(bc_item.isRoot)
-				cssClass.push('root');
+        if(bc_item.isRoot)
+            cssClass.push('root');
 
-			if(bc_item.active)
-				cssClass.push('active');
+        if(bc_item.active)
+            cssClass.push('active');
 
-			return cssClass.join(' ');
-		};
+        return cssClass.join(' ');
+    }
 
-		this.goto = function (item, e) {
-			if(!item.active)
-				model.itemsModel.loadList(item.path);
+    goto(item, e) {
+    	let model = this.rfp.fmModel;
 
-		};
-	};
-};
+        if(!item.active)
+            model.itemsModel.loadList(item.path);
 
-let RenderModel = function () {
-	let $containerElement;
-	let render_model = this;
+    }
+}
 
-	this.rdo = ko.observable({});
-	this.content = ko.observable(null);
-	this.renderer = ko.observable(null);
+class RenderModel {
+	// let render_model = this;
+	$containerElement;
 
-	this.render = function (data) {
-		if(render_model.renderer())
+	rdo;
+	content;
+	renderer;
+
+	constructor(private rfp: richFilemanagerPlugin) {
+        this.rdo = ko.observable({});
+        this.content = ko.observable(null);
+        this.renderer = ko.observable(null);
+	}
+
+	render(data) {
+        let render_model = this;
+
+        if(render_model.renderer())
 			render_model.renderer().processContent(data);
 
-	};
+	}
 
-	this.setRenderer = function (resourceObject) {
-		render_model.rdo(resourceObject);
+	setRenderer(resourceObject) {
+        let render_model = this;
+        let rfp = this.rfp;
 
-		if(isMarkdownFile(resourceObject.attributes.name))
+        render_model.rdo(resourceObject);
+
+		if(rfp.isMarkdownFile(resourceObject.attributes.name))
 		// markdown renderer
-			render_model.renderer(<MarkdownRenderer>new MarkdownRenderer());
+			render_model.renderer(<MarkdownRenderer>new MarkdownRenderer(rfp, render_model));
 		else
 		// CodeMirror renderer
-			render_model.renderer(<CodeMirrorRenderer>new CodeMirrorRenderer());
+			render_model.renderer(<CodeMirrorRenderer>new CodeMirrorRenderer(rfp, render_model));
 
-	};
+	}
 
-	this.setContainer = function (templateElements) {
+	setContainer(templateElements) {
+        let render_model = this;
+        let rfp = this;
+
 		$.each(templateElements, function () {
 			if($(this).hasClass('fm-renderer-container')) {
-				$containerElement = $(this);
+				rfp.$containerElement = $(this);
 				return false;
 			}
 		});
 
-		render_model.renderer().processDomElements($containerElement);
-	};
+		render_model.renderer().processDomElements(rfp.$containerElement);
+	}
+}
 
-	let CodeMirrorRenderer = function () {
-		this.name = 'codeMirror';
-		this.interactive = false;
+class CodeMirrorRenderer {
+    name;
+    interactive;
+    instance: EditorModel;
 
-		let instance: EditorModel = new EditorModel();
+    constructor(private rfp: richFilemanagerPlugin, private render_model: RenderModel) {
+        this.name = 'codeMirror';
+        this.interactive = false;
+        this.instance = new EditorModel(rfp);
+	}
 
-		this.processContent = function (data) {
-			instance.render(data);
-			render_model.content(data);
-		};
+    processContent(data) {
+    	let render_model = this.render_model;
 
-		this.processDomElements = function ($container) {
-			if(!instance.instance) {
-				let textarea = $container.find('.fm-cm-renderer-content')[ 0 ];
-				let extension = getExtension(render_model.rdo().id);
+        this.instance.render(data);
+        render_model.content(data);
+    }
 
-				instance.createInstance(extension, textarea, {
-					readOnly: 'nocursor',
-					styleActiveLine: false,
-					lineNumbers: false
-				});
-			}
-		};
-	};
+    processDomElements($container) {
+        let render_model = this.render_model;
+        let rfp = this.rfp;
 
-	let MarkdownRenderer = function () {
-		this.name = 'markdown';
-		this.interactive = true;
+        if(!this.instance.instance) {
+            let textarea = $container.find('.fm-cm-renderer-content')[ 0 ];
+            let extension = rfp.getExtension(render_model.rdo().id);
 
-		let instance = (<any>window).markdownit({
-			// Basic options:
-			html: true,
-			linkify: true,
-			typographer: true,
+            this.instance.createInstance(extension, textarea, {
+                readOnly: 'nocursor',
+                styleActiveLine: false,
+                lineNumbers: false
+            });
+        }
+    }
+}
 
-			// Custom highlight function to apply CSS class `highlight`:
-			highlight: (str, lang) => {
-				if(lang && hljs.getLanguage(lang)) {
-					try {
-						return `<pre class="highlight"><code>${hljs.highlight(lang, str, true).value}</code></pre>`;
-					} catch(__) {
-					}
-				}
-				return `<pre class="highlight"><code>${instance.utils.escapeHtml(str)}</code></pre>`;
-			},
+class MarkdownRenderer {
+    name;
+    interactive;
+    instance;
 
-			// custom link function to enable <img ...> and file d/ls:
-			replaceLink: (link, env) => {
+	constructor(private rfp: richFilemanagerPlugin, private render_model: RenderModel) {
+		let rfp = this.rfp;
+		let render_model = this.render_model;
 
-				// do not change if link as http:// or ftp:// or mailto: etc.
-				if(link.search('://') != -1 || startsWith(link, 'mailto:'))
-					return link;
+        this.name = 'markdown';
+        this.interactive = true;
 
-				// define path depending on absolute / relative link type
-				let basePath = (startsWith(link, '/')) ? fileRoot : getDirname(render_model.rdo().id);
-				let path = basePath + ltrim(link, '/');
+        let instance = this.instance = (<any>window).markdownit({
+            // Basic options:
+            html: true,
+            linkify: true,
+            typographer: true,
 
-				if(isMarkdownFile(path))
-				// to open file in preview mode upon click
-					return path;
-				else {
-					let queryParams = extendRequestParams('GET', {
-						mode: 'readfile',
-						path: path
-					});
-					return buildConnectorUrl(queryParams);
-				}
-			}
-		}).use((<any>window).markdownitReplaceLink);
+            // Custom highlight function to apply CSS class `highlight`:
+            highlight: (str, lang) => {
+                if(lang && hljs.getLanguage(lang)) {
+                    try {
+                        return `<pre class="highlight"><code>${hljs.highlight(lang, str, true).value}</code></pre>`;
+                    } catch(__) {
+                    }
+                }
+                return `<pre class="highlight"><code>${instance.utils.escapeHtml(str)}</code></pre>`;
+            },
 
-		this.processContent = function (data) {
-			let result = instance.render(data);
+            // custom link function to enable <img ...> and file d/ls:
+            replaceLink: (link, env) => {
 
-			render_model.content(result);
-			setLinksBehavior();
-		};
+                // do not change if link as http:// or ftp:// or mailto: etc.
+                if(link.search('://') != -1 || rfp.startsWith(link, 'mailto:'))
+                    return link;
 
-		this.processDomElements = function ($container) {
-		};
+                // define path depending on absolute / relative link type
+                let basePath = (rfp.startsWith(link, '/')) ? rfp.fileRoot : rfp.getDirname(render_model.rdo().id);
+                let path = basePath + rfp.ltrim(link, '/');
 
-		function setLinksBehavior() {
-			// add onClick events to local .md file links (to perform AJAX previews)
-			$containerElement.find('a').each(function () {
-				let href = <string>$(this).attr('href');
-				let editor = fmModel.previewModel.editor;
+                if(rfp.isMarkdownFile(path))
+                // to open file in preview mode upon click
+                    return path;
+                else {
+                    let queryParams = rfp.extendRequestParams('GET', {
+                        mode: 'readfile',
+                        path: path
+                    });
+                    return rfp.buildConnectorUrl(queryParams);
+                }
+            }
+        }).use((<any>window).markdownitReplaceLink);
+	}
 
-				if(editor.enabled() && editor.isInteractive()) {
-					// prevent user from losing unsaved changes in preview mode
-					// in case of clicking on a link that jumps off the page
-					$(this).off('click');
-					$(this).on('click', () => false); // prevent onClick event
-				} else {
-					if(href.search('://') != -1 || startsWith(href, 'mailto:'))
-						return; // do nothing
+    processContent(data) {
+		let instance = this.instance;
+		let render_model = this.render_model;
+        let result = instance.render(data);
 
-					if(isMarkdownFile(href)) {
-						// open file in preview mode for clicked link
-						$(this).on('click', e => {
-							getItemInfo(href).then(response => {
-								if(response.data)
-									getDetailView(response.data);
+        render_model.content(result);
+        this.setLinksBehavior();
+    }
 
-							});
+    processDomElements($container) {
+    }
 
-							return false; // prevent onClick event
-						});
-					}
-				}
-			});
-		}
-	};
-};
+    setLinksBehavior() {
+		let render_model = this.render_model;
+		let rfp = this.rfp;
+		let fmModel = this.rfp.fmModel;
+        // add onClick events to local .md file links (to perform AJAX previews)
+        render_model.$containerElement.find('a').each(function () {
+            let href = <string>$(this).attr('href');
+            let editor = fmModel.previewModel.editor;
 
-let EditorModel = function () {
-	let editor_model = this;
-	let delayedContent = null;
+            if(editor.enabled() && editor.isInteractive()) {
+                // prevent user from losing unsaved changes in preview mode
+                // in case of clicking on a link that jumps off the page
+                $(this).off('click');
+                $(this).on('click', () => false); // prevent onClick event
+            } else {
+                if(href.search('://') != -1 || rfp.startsWith(href, 'mailto:'))
+                    return; // do nothing
 
-	this.instance = null;
-	this.enabled = ko.observable(false);
-	this.content = ko.observable(null);
-	this.mode = ko.observable(null);
-	this.isInteractive = ko.observable(false);
+                if(rfp.isMarkdownFile(href)) {
+                    // open file in preview mode for clicked link
+                    $(this).on('click', e => {
+                        rfp.getItemInfo(href).then(response => {
+                            if(response.data)
+                                rfp.getDetailView(response.data);
 
-	this.mode.subscribe(mode => {
-		if(mode) {
-			editor_model.instance.setOption('mode', mode);
-			if(delayedContent) {
-				drawContent(delayedContent);
-				delayedContent = null;
-			}
-		}
-	});
+                        });
 
-	this.render = function (content) {
+                        return false; // prevent onClick event
+                    });
+                }
+            }
+        });
+    }
+}
+
+class EditorModel {
+	// let editor_model = this;
+	delayedContent = null;
+    instance;
+    enabled;
+    content;
+    mode;
+    isInteractive;
+
+	constructor(private rfp: richFilemanagerPlugin) {
+		let editor_model = this;
+
+        this.instance = null;
+        this.enabled = ko.observable(false);
+        this.content = ko.observable(null);
+        this.mode = ko.observable(null);
+        this.isInteractive = ko.observable(false);
+
+        this.mode.subscribe(mode => {
+            if(mode) {
+                editor_model.instance.setOption('mode', mode);
+                if(this.delayedContent) {
+                    this.drawContent(this.delayedContent);
+                    this.delayedContent = null;
+                }
+            }
+        });
+	}
+
+	render(content) {
+        let editor_model = this;
+
 		if(editor_model.mode())
-			drawContent(content);
+			this.drawContent(content);
 		else
-			delayedContent = content;
+			this.delayedContent = content;
 
-	};
+	}
 
-	this.createInstance = function (extension, element, options) {
+	createInstance(extension, element, options) {
+        let editor_model = this;
+		let config = this.rfp.config;
 		let cm;
 		let defaults = {
 			readOnly: 'nocursor',
@@ -2325,10 +2419,12 @@ let EditorModel = function () {
 
 		editor_model.instance = cm;
 
-		includeAssets(extension);
-	};
+		this.includeAssets(extension);
+	}
 
-	function drawContent(content) {
+	drawContent(content) {
+        let editor_model = this;
+
 		editor_model.enabled(true);
 		editor_model.instance.setValue(content);
 		// to make sure DOM is ready to render content
@@ -2337,9 +2433,12 @@ let EditorModel = function () {
 		}, 0);
 	}
 
-	function includeAssets(extension) {
+	includeAssets(extension) {
 		let assets = [];
 		let currentMode = 'default';
+		let config = this.rfp.config;
+        let editor_model = this;
+        let rfp = this.rfp;
 
 		// highlight code according to extension file
 		if(config.editor.codeHighlight) {
@@ -2416,57 +2515,70 @@ let EditorModel = function () {
 				// after all required assets are loaded
 				editor_model.mode(currentMode);
 			});
-			loadAssets(assets);
+			rfp.loadAssets(assets);
 		} else
 			editor_model.mode(currentMode);
 
 	}
-};
+}
 
-let DragAndDropModel = function () {
-	let drag_model = this;
-	let restrictedCssClass = 'drop-restricted';
-	let $dragHelperTemplate = $('#drag-helper-template');
+class DragAndDropModel {
+	// let drag_model = this;
+	restrictedCssClass;
+	$dragHelperTemplate;
 
-	this.items = [];
-	this.hoveredItem = null;
-	this.dragHelper = null;
-	this.isScrolling = false;
-	this.isScrolled = false;
-	this.hoveredCssClass = 'drop-hover';
+    items;
+    hoveredItem;
+    dragHelper;
+    isScrolling;
+    isScrolled;
+    hoveredCssClass;
 
-	this.makeDraggable = function (item, element) {
-		if(item.rdo.type === 'file' || item.rdo.type === 'folder') {
+	constructor(private rfp: richFilemanagerPlugin, private fm: FmModel) {
+        this.restrictedCssClass = 'drop-restricted';
+        this.$dragHelperTemplate = $('#drag-helper-template');
+        this.items = [];
+        this.hoveredItem = null;
+        this.dragHelper = null;
+        this.isScrolling = false;
+        this.isScrolled = false;
+        this.hoveredCssClass = 'drop-hover';
+	}
+
+	makeDraggable(item, element) {
+        let drag_model = this;
+
+        if(item.rdo.type === 'file' || item.rdo.type === 'folder') {
 			$(element).draggable({
 				distance: 3,
 				cursor: 'pointer',
 				cursorAt: {
-					left: Math.floor($dragHelperTemplate.width() / 2),
+					left: Math.floor(this.$dragHelperTemplate.width() / 2),
 					bottom: 15
 				},
 				scroll: false,
-				appendTo: $wrapper,
-				containment: $container,
+				appendTo: this.rfp.$wrapper,
+				containment: this.rfp.$container,
 				refreshPositions: false,
 				helper: () => {
 					let $cloned;
 					let iconClass;
 
-					if(model.fetchSelectedItems(item.constructor.name).length > 1)
+					if(this.fm.fetchSelectedItems(item.constructor.name).length > 1)
 						iconClass = 'ico_multiple';
 					else
 						iconClass = (item.rdo.type === 'folder')
 							? 'ico_folder'
-							: 'ico_file ico_ext_' + getExtension(item.rdo.id);
+							: 'ico_file ico_ext_' + this.rfp.getExtension(item.rdo.id);
 
-					$cloned = $dragHelperTemplate.children('.drag-helper').clone();
+					$cloned = drag_model.$dragHelperTemplate.children('.drag-helper').clone();
 					$cloned.find('.clip').addClass(iconClass);
 
 					drag_model.dragHelper = $cloned;
 					return $cloned;
 				},
 				start: (event, ui) => {
-					drag_model.items = model.fetchSelectedItems(item.constructor.name);
+					drag_model.items = this.fm.fetchSelectedItems(item.constructor.name);
 				},
 				drag: function (event, ui) {
 					$(this).draggable('option', 'refreshPositions', drag_model.isScrolling || drag_model.isScrolled);
@@ -2478,9 +2590,12 @@ let DragAndDropModel = function () {
 				}
 			});
 		}
-	};
+	}
 
-	this.makeDroppable = function (targetItem, element) {
+	makeDroppable(targetItem, element) {
+        let drag_model = this;
+        let rfp = this.rfp;
+
 		if(targetItem.rdo.type === 'folder' || targetItem.rdo.type === 'parent') {
 			$(element).droppable({
 				tolerance: 'pointer',
@@ -2495,41 +2610,44 @@ let DragAndDropModel = function () {
 					// prevent "over" event fire before "out" event
 					// http://stackoverflow.com/a/28457286/7095038
 					setTimeout(() => {
-						markHovered(null);
-						markRestricted(ui.helper, false);
+						drag_model.markHovered(null);
+						drag_model.markRestricted(ui.helper, false);
 
-						if(!isDropAllowed(targetItem))
-							markRestricted(ui.helper, true);
+						if(!drag_model.isDropAllowed(targetItem))
+							drag_model.markRestricted(ui.helper, true);
 
-						markHovered(targetItem);
+						drag_model.markHovered(targetItem);
 					}, 0);
 				},
 				out: (event, ui) => {
-					markHovered(null);
-					markRestricted(ui.helper, false);
+					drag_model.markHovered(null);
+					drag_model.markRestricted(ui.helper, false);
 				},
 				drop: (event, ui) => {
-					markHovered(null);
+					drag_model.markHovered(null);
 
-					if(!isDropAllowed(targetItem))
+					if(!drag_model.isDropAllowed(targetItem))
 						return false;
 
-					processMultipleActions(drag_model.items, (i, itemObject) => moveItem(itemObject.rdo, targetItem.id));
+					rfp.processMultipleActions(drag_model.items, (i, itemObject) => rfp.moveItem(itemObject.rdo, targetItem.id));
 				}
 			});
 		}
-	};
+	}
 
 	// check whether draggable items can be accepted by target item
-	function isDropAllowed(targetItem) {
+	isDropAllowed(targetItem) {
+        let drag_model = this;
+        let rfp = this.rfp;
+
 		let matches = $.grep(drag_model.items, (itemObject, i) => {
 			if(targetItem.rdo.type === 'folder' || targetItem.rdo.type === 'parent') {
 				// drop folder inside descending folders (filetree)
-				if(startsWith(targetItem.rdo.id, itemObject.rdo.id))
+				if(rfp.startsWith(targetItem.rdo.id, itemObject.rdo.id))
 					return true;
 
 				// drop items inside the same folder (filetree)
-				if(targetItem.rdo.id === getClosestNode(itemObject.rdo.id))
+				if(targetItem.rdo.id === rfp.getClosestNode(itemObject.rdo.id))
 					return true;
 
 			}
@@ -2541,7 +2659,9 @@ let DragAndDropModel = function () {
 	}
 
 	// mark item as hovered if it accepts draggable item
-	function markHovered(item) {
+	markHovered(item) {
+        let drag_model = this;
+
 		if(drag_model.hoveredItem !== null)
 			drag_model.hoveredItem.dragHovered(false);
 
@@ -2552,20 +2672,20 @@ let DragAndDropModel = function () {
 	}
 
 	// mark helper as restricted if target item doesn't accept draggable item
-	function markRestricted($helper, flag) {
+	markRestricted($helper, flag) {
+        let drag_model = this;
+
 		if(flag)
-			$helper.addClass(restrictedCssClass);
+			$helper.addClass(drag_model.restrictedCssClass);
 		else
-			$helper.removeClass(restrictedCssClass);
+			$helper.removeClass(drag_model.restrictedCssClass);
 
 	}
-};
+}
 
-let SelectionModel = function () {
-	this.unselect = false;
-};
-
-
+class SelectionModel {
+	public unselect = false;
+}
 
 /**
  * Knockout general model
@@ -2670,7 +2790,7 @@ class FmModel {
 	}
 
 	// fetch selected view items OR tree nodes
-	fetchSelectedItems(instanceName) {
+	fetchSelectedItems(instanceName?) {
 		let fmModel = this;
 		let selectedNodes;
 		let selectedItems;
@@ -2711,8 +2831,7 @@ class FmModel {
 		return !(this.config.manager.dblClickOpen && event.type === 'click');
 
 	}
-};
-
+}
 
 class richFilemanagerPlugin {
 	public settings: Settings;
@@ -2751,7 +2870,7 @@ class richFilemanagerPlugin {
 	public _url_ = purl();
 	public timeStart = new Date().getTime();
 
-	private fullexpandedFolder: string;
+	fullexpandedFolder: string;
 
 	/**
 	 * The "constructor" method that gets called when the object is created
@@ -2865,7 +2984,7 @@ class richFilemanagerPlugin {
 		$((<any>window)).resize(this.setDimensions.bind(this));
 	}
 
-	private configure() {
+	configure() {
 		return $.when(this.loadConfigFile('default'), this.loadConfigFile('user')).done((confd, confu) => {
 			let config_default = confd[ 0 ];
 			let config_user = confu[ 0 ];
@@ -2895,7 +3014,7 @@ class richFilemanagerPlugin {
 	}
 
 	// performs initial request to server to retrieve initial params
-	private performInitialRequest() {
+	performInitialRequest() {
 		let config = this.config;
 		let fm = this;
 
@@ -2932,7 +3051,7 @@ class richFilemanagerPlugin {
 	}
 
 	// localize messages based on configuration or URL value
-	private localize() {
+	localize() {
 		let fm = this;
 		let langModel = this.langModel = new LangModel(fm);
 		let config = this.config;
@@ -2967,7 +3086,7 @@ class richFilemanagerPlugin {
 			});
 	}
 
-	private includeTemplates() {
+	includeTemplates() {
 		return $.when(this.loadTemplate('upload-container'), this.loadTemplate('upload-item')).done(function (uc, ui) {
 			let tmpl_upload_container = uc[ 0 ];
 			let tmpl_upload_item = ui[ 0 ];
@@ -2978,7 +3097,7 @@ class richFilemanagerPlugin {
 		});
 	}
 
-	private includeAssets(callback) {
+	includeAssets(callback) {
 		let primary = [];
 		let secondary = [];
 		let config = this.config;
@@ -3058,7 +3177,7 @@ class richFilemanagerPlugin {
 
 	}
 
-	private initialize() {
+	initialize() {
 		let config = this.config;
 		let _url_ = this._url_;
 		let fm = this;
@@ -3402,11 +3521,11 @@ class richFilemanagerPlugin {
 	}
 
 	// Wrapper for translate method
-	private lg(key) {
+	lg(key) {
 		return this.langModel.translate(key);
 	}
 
-	private sortItems(items) {
+	sortItems(items) {
 		let fmModel = this.fmModel;
 		let parentItem;
 		let sortOrder = (fmModel.viewMode() === 'list') ? fmModel.itemsModel.listSortOrder() : this.configSortOrder;
@@ -3556,7 +3675,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Test if a given url exists
-	private file_exists(url) {
+	file_exists(url) {
 		return $.ajax({
 			type: 'HEAD',
 			url: url
@@ -3564,7 +3683,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Retrieves config settings from config files
-	private loadConfigFile(type) {
+	loadConfigFile(type) {
 		let url = null;
 		let fm = this;
 
@@ -3591,7 +3710,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Loads a given js/css files dynamically into header
-	private loadAssets(assets) {
+	loadAssets(assets) {
 		let fm = this;
 
 		for(let i = 0, l = assets.length; i < l; i++) {
@@ -3604,7 +3723,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Loads a given js template file into header if not already included
-	private loadTemplate(id/*, data*/) {
+	loadTemplate(id/*, data*/) {
 		let fm = this;
 
 		return $.ajax({
@@ -3615,7 +3734,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Converts bytes to KB, MB, or GB as needed for display
-	private formatBytes(bytes, round?) {
+	formatBytes(bytes, round?) {
 		if(!bytes) return '';
 		round = round || false;
 		let n = parseFloat(bytes);
@@ -3635,7 +3754,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Format server-side response single error object
-	private formatServerError(errorObject: any) {
+	formatServerError(errorObject: any) {
 		let message;
 		// look for message in case an error CODE is provided
 		if(this.langModel.getLang() && this.lg(errorObject.message)) {
@@ -3650,7 +3769,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Handle ajax request error.
-	private handleAjaxError(response) {
+	handleAjaxError(response) {
 		let fm = this;
 
 		fm.log(response.responseText || response);
@@ -3659,7 +3778,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Handle ajax json response error.
-	private handleAjaxResponseErrors(response) {
+	handleAjaxResponseErrors(response) {
 		let fm = this;
 
 		if(response.errors) {
@@ -3676,7 +3795,7 @@ class richFilemanagerPlugin {
 
 
 	// Test if file is authorized, based on extension only
-	private isAuthorizedFile(filename) {
+	isAuthorizedFile(filename) {
 		let ext = this.getExtension(filename);
 		let config = this.config;
 
@@ -3786,53 +3905,53 @@ class richFilemanagerPlugin {
 	}
 
 	// Test if is editable file
-	private isEditableFile(filename) {
+	public isEditableFile(filename) {
 		return ($.inArray(this.getExtension(filename), this.config.editor.extensions) !== -1);
 	}
 
 	// Test if is image file
-	private isImageFile(filename) {
+	public isImageFile(filename) {
 		return ($.inArray(this.getExtension(filename), this.config.viewer.image.extensions) !== -1);
 	}
 
 	// Test if file is supported web video file
-	private isVideoFile(filename) {
+	public isVideoFile(filename) {
 		return ($.inArray(this.getExtension(filename), this.config.viewer.video.extensions) !== -1);
 	}
 
 	// Test if file is supported web audio file
-	private isAudioFile(filename) {
+	public isAudioFile(filename) {
 		return ($.inArray(this.getExtension(filename), this.config.viewer.audio.extensions) !== -1);
 	}
 
 	// Test if file is openable in iframe
-	private isIFrameFile(filename) {
+	public isIFrameFile(filename) {
 		return ($.inArray(this.getExtension(filename), this.config.viewer.iframe.extensions) !== -1);
 	}
 
 	// Test if file is opendoc file
 	// Supported file types: http://viewerjs.org/examples/
-	private isOpenDocFile(filename) {
+	public isOpenDocFile(filename) {
 		return ($.inArray(this.getExtension(filename), this.config.viewer.opendoc.extensions) !== -1);
 	}
 
 	// Test if file is supported by Google Docs viewer
 	// Supported file types: http://stackoverflow.com/q/24325363/1789808
-	private isGoogleDocsFile(filename) {
+	public isGoogleDocsFile(filename) {
 		return ($.inArray(this.getExtension(filename), this.config.viewer.google.extensions) !== -1);
 	}
 
 	// Test if file is supported by CodeMirror renderer
-	private isCodeMirrorFile(filename) {
+	public isCodeMirrorFile(filename) {
 		return ($.inArray(this.getExtension(filename), this.config.viewer.codeMirrorRenderer.extensions) !== -1);
 	}
 
 	// Test if file is supported by Markdown-it renderer, which renders .md files to HTML
-	private isMarkdownFile(filename) {
+	public isMarkdownFile(filename) {
 		return ($.inArray(this.getExtension(filename), this.config.viewer.markdownRenderer.extensions) !== -1);
 	}
 
-	private extendRequestParams(method, parameters) {
+	public extendRequestParams(method, parameters) {
 		let methodParams;
 		let configParams = this.config.api.requestParams;
 
@@ -3860,7 +3979,7 @@ class richFilemanagerPlugin {
 		return parameters;
 	}
 
-	private buildAjaxRequest(method, parameters): JQuery.PromiseBase {
+	public buildAjaxRequest(method, parameters): JQuery.PromiseBase {
 		return $.ajax({
 			type: method,
 			cache: false,
@@ -3870,7 +3989,7 @@ class richFilemanagerPlugin {
 		});
 	}
 
-	private getFilteredFileExtensions() {
+	public getFilteredFileExtensions() {
 		let shownExtensions;
 		let config = this.config;
 		let _url_ = this._url_;
@@ -3883,7 +4002,7 @@ class richFilemanagerPlugin {
 		return shownExtensions;
 	}
 
-	private buildConnectorUrl(params?) {
+	public buildConnectorUrl(params?) {
 		let defaults = {
 			time: new Date().getTime()
 		};
@@ -3893,7 +4012,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Build url to preview files
-	private createPreviewUrl(resourceObject, encode) {
+	public createPreviewUrl(resourceObject, encode) {
 		let fm = this;
 		let previewUrl;
 		let objectPath = resourceObject.attributes.path;
@@ -3916,7 +4035,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Build url to display image or its thumbnail
-	private createImageUrl(resourceObject, thumbnail, disableCache) {
+	public createImageUrl(resourceObject, thumbnail, disableCache) {
 		let fm = this;
 		let imageUrl;
 		let config = this.config;
@@ -3947,7 +4066,7 @@ class richFilemanagerPlugin {
 		return imageUrl;
 	}
 
-	private buildAbsolutePath(path, disableCache) {
+	public buildAbsolutePath(path, disableCache) {
 		let config = this.config;
 		let url = (typeof config.viewer.previewUrl === 'string') ? config.viewer.previewUrl : location.origin;
 
@@ -3959,7 +4078,7 @@ class richFilemanagerPlugin {
 		return url;
 	}
 
-	private createCopyUrl(resourceObject) {
+	public createCopyUrl(resourceObject) {
 		function encodeCopyUrl(path) {
 			return (this.config.clipboard.encodeCopyUrl) ? this.encodePath(path) : path;
 		}
@@ -3977,7 +4096,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Returns container for filetree or fileinfo section based on scrollbar plugin state
-	private getSectionContainer($section) {
+	public getSectionContainer($section) {
 		// if scrollbar plugin is enabled
 		if(this.config.customScrollbar.enabled)
 			return $section.find('.mCSB_container');
@@ -3988,7 +4107,7 @@ class richFilemanagerPlugin {
 
 
 	// Handle multiple actions in loop with deferred object
-	private processMultipleActions(items, callbackFunction: (a: any, b: any) => JQuery.PromiseBase<any>, finishCallback?) {
+	public processMultipleActions(items, callbackFunction: (a: any, b: any) => JQuery.PromiseBase<any>, finishCallback?) {
 		let fm = this;
 		let successCounter = 0;
 		let totalCounter = items.length;
@@ -4018,7 +4137,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Clears browser window selection
-	private clearSelection() {
+	public clearSelection() {
 		if((<any>document).selection && (<any>document).selection.empty)
 			(<any>document).selection.empty();
 		else if(window.getSelection) {
@@ -4029,7 +4148,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Build FileTree and bind events
-	private prepareFileTree() {
+	public prepareFileTree() {
 		let fmModel = this.fmModel;
 		let config = this.config;
 
@@ -4049,13 +4168,13 @@ class richFilemanagerPlugin {
 	}
 
 	// Build FileTree and bind events
-	private prepareFileView() {
+	public prepareFileView() {
 		let fmModel = this.fmModel;
 		fmModel.itemsModel.loadList(this.fileRoot);
 	}
 
 	// Check if plugin instance created inside some context
-	private hasContext() {
+	public hasContext() {
 		let _url_ = this._url_;
 
 		return window.opener // window.open()
@@ -4073,7 +4192,7 @@ class richFilemanagerPlugin {
 	// Triggered by clicking the "Select" button in detail views
 	// or choosing the "Select" contextual menu option in list views.
 	// NOTE: closes the window when finished.
-	private selectItem(resourceObject) {
+	public selectItem(resourceObject) {
 		let fm = this;
 		let contextWindow: any = null;
 		let previewUrl = this.createPreviewUrl(resourceObject, true);
@@ -4178,7 +4297,7 @@ class richFilemanagerPlugin {
 	// Renames the current item and returns the new name.
 	// Called by clicking the "Rename" button in detail views
 	// or choosing the "Rename" contextual menu option in list views.
-	private renameItem(resourceObject) {
+	public renameItem(resourceObject) {
 		let fmModel = this.fmModel;
 		let fm = this;
 		let config = this.config;
@@ -4289,7 +4408,7 @@ class richFilemanagerPlugin {
 	// Move the current item to specified dir and returns the new name.
 	// Called by clicking the "Move" button in de tail views
 	// or choosing the "Move" contextual menu option in list views.
-	private moveItemPrompt(objects, successCallback) {
+	public moveItemPrompt(objects, successCallback) {
 		let fmModel = this.fmModel;
 		let fm = this;
 		let doMove = (e, ui: AleritfyDialogUI) => {
@@ -4327,7 +4446,7 @@ class richFilemanagerPlugin {
 
 	// Copy the current item to specified dir and returns the new name.
 	// Called upon paste copied items via clipboard.
-	private copyItem(resourceObject, targetPath) {
+	public copyItem(resourceObject, targetPath) {
 		let fmModel = this.fmModel;
 		let fm = this;
 		return this.buildAjaxRequest('GET', {
@@ -4352,7 +4471,7 @@ class richFilemanagerPlugin {
 	// Move the current item to specified dir and returns the new name.
 	// Called by clicking the "Move" button in detail views
 	// or choosing the "Move" contextual menu option in list views.
-	private moveItem(resourceObject, targetPath) {
+	public moveItem(resourceObject, targetPath) {
 		let fmModel = this.fmModel;
 		let fm = this;
 		return this.buildAjaxRequest('GET', {
@@ -4384,7 +4503,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Prompts for confirmation, then deletes the current item.
-	private deleteItemPrompt(objects, successCallback) {
+	public deleteItemPrompt(objects, successCallback) {
 		let fm = this;
 		let objectsTotal = objects.length;
 		let message = (objectsTotal > 1) ? this.lg('confirm_delete_multiple').replace('%s', objectsTotal) : this.lg('confirm_delete');
@@ -4404,7 +4523,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Delete item by path
-	private deleteItem(path) {
+	public deleteItem(path) {
 		let fmModel = this.fmModel;
 		let fm = this;
 		return this.buildAjaxRequest('GET', {
@@ -4431,7 +4550,7 @@ class richFilemanagerPlugin {
 	// Starts file download process.
 	// Called by clicking the "Download" button in detail views
 	// or choosing the "Download" contextual menu item in list views.
-	private downloadItem(resourceObject) {
+	public downloadItem(resourceObject) {
 		let queryParams = {
 			mode: 'download',
 			path: resourceObject.id
@@ -4447,7 +4566,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Creates CodeMirror instance to let user change the content of the file
-	private previewItem(resourceObject) {
+	public previewItem(resourceObject) {
 		return this.buildAjaxRequest('GET', {
 			mode: 'editfile',
 			path: resourceObject.id
@@ -4457,7 +4576,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Save CodeMirror editor content to file
-	private saveItem(resourceObject) {
+	public saveItem(resourceObject) {
 		let fmModel = this.fmModel;
 		let fm = this;
 		let formParams = $('#fm-js-editor-form').serializeArray();
@@ -4487,7 +4606,7 @@ class richFilemanagerPlugin {
 		}).fail(this.handleAjaxError.bind(this));
 	}
 
-	private getItemInfo(targetPath) {
+	public getItemInfo(targetPath) {
 		return this.buildAjaxRequest('GET', {
 			mode: 'getfile',
 			path: targetPath
@@ -4497,7 +4616,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Display storage summary info
-	private summarizeItems() {
+	public summarizeItems() {
 		let fmModel = this.fmModel;
 		let fm = this;
 
@@ -4532,7 +4651,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Prompts for confirmation, then extracts the current archive.
-	private extractItemPrompt(resourceObject) {
+	public extractItemPrompt(resourceObject) {
 		let fmModel = this.fmModel;
 		let fm = this;
 
@@ -4562,7 +4681,7 @@ class richFilemanagerPlugin {
 
 	// Extract files and folders from archive.
 	// Called by choosing the "Extract" contextual menu option in list views.
-	private extractItem(resourceObject, targetPath) {
+	public extractItem(resourceObject, targetPath) {
 		let fmModel = this.fmModel;
 		let fm = this;
 
@@ -4591,7 +4710,7 @@ class richFilemanagerPlugin {
  ---------------------------------------------------------*/
 
 	// Retrieves file or folder info based on the path provided.
-	private getDetailView(resourceObject) {
+	public getDetailView(resourceObject) {
 		let fmModel = this.fmModel;
 		let fm = this;
 
@@ -4609,7 +4728,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Options for context menu plugin
-	private getContextMenuItems(resourceObject) {
+	public getContextMenuItems(resourceObject) {
 		let fmModel = this.fmModel;
 		let clipboardDisabled = !fmModel.clipboardModel.enabled();
 		let contextMenuItems = {
@@ -4641,7 +4760,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Binds contextual menu to items in list and grid views.
-	private performAction(action, options, targetObject: KnockoutObservable, selectedObjects?) {
+	public performAction(action, options, targetObject: KnockoutObservable, selectedObjects?) {
 		let fmModel = this.fmModel;
 		// suppose that target object is part of selected objects while multiple selection
 		let objects = selectedObjects ? selectedObjects : [ targetObject ];
@@ -4700,7 +4819,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Handling file uploads
-	private setupUploader() {
+	public setupUploader() {
 		let fmModel = this.fmModel;
 		let config = this.config;
 		let fm = this;
@@ -5153,7 +5272,7 @@ class richFilemanagerPlugin {
 
 	// Test if item has the 'cap' capability
 	// 'cap' is one of 'select', 'rename', 'delete', 'download', 'copy', 'move'
-	private has_capability(resourceObject, cap) {
+	public has_capability(resourceObject, cap) {
 		if(this.capabilities.indexOf(cap) === -1) return false;
 		if(cap === 'select' && resourceObject.type === 'folder') return false;
 		if(cap === 'extract') {
