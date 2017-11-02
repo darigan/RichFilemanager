@@ -1,137 +1,239 @@
 interface Config {
 	api?: {
-		connectorUrl: any;
-		lang: any;
-		requestParams: any;
+		connectorUrl: boolean | string;
+		lang: string;
+		requestParams: {
+            GET: any,
+            POST: any,
+            MIXED: any
+        };
 	};
 	clipboard?: {
-		encodeCopyUrl: any;
+		encodeCopyUrl: boolean;
 		enabled: boolean;
 	};
 	customScrollbar?: {
-		button: any;
-		enabled: any;
-		theme: any;
+		button: boolean;
+		enabled: boolean;
+		theme: string;
 	};
 	editor?: {
-		codeHighlight: any;
-		enabled: any;
-		extensions: any;
-		lineNumbers: any;
-		lineWrapping: any;
-		matchBrackets: any;
-		theme: any;
+		codeHighlight: boolean;
+		enabled: boolean;
+		extensions: string[];
+		lineNumbers: boolean;
+		lineWrapping: boolean;
+		matchBrackets: boolean;
+		theme: string;
 	};
 	extras?: {
-		extra_js: any;
-		extra_js_async: any;
+		extra_js: any[];
+		extra_js_async: boolean;
 	};
 	filetree?: {
-		enabled: any;
-		expandSpeed: any;
-		foldersOnly: any;
-		minWidth: any;
-		reloadOnClick: any;
-		showLine: any;
-		width: any;
+		enabled: boolean;
+		expandSpeed: number;
+		foldersOnly: boolean;
+		minWidth: number;
+		reloadOnClick: boolean;
+		showLine: boolean;
+		width: number;
 	};
-	filter?: any;
+	filter?: {
+		[name: string]: string[];
+	};
 	language?: {
-		available: any;
-		default: any;
+		available: string[];
+        // noinspection ReservedWordAsName
+        default: string;
 	};
 	manager?: {
-		dblClickOpen: any;
-		defaultViewMode: any;
+		dblClickOpen: boolean;
+		defaultViewMode: string;
 		renderer: {
-			indexFile: any;
-			position: any;
+			indexFile: string;
+			position: boolean;
 		};
 		selection: {
-			enabled: any;
-			useCtrlKey: any;
+			enabled: boolean;
+			useCtrlKey: boolean;
 		};
 	};
 	options ?: {
-		allowChangeExtensions: any;
-		allowFolderDownload: any;
-		browseOnly: any;
-		capabilities: any;
-		fileSorting: any;
-		folderPosition: any;
-		logger: any;
-		quickSelect: any;
-		showConfirmation: any;
-		showTitleAttr: any;
-		theme: any;
+        allowChangeExtensions: false;
+        allowFolderDownload: true;
+        browseOnly: false;
+        capabilities: string[]
+        fileSorting: string;
+        folderPosition: string;
+        logger: false;
+        quickSelect: false;
+        searchBox: true;
+        showConfirmation: true;
+        showTitleAttr: false;
+        theme: string;
 	};
 	security?: {
 		extensions: {
-			ignoreCase: any;
+			ignoreCase: boolean;
 			policy: any;
 			restrictions: any;
 		}
-		readOnly: any;
+		readOnly: boolean;
 	};
 	upload?: {
-		chunkSize: any;
-		fileSizeLimit: any;
-		maxNumberOfFiles: any;
-		multiple: any;
+		chunkSize: boolean;
+		fileSizeLimit: number;
+		maxNumberOfFiles: number;
+		multiple: boolean;
 	};
 	viewer?: {
-		absolutePath: any;
+		absolutePath: boolean;
 		audio: {
-			enabled: any;
-			extensions: any;
+			enabled: boolean;
+			extensions: string[];
 		};
 		codeMirrorRenderer: {
-			enabled: any;
-			extensions: any;
+			enabled: boolean;
+			extensions: string[];
 		};
 		google: {
-			enabled: any;
-			extensions: any;
-			readerHeight: any;
-			readerWidth: any;
+			enabled: boolean;
+			extensions: string[];
+			readerHeight: number;
+			readerWidth: number;
 		};
 		iframe: {
-			enabled: any;
-			extensions: any;
-			readerHeight: any;
-			readerWidth: any;
+			enabled: boolean;
+			extensions: string[];
+			readerHeight: number;
+			readerWidth: number;
 		};
 		image: {
-			enabled: any;
-			extensions: any;
-			lazyLoad: any;
-			showThumbs: any;
-			thumbMaxWidth: any;
+			enabled: boolean;
+			extensions: string[];
+			lazyLoad: boolean;
+			showThumbs: boolean;
+			thumbMaxWidth: number;
 		};
 		markdownRenderer: {
-			enabled: any;
-			extensions: any;
+			enabled: boolean;
+			extensions: string[];
 		};
 		opendoc: {
-			enabled: any;
-			extensions: any;
-			readerHeight: any;
-			readerWidth: any;
+			enabled: boolean;
+			extensions: string[];
+			readerHeight: number;
+			readerWidth: number;
 		};
-		previewUrl: any;
+		previewUrl: boolean;
 		video: {
-			enabled: any;
-			extensions: any;
-			playerHeight: any;
-			playerWidth: any;
+			enabled: boolean;
+			extensions: string[];
+			playerHeight: number;
+			playerWidth: number;
 		};
 	};
 }
 
-interface JQuery {
-	mCustomScrollbar: {
-		(): JQuery;
+interface ReadableObject {
+    id?: string;
+    type?: string
+    attributes?: {
+    	size?: number;
+        name?: string;
+        path?: string;
+        readable?: boolean;
+        writable?: boolean;
+        width?: string | null;
+        height?: string | null;
+        capabilities?: any;
+    }
+}
+
+interface ComputedDataObject {
+    isFolder?: boolean;
+    extension?: string | null;
+    dimensions?: string | null;
+    cssItemClass?: string;
+    hiddenByType?: boolean;
+    hiddenBySearch?: boolean;
+}
+
+interface mCustomScrollbarOptions {
+    setTop: number;
+    setLeft: number;
+    axis: string;
+    scrollbarPosition: string;
+    scrollInertia: number;
+    autoDraggerLength: boolean;
+    alwaysShowScrollbar: number;
+    snapOffset: number;
+    mouseWheel:{
+        enable:true,
+        scrollAmount: string,
+        axis: string,
+        deltaFactor: string,
+        disableOver: string[]
+    };
+    scrollButtons:{
+        scrollType: string,
+        scrollAmount: string
+    };
+    keyboard:{
+        enable:true,
+        scrollType: string,
+        scrollAmount: string
+    };
+    contentTouchScroll: number;
+    documentTouchScroll: boolean;
+    advanced:{
+        autoScrollOnFocus: string,
+        updateOnContentResize: boolean,
+        updateOnImageLoad: string,
+        autoUpdateTimeout: number
+    };
+    theme: string;
+    callbacks:{
+        onScrollStart: (this: mCustomScrollbar) => { };
+        onScroll: (this: mCustomScrollbar) => { };
+        whileScrolling: (this: mCustomScrollbar) => { };
+        onTotalScrollOffset: number,
+        onTotalScrollBackOffset: number,
+        alwaysTriggerOffsets: boolean
+    };
+}
+
+interface mCustomScrollbar {
+    defaults: mCustomScrollbarOptions;
+    totalInstances: number;
+    liveTimers: any;
+    oldIE: boolean;
+    touchActive: boolean;
+    touchable: any;
+    classes: string[];
+    yStartPosition: number;
+    mcs: {
+        content: any;
+        top: number;
+        left: number;
+        draggerTop: number;
+        draggerLeft: number;
+        topPct: number;
+        leftPct: number;
+        direction: string;
 	};
+    (options: mCustomScrollbarOptions): JQuery;
+}
+
+interface JQuery {
+	mCustomScrollbar: mCustomScrollbar;
+	mCustomScrollbar: (method: 'update', el: any, cb?: any) => {};
+    mCustomScrollbar: (method: 'scrollTo', options?: mCustomScrollbarOptions) => {};
+    mCustomScrollbar: (method: 'stop') => {};
+    mCustomScrollbar: (method: 'disable', r?: boolean) => {};
+    mCustomScrollbar: (method: 'destroy') => {};
+
 	fileupload: {
 		(opts: any): JQuery;
 	};
@@ -141,480 +243,485 @@ interface JQuery {
 	fileDownload(a: any): any;
 
 	blueimp: any;
+
+    splitter: any;
+}
+
+interface LazyLoad {
+	(instanceSettings);
+    handleScroll();
+    update();
+    destroy();
+}
+
+interface Alertify {
+    parent(elem);
+    reset();
+    dialog(message, buttons);
+    alert(message, okButton);
+    confirm(message, okButton, cancelButton);
+    prompt(message, defaultValue, okButton, cancelButton);
+    log(message, click);
+    success(message, click);
+    warning(message, click);
+    error(message, click);
+    dialogWidth(width);
+    dialogPersistent(bool);
+    dialogContainerClass(str);
+    logDelay(time);
+    logMaxItems(num);
+    logPosition(str);
+    logContainerClass(str);
+    logMessageTemplate(templateMethod);
+    theme(theme);
+    clearDialogs();
+    clearLogs();
+}
+
+interface AlertifyBtn {
+    type?: string;
+    label?: string;
+    autoClose?: boolean;
+    closeOnClick?: boolean;
+    template?: string;
+    click?: (e, ui: AleritfyDialogUI) => {};
+}
+
+interface AleritfyDialogUI {
+    dom: any;
+    closeDialog(): void;
+    centerDialog(): void;
+    setMessage(message: string): void;
+    setContent(content: string): void;
+    getInputValue(): string | undefined;
+}
+interface AlertifyTemplates {
+    dialogButtonsHolder?: string;
+    dialogMessage?: string;
+    dialogInput?: string;
+    logMessage?: string;
+}
+interface Message {
+	message?: string;
+	width?: any;
+	persistent?: boolean;
+	template?: AlertifyTemplates;
+	message?: string;
+	value?: string;
+	okBtn?: AlertifyBtn;
+	cancelBtn?: AlertifyBtn;
+	buttons?: AlertifyBtn[];
 }
 
 interface Settings {
-	baseUrl: string;
-	config: Config;
-	callbacks: any;
+    baseUrl: string;
+    config: Config;
+    callbacks: any;
 }
 
-interface Message {
-	width?: any;
-	persistent?: any;
-	template?: any;
-	message?: any;
-	value?: any;
-	okBtn?: {
-		label: any;
-		autoClose?: boolean;
-		click: Function;
-	},
-	cancelBtn?: {
-		label: any;
-	}
-	buttons?: any;
+interface Editor {
+    interactive: boolean;
+}
+
+interface Viewer {
+    type?: string;
+    isEditable?: boolean;
+    url?: string | null;
+    pureUrl?: any;
+    options?: {
+    	width?: number;
+    	height?: number;
+        is_writable?: boolean;
+	};
+    content?: any;
+    codeMirror?: any;
+}
+
+interface KnockoutObservableViewer {
+    type?: KnockoutObservable;
+    isEditable?: KnockoutObservable;
+    url?: KnockoutObservable;
+    pureUrl?: KnockoutObservable;
+    options?: KnockoutObservable;
+    content?: KnockoutObservable;
+    codeMirror?: KnockoutObservable;
+}
+
+interface TreeData {
+    id: any;
+    level: KnockoutObservable<number>;
+    children: KnockoutObservableArray;
+}
+
+declare class Clipboard {
+    constructor(elm, opts?);
+
+    destroy();
+
+    on: (a, b) => Clipboard;
 }
 
 declare function tmpl(t: string, data: any): string;
 
 declare function toast();
 
-declare class Clipboard {
-	constructor(elm, opts?);
-
-	destroy();
-
-	on: (a, b) => Clipboard;
-}
-
 declare const hljs: any;
 declare const tinyMCEPopup: any;
+declare const alertify: Alertify;
+declare const $: JQueryStatic;
 
-interface LangModel {
-	buildLangFileUrl(code);
+////////////////////////
 
-	setLang(code);
-
-	getLang();
-
-	setTranslations(json);
-
-	getTranslations();
-
-	translate(key);
+// Test if a given url exists
+function file_exists(url) {
+    return $.ajax({
+        type: 'HEAD',
+        url: url
+    });
 }
 
-interface FmModel {
-	(element: HTMLElement, pluginOptions);
-
-	config: KnockoutObservable<Config>;
-	loadingView: KnockoutObservable<boolean>;
-	previewFile: KnockoutObservable<boolean>;
-	viewMode: KnockoutObservable;
-	currentPath: KnockoutObservable;
-	browseOnly: KnockoutObservable<boolean>;
-	previewModel: KnockoutObservable;
-	currentLang: any;
-	lg: any;
-
-	addItem(resourceObject, targetPath): any;
-
-	removeItem(resourceObject): any;
-
-	fetchSelectedItems(instanceName): any;
-
-	fetchSelectedObjects(item): any;
-
-	treeModel: TreeModel;
-	itemsModel: ItemsModel;
-	tableViewModel: TableViewModel;
-	previewModel: PreviewModel;
-	headerModel: HeaderModel;
-	summaryModel: SummaryModel;
-	filterModel: FilterModel;
-	searchModel: SearchModel;
-	clipboardModel: ClipboardModel;
-	breadcrumbsModel: BreadcrumbsModel;
-	ddModel: DragAndDropModel;
-	selectionModel: SelectionModel;
-	settings: Settings;
-
-	write(message, options?);
-
-	error(message, options?);
-
-	warning(message, options?);
-
-	success(message, options?);
-
-	alert(message);
-
-	confirm(obj: Message);
-
-	prompt(obj: Message);
-
-	dialog(obj: Message);
-
-	setDimensions();
-
-	log(...args: any[]);
+function expandNode(node): boolean {
+    if (node.isExpanded() === false && node.isLoaded() === true) {
+        node.isSliding(true);
+        return true;
+    }
+    return false;
 }
 
-interface PreviewModel {
-	rdo: KnockoutObservable;
-	cdo: KnockoutObservable;
-	viewer: {
-		type: KnockoutObservable<string>;
-		isEditable: KnockoutObservable<boolean>;
-		url: KnockoutObservable;
-		pureUrl: KnockoutObservable;
-		options: KnockoutObservable;
-		content: KnockoutObservable;
-		codeMirror: KnockoutObservable;
-	}
-	renderer: RenderModel;
-	editor: EditorModel;
-
-	applyObject(resourceObject): any;
-
-	afterRender(): any;
-
-	initiateEditor(elements): any;
-
-	bindToolbar(action): any;
-
-	previewIconClass: KnockoutComputed;
-
-	editFile(): any;
-
-	saveFile(): any;
-
-	closeEditor(): any;
-
-	buttonVisibility(action): any;
+function collapseNode(node): boolean {
+    if (node.isExpanded() === true) {
+        node.isSliding(true);
+        return true;
+    }
+    return false;
 }
 
-interface TreeData {
-	id: any;
-	level: KnockoutObservable<number>;
-	children: KnockoutObservableArray;
+// Test if path is dir
+function isFile(path) {
+    return path.charAt(path.length - 1) !== '/';
 }
 
-interface TreeModel {
-	selectedNode: KnockoutObservable;
-	treeData: TreeData;
+// Replace all leading or trailing chars with an empty string
+function trim(string, char) {
+    let regExp = new RegExp(`^${char}+|${char}+$`, 'g');
 
-	mapNodes(filter, contextNode): any;
-
-	findByParam(key, value, contextNode?): any;
-
-	findByFilter(filter, contextNode?): any;
-
-	getSelected(): any;
-
-	loadNodes(targetNode, refresh): any;
-
-	createNode(resourceObject): any;
-
-	addNodes(targetNode, newNodes): any;
-
-	expandNode(node): any;
-
-	collapseNode(node): any;
-
-	toggleNode(node): any;
-
-	arrangeNode(node): any;
-
-	nodeRendered(elements, node): any;
-
-	actualizeNodeObject(node, oldFolder, newFolder): any;
+    return string.replace(regExp, '');
 }
 
-interface TreeNodeModel {
-	(resourceObject);
+// Replace all leading chars with an empty string
+function ltrim(string, char) {
+    let regExp = new RegExp(`^${char}+`, 'g');
 
-	id: any;
-	rdo: KnockoutObservable;
-	cdo: KnockoutObservable<{
-		isFolder: boolean;
-		extension: any;
-		dimensions: any;
-		cssItemClass: string;
-		hiddenByType: boolean;
-		hiddenBySearch: boolean;
-	}>;
-	visible: KnockoutObservable;
-	nodeTitle: KnockoutObservable;
-	children: KnockoutObservable;
-	parentNode: KnockoutObservable;
-	isSliding: KnockoutObservable;
-	isLoading: KnockoutObservable;
-	isLoaded: KnockoutObservable;
-	isExpanded: KnockoutObservable;
-	selected: KnockoutObservable;
-	dragHovered: KnockoutObservable;
-	level: KnockoutObservable;
-	isFirstNode: KnockoutObservable;
-	isLastNode: KnockoutObservable;
-
-	switchNode(node): any;
-
-	mouseDown(node, e?): any;
-
-	nodeClick(node, e?): any;
-
-	nodeDblClick(node, e?): any;
-
-	openNode(node, e?): any;
-
-	remove(): any;
-
-	isRoot(): any;
-
-	title: KnockoutComputed;
-	itemClass: KnockoutComputed;
-	iconClass: KnockoutComputed;
-	switcherClass: KnockoutComputed;
-	clusterClass: KnockoutComputed;
+    return string.replace(regExp, '');
 }
 
-interface ItemsModel {
-	objects: KnockoutObservable;
-	objectsSize: KnockoutObservable;
-	objectsNumber: KnockoutObservable;
-	selectedNumber: KnockoutObservable;
-	listSortField: KnockoutObservable;
-	listSortOrder: KnockoutObservable;
-	isSelecting: KnockoutObservable;
-	continiousSelection: KnockoutObservable;
-	descriptivePanel: RenderModel;
-	lazyLoad: any;
+// Replace all trailing chars with an empty string
+function rtrim(string, char) {
+    let regExp = new RegExp(`${char}+$`, 'g');
 
-	createObject(resourceObject): any;
-
-	addNew(dataObjects): any;
-
-	loadList(path): any;
-
-	setList(dataObjects): any;
-
-	findByParam(key, value): any;
-
-	findByFilter(filter, allMatches): any;
-
-	sortObjects(): any;
-
-	getSelected(): any;
-
-	unselectItems(ctrlKey): any;
-
-	initiateLazyLoad(): any;
+    return string.replace(regExp, '');
 }
 
-interface ItemObject {
-	(resourceObject);
-
-	id: any;
-	rdo: KnockoutObservable;
-	cdo: KnockoutObservable<{
-		isFolder: boolean;
-		sizeFormatted: any;
-		extension: any;
-		dimensions: any;
-		cssItemClass: string;
-		imageUrl: any;
-		previewWidth: any;
-		hiddenByType: boolean;
-		hiddenBySearch: boolean;
-	}>;
-	visible: KnockoutObservable;
-	selected: KnockoutObservable;
-	dragHovered: KnockoutObservable;
-	lazyPreview: any;
-	title: KnockoutComputed;
-	itemClass: KnockoutComputed;
-	listIconClass: KnockoutComputed;
-	gridIconClass: KnockoutComputed;
-
-	mouseDown(item, e): any;
-
-	open(item, e): any;
-
-	remove(): any;
+function startsWith(string: String, searchString, position?) {
+    position = position || 0;
+    return string.substr(position, searchString.length) === searchString;
 }
 
-interface TableViewModel {
-	thName: SortableHeader;
-	thType: SortableHeader;
-	thSize: SortableHeader;
-	thDimensions: SortableHeader;
-	thModified: SortableHeader;
+// invert backslashes and remove duplicated ones
+function normalizePath(path) {
+    return path.replace(/\\/g, '/').replace(/\/+/g, '/');
 }
 
-interface SortableHeader {
-	(name);
+// return filename extension
+function getExtension(filename) {
+    if (filename.split('.').length === 1)
+        return '';
 
-	column: KnockoutObservable;
-	order: KnockoutObservable;
-	sortClass: KnockoutComputed;
-
-	sort(): any;
+    return filename.split('.').pop().toLowerCase();
 }
 
-interface HeaderModel {
-	closeButton: KnockoutObservable;
-	langSwitcher: any;
+// return filename without extension
+function getFilename(filename) {
+    if (filename.lastIndexOf('.') !== -1)
+        return filename.substring(0, filename.lastIndexOf('.'));
+    else
+        return filename;
 
-	closeButtonOnClick(): any;
-
-	navHome(): any;
-
-	navLevelUp(): any;
-
-	navRefresh(): any;
-
-	displayGrid(): any;
-
-	displayList(): any;
-
-	switchLang(e): any;
-
-	createFolder(): any;
 }
 
-interface SummaryModel {
-	files: KnockoutObservable;
-	folders: KnockoutObservable;
-	size: KnockoutObservable;
-	enabled: KnockoutObservable<boolean>;
+// return path without filename
+// "/dir/to/" 		  --> "/dir/to/"
+// "/dir/to/file.txt" --> "/dir/to/"
+function getDirname(path) {
+    if (path.lastIndexOf('/') !== path.length - 1)
+        return path.substr(0, path.lastIndexOf('/') + 1);
+    else
+        return path;
 
-	doSummarize(): any;
 }
 
-interface FilterModel {
-	name: KnockoutObservable;
-
-	setName(filterName): any;
-
-	getExtensions(): any;
-
-	filterItem(itemObject): any;
-
-	filter(filterName): any;
-
-	reset(): any;
+// return parent folder for path, if folder is passed it should ends with '/'
+// "/dir/to/"          -->  "/dir/"
+// "/dir/to/file.txt"  -->  "/dir/"
+function getParentDirname(path) {
+    return path.split('/').reverse().slice(2).reverse().join('/') + '/';
 }
 
-interface SearchModel {
-	value: KnockoutObservable;
-
-	findAll(data, event): any;
-
-	reset(data, event): any;
+// return closest node for path
+// "/dir/to/"          -->  "/dir/"
+// "/dir/to/file.txt"  -->  "/dir/to/"
+function getClosestNode(path) {
+    return path.substring(0, path.slice(0, -1).lastIndexOf('/')) + '/';
 }
 
-interface ClipboardModel {
-	itemsNum: KnockoutObservable;
-	enabled: KnockoutObservable;
+// Clears browser window selection
+function clearSelection() {
+    if ((<any>document).selection && (<any>document).selection.empty)
+        (<any>document).selection.empty();
+    else if (window.getSelection) {
+        let sel = window.getSelection();
 
-	copy(objects): any;
-
-	cut(objects): any;
-
-	paste(): any;
-
-	clear(): any;
-
-	isEmpty(): any;
-
-	hasCapability(capability): any;
+        sel.removeAllRanges();
+    }
 }
 
-interface BreadcrumbsModel {
-	items: KnockoutObservable;
+function write(message, obj?) {
+    let log = alertify;
+    let options: any = $.extend({}, {
+        reset: true,
+        delay: 5000,
+        logMaxItems: 5,
+        logPosition: 'bottom right',
+        logContainerClass: 'fm-log',
+        parent: $('.fm-popup').is(':visible') ? document.body : this.$fileinfo[0],
+        onClick: undefined,
+        unique: false,
+        type: 'log'
+    }, obj);
 
-	add(path, label): any;
+    // display only one log for the specified 'logClass'
+    if (options.logClass && options.unique && $('.fm-log').children('.' + options.logClass).length > 0)
+        return log;
 
-	splitCurrent(): any;
+    if (options.reset)
+        log.reset();
+
+    if (options.parent)
+        log.parent(options.parent);
+
+    log.logDelay(options.delay);
+    log.logMaxItems(options.logMaxItems);
+    log.logPosition(options.logPosition);
+    log.logContainerClass(options.logContainerClass);
+    log[options.type](message, options.onClick);
+
+    return log;
 }
 
-interface BcItem {
-	(path, label);
-
-	path: any;
-	label: any
-	isRoot: boolean;
-	active: boolean;
-
-	itemClass(): any;
-
-	goto(item, e): any;
+function error(message, options?) {
+    return write(message, $.extend({}, {
+        type: 'error',
+        delay: 10000
+    }, options));
 }
 
-interface RenderModel {
-	rdo: KnockoutObservable;
-	content: KnockoutObservable;
-	renderer: KnockoutObservable;
-
-	render(data): any;
-
-	setRenderer(resourceObject): any;
-
-	setContainer(templateElements): any;
+function warning(message, options?) {
+    return write(message, $.extend({}, {
+        type: 'warning',
+        delay: 10000
+    }, options));
 }
 
-interface CodeMirrorRenderer {
-	name: string;
-	interactive: boolean;
-
-	processContent(data): any;
-
-	processDomElements($container): any;
+function success(message, options?) {
+    return write(message, $.extend({}, {
+        type: 'success',
+        delay: 6000
+    }, options));
 }
 
-interface MarkdownRenderer {
-	name: string;
-	interactive: boolean;
-
-	processContent(data): any;
-
-	processDomElements($container): any;
+function alert(message) {
+    alertify
+        .reset()
+        .dialogContainerClass('fm-popup')
+        .alert(message);
 }
 
-interface EditorModel {
-	instance: any;
-	enabled: KnockoutObservable;
-	content: KnockoutObservable;
-	mode: KnockoutObservable;
-	isInteractive: KnockoutObservable;
-
-	render(content): any;
-
-	createInstance(extension, element, options): any;
+function confirm(obj: Message) {
+    alertify
+        .reset()
+        .dialogWidth(obj.width)
+        .dialogPersistent(obj.persistent)
+        .dialogContainerClass('fm-popup')
+        .confirm(obj.message, obj.okBtn, obj.cancelBtn);
 }
 
-interface DragAndDropModel {
-	items: any[];
-	hoveredItem: any;
-	dragHelper: any;
-	isScrolling: boolean;
-	isScrolled: boolean;
-	hoveredCssClass: string;
-
-	makeDraggable(item, element): any;
-
-	makeDroppable(targetItem, element): any;
+function prompt(obj: Message) {
+    alertify
+        .reset()
+        .dialogWidth(obj.width) // dialogWidth
+        .dialogPersistent(obj.persistent) // dialogPersistent
+        .dialogContainerClass('fm-popup')
+        .theme(obj.template)
+        .prompt(obj.message, obj.value || '', obj.okBtn, obj.cancelBtn);
 }
 
-interface SelectionModel {
-	unselect: boolean;
+function dialog(obj: Message) {
+    alertify
+        .reset()
+        .dialogWidth(obj.width)
+        .dialogPersistent(obj.persistent)
+        .dialogContainerClass('fm-popup')
+        .dialog(obj.message, obj.buttons);
 }
 
-interface AleritfyDialogUI {
-	dom: any;
-
-	closeDialog();
-
-	centerDialog();
-
-	setMessage(message);
-
-	setContent(content);
-
-	getInputValue();
+// Wrapper for translate method
+function lg(key: string): string {
+    return LangModel.translate(key);
 }
+// Converts bytes to KB, MB, or GB as needed for display
+function formatBytes(bytes: number | string, round?): string {
+    if(!bytes) return '';
+    round = round || false;
+    let n = parseFloat(<string>bytes);
+    let d = parseFloat(<string>(round ? 1000 : 1024));
+    let c = 0;
+    let u = [ lg('unit_bytes'), lg('unit_kb'), lg('unit_mb'), lg('unit_gb') ];
+
+    while(true) {
+        if(n < d) {
+            n = Math.round(n * 100) / 100;
+            return n + ' ' + u[ c ];
+        } else {
+            n /= d;
+            c += 1;
+        }
+    }
+}
+
+function log() {
+    if(config.options.logger && arguments) {
+        [].unshift.call(arguments, new Date().getTime());
+        console.log.apply(this, arguments);
+    }
+}
+
+
+// Format server-side response single error object
+function formatServerError(errorObject: any) {
+    let message;
+    // look for message in case an error CODE is provided
+    if(LangModel.getLang() && lg(errorObject.message)) {
+        message = lg(errorObject.message);
+        $.each(errorObject.arguments, (i, argument) => {
+            message = message.replace('%s', argument);
+        });
+    } else
+        message = errorObject.message;
+
+    return message;
+}
+
+// Handle ajax request error.
+function handleAjaxError(response) {
+
+    log(response.responseText || response);
+    error(lg('ERROR_SERVER'));
+    error(response.responseText);
+}
+
+// Handle ajax json response error.
+function handleAjaxResponseErrors(response) {
+    if(response.errors) {
+        log(response.errors);
+        $.each(response.errors, (i, errorObject) => {
+            error(this.formatServerError(errorObject));
+
+            if(errorObject.arguments.redirect)
+                window.location.href = errorObject.arguments.redirect;
+
+        });
+    }
+}
+
+// Test if file is authorized, based on extension only
+function isAuthorizedFile(filename) {
+    let ext = getExtension(filename);
+
+    if(config.security.extensions.ignoreCase) {
+        if(config.security.extensions.policy == 'ALLOW_LIST')
+            if((<JQuery>$).inArrayInsensitive(ext, config.security.extensions.restrictions) !== -1) return true;
+
+        if(config.security.extensions.policy == 'DISALLOW_LIST')
+            if((<JQuery>$).inArrayInsensitive(ext, config.security.extensions.restrictions) === -1) return true;
+
+    } else {
+        if(config.security.extensions.policy == 'ALLOW_LIST')
+            if($.inArray(ext, config.security.extensions.restrictions) !== -1) return true;
+
+        if(config.security.extensions.policy == 'DISALLOW_LIST')
+            if($.inArray(ext, config.security.extensions.restrictions) === -1) return true;
+
+    }
+
+    return false;
+}
+
+function encodePath(path) {
+    let parts = [];
+    $.each(path.split('/'), (i, part) => {
+        parts.push(encodeURIComponent(part));
+    });
+    return parts.join('/');
+}
+
+// Test if is editable file
+function isEditableFile(filename) {
+    return ($.inArray(getExtension(filename), config.editor.extensions) !== -1);
+}
+
+// Test if is image file
+function isImageFile(filename) {
+    return ($.inArray(getExtension(filename), config.viewer.image.extensions) !== -1);
+}
+
+// Test if file is supported web video file
+function isVideoFile(filename) {
+    return ($.inArray(getExtension(filename), config.viewer.video.extensions) !== -1);
+}
+
+// Test if file is supported web audio file
+function isAudioFile(filename) {
+    return ($.inArray(getExtension(filename), config.viewer.audio.extensions) !== -1);
+}
+
+// Test if file is openable in iframe
+function isIFrameFile(filename) {
+    return ($.inArray(getExtension(filename), config.viewer.iframe.extensions) !== -1);
+}
+
+// Test if file is opendoc file
+// Supported file types: http://viewerjs.org/examples/
+function isOpenDocFile(filename) {
+    return ($.inArray(getExtension(filename), config.viewer.opendoc.extensions) !== -1);
+}
+
+// Test if file is supported by Google Docs viewer
+// Supported file types: http://stackoverflow.com/q/24325363/1789808
+function isGoogleDocsFile(filename) {
+    return ($.inArray(getExtension(filename), config.viewer.google.extensions) !== -1);
+}
+
+// Test if file is supported by CodeMirror renderer
+function isCodeMirrorFile(filename) {
+    return ($.inArray(getExtension(filename), config.viewer.codeMirrorRenderer.extensions) !== -1);
+}
+
+// Test if file is supported by Markdown-it renderer, which renders .md files to HTML
+function isMarkdownFile(filename) {
+    return ($.inArray(getExtension(filename), config.viewer.markdownRenderer.extensions) !== -1);
+}
+
+///////////////////////
 
 /**
  * Plugin's default options
@@ -626,8 +733,7 @@ const defaults: Settings = {
 		beforeCreateImageUrl: (resourceObject, url) => url,
 		beforeCreatePreviewUrl: (resourceObject, url) => url,
 		beforeSelectItem: (resourceObject, url) => url,
-		afterSelectItem: (resourceObject, url, contextWindow) => {
-		}
+		afterSelectItem: (/*resourceObject, url, contextWindow*/) => { }
 	}
 };
 
@@ -635,58 +741,54 @@ const defaults: Settings = {
  * Language model
  * @constructor
  */
-class LangModel {
-	public currentLang = null;
-	public translationsHash = {};
-	public translationsPath;
+namespace LangModel {
+	export let currentLang: string = null;
+	export let translationsHash = {};
+	export let translationsPath: string;
 
-	constructor(fm) {
-		this.translationsPath = `${fm.settings.baseUrl}/languages/`;
+	export function init(baseUrl: string) {
+		translationsPath = `${baseUrl}/languages/`;
 	}
 
-	public buildLangFileUrl(code) {
-		return `${this.translationsPath + code}.json`;
+	export function buildLangFileUrl(code: string): string {
+		return `${translationsPath + code}.json`;
 	}
 
-	public setLang(code) {
-		this.currentLang = code;
+	export function setLang(code: string) {
+		currentLang = code;
 	}
 
-	public getLang() {
-		return this.currentLang;
+	export function getLang(): string {
+		return currentLang;
 	}
 
-	public setTranslations(json) {
-		this.translationsHash = json;
-	};
-
-	public getTranslations() {
-		return this.translationsHash;
+	export function setTranslations(json) {
+		translationsHash = json;
 	}
 
-	public translate(key) {
-		return this.translationsHash[ key ];
+	export function getTranslations() {
+		return translationsHash;
+	}
+
+	export function translate(key: string): string {
+		return translationsHash[ key ];
 	}
 }
 
-class SelectionModel {
-	public unselect = false;
-}
-
+let config: Config;
 
 class PreviewModel {
 	// let preview_model: PreviewModel = this;
 	// let clipboard: Clipboard = null;
 
-	rdo;
-	cdo;
-	viewer;
-	renderer;
-	editor;
-	previewIconClass;
-	constructor(fm) {
-		let preview_model = this;
+	rdo: KnockoutObservable<ReadableObject>;
+	cdo: KnockoutObservable<ComputedDataObject>;
+	viewer: KnockoutObservableViewer;
+	renderer: RenderModel;
+	editor: EditorModel;
+	previewIconClass: KnockoutComputed;
 
+	constructor(private rfp: richFilemanagerPlugin) {
 		this.rdo = ko.observable({});
 		// computed resource data object
 		this.cdo = ko.observable({});
@@ -701,12 +803,11 @@ class PreviewModel {
 			codeMirror: ko.observable(null)
 		};
 
-		this.renderer = <RenderModel>new RenderModel();
-		this.editor = <EditorModel>new EditorModel();
-
+		this.renderer = new RenderModel(rfp);
+		this.editor = new EditorModel(rfp);
 
 		this.rdo.subscribe(resourceObject => {
-			preview_model.cdo({
+            this.cdo({
 				isFolder: (resourceObject.type === 'folder'),
 				sizeFormatted: formatBytes(resourceObject.attributes.size),
 				extension: (resourceObject.type === 'file') ? getExtension(resourceObject.id) : null,
@@ -715,108 +816,115 @@ class PreviewModel {
 		});
 
 		this.editor.content.subscribe(content => {
-			if(preview_model.editor.isInteractive())
 			// instantly render changes of editor content
-				preview_model.renderer.render(content);
+			if(this.editor.isInteractive())
+				this.renderer.render(content);
 		});
 
-		this.previewIconClass = ko.pureComputed(function () {
-			let cssClass = [];
-			let extraClass = [ 'ico' ];
+		this.previewIconClass = ko.pureComputed((): string => {
+			let cssClass: string[] = [];
+			let extraClass: string[] = [ 'ico' ];
 
-			if(preview_model.viewer.type() === 'default' || !preview_model.viewer.url()) {
+			if(this.viewer.type() === 'default' || !this.viewer.url()) {
 				cssClass.push('grid-icon');
+
 				if(this.cdo().isFolder === true) {
 					cssClass.push('ico_folder');
 					extraClass.push('folder');
+
 					if(!this.rdo().attributes.readable)
 						extraClass.push('lock');
-
 				} else {
 					cssClass.push('ico_file');
+
 					if(this.rdo().attributes.readable)
 						extraClass.push('ext', this.cdo().extension);
 					else
 						extraClass.push('file', 'lock');
-
 				}
+
 				cssClass.push(extraClass.join('_'));
 			}
+
 			return cssClass.join(' ');
-		}, this);
+		});
 	}
 
 
-	applyObject(resourceObject) {
+	applyObject(resourceObject: ReadableObject) {
 		let preview_model = this;
-		let config = this.fm.config;
-		let fm = this.fm;
+		let settings = this.rfp.settings;
+        let createCopyUrl = this.rfp.createCopyUrl;
+        let createImageUrl = this.rfp.createImageUrl;
+        let createPreviewUrl = this.rfp.createPreviewUrl;
+        let previewItem = this.rfp.previewItem;
+        let previewFile = this.rfp.fmModel.previewFile;
 
 		if(clipboard)
 			clipboard.destroy();
 
-		model.previewFile(false);
+		previewFile(false);
 
-		let filename = resourceObject.attributes.name;
-		let editorObject = {
-				interactive: false
-			},
-			viewerObject = {
-				type: 'default',
-				url: null,
-				options: {}
-			};
+		let filename: string = resourceObject.attributes.name;
+		let editorObject: Editor = {
+			interactive: false
+		};
+		let viewerObject: Viewer = {
+			type: 'default',
+			url: null,
+			options: {}
+		};
 
 		preview_model.rdo(resourceObject);
 
-		if(fm.isImageFile(filename)) {
+		if(isImageFile(filename)) {
 			viewerObject.type = 'image';
-			viewerObject.url = fm.createImageUrl(resourceObject, false, true);
+			viewerObject.url = createImageUrl(resourceObject, false, true);
 		}
 
-		if(fm.isAudioFile(filename) && config.viewer.audio.enabled === true) {
+		if(isAudioFile(filename) && config.viewer.audio.enabled === true) {
 			viewerObject.type = 'audio';
-			viewerObject.url = fm.createPreviewUrl(resourceObject, true);
+			viewerObject.url = createPreviewUrl(resourceObject, true);
 		}
 
-		if(fm.isVideoFile(filename) && config.viewer.video.enabled === true) {
+		if(isVideoFile(filename) && config.viewer.video.enabled === true) {
 			viewerObject.type = 'video';
-			viewerObject.url = fm.createPreviewUrl(resourceObject, true);
+			viewerObject.url = createPreviewUrl(resourceObject, true);
 			viewerObject.options = {
 				width: config.viewer.video.playerWidth,
 				height: config.viewer.video.playerHeight
 			};
 		}
 
-		if(fm.isOpenDocFile(filename) && config.viewer.opendoc.enabled === true) {
+		if(isOpenDocFile(filename) && config.viewer.opendoc.enabled === true) {
 			viewerObject.type = 'opendoc';
-			viewerObject.url = `${fm.settings.baseUrl}/scripts/ViewerJS/index.html#${fm.createPreviewUrl(resourceObject, true)}`;
+			viewerObject.url = `${settings.baseUrl}/scripts/ViewerJS/index.html#${createPreviewUrl(resourceObject, true)}`;
 			viewerObject.options = {
 				width: config.viewer.opendoc.readerWidth,
 				height: config.viewer.opendoc.readerHeight
 			};
 		}
 
-		if(fm.isGoogleDocsFile(filename) && config.viewer.google.enabled === true) {
+		if(isGoogleDocsFile(filename) && config.viewer.google.enabled === true) {
 			viewerObject.type = 'google';
-			viewerObject.url = `https://docs.google.com/viewer?url=${encodeURIComponent(fm.createPreviewUrl(resourceObject, false))}&embedded=true`;
+			viewerObject.url = `https://docs.google.com/viewer?url=${encodeURIComponent(createPreviewUrl(resourceObject, false))}&embedded=true`;
 			viewerObject.options = {
 				width: config.viewer.google.readerWidth,
 				height: config.viewer.google.readerHeight
 			};
 		}
 
-		if(fm.isIFrameFile(filename) && config.viewer.iframe.enabled === true) {
+		if(isIFrameFile(filename) && config.viewer.iframe.enabled === true) {
 			viewerObject.type = 'iframe';
-			viewerObject.url = fm.createPreviewUrl(resourceObject, true);
+			viewerObject.url = createPreviewUrl(resourceObject, true);
 			viewerObject.options = {
 				width: config.viewer.iframe.readerWidth,
 				height: config.viewer.iframe.readerHeight
 			};
 		}
 
-		if((fm.isCodeMirrorFile(filename) && config.viewer.codeMirrorRenderer.enabled === true) ||
-			(fm.isMarkdownFile(filename) && config.viewer.markdownRenderer.enabled === true)
+		if((isCodeMirrorFile(filename) && config.viewer.codeMirrorRenderer.enabled === true) ||
+			(isMarkdownFile(filename) && config.viewer.markdownRenderer.enabled === true)
 		) {
 			viewerObject.type = 'renderer';
 			viewerObject.options = {
@@ -829,44 +937,44 @@ class PreviewModel {
 		preview_model.viewer.type(viewerObject.type);
 		preview_model.viewer.url(viewerObject.url);
 		preview_model.viewer.options(viewerObject.options);
-		preview_model.viewer.pureUrl(fm.createCopyUrl(resourceObject));
-		preview_model.viewer.isEditable(fm.isEditableFile(filename) && config.editor.enabled === true);
+		preview_model.viewer.pureUrl(createCopyUrl(resourceObject));
+		preview_model.viewer.isEditable(isEditableFile(filename) && config.editor.enabled === true);
 		preview_model.editor.isInteractive(editorObject.interactive);
 
 		if(viewerObject.type === 'renderer' || preview_model.viewer.isEditable()) {
-			fm.previewItem(resourceObject).then(function (response) {
+			previewItem(resourceObject).then(function (response) {
 				if(response.data) {
 					let content = response.data.attributes.content;
 
 					preview_model.viewer.content(content);
-					fm.previewFile(true);
+					previewFile(true);
 				}
 			});
 		} else
-			fm.previewFile(true);
+			previewFile(true);
 
 	};
 
 	afterRender() {
 		let preview_model = this;
-		let fm = this.fm;
+		let $previewWrapper = this.rfp.$previewWrapper;
 
 		preview_model.renderer.render(preview_model.viewer.content());
 
-		let copyBtnEl = fm.$previewWrapper.find('.btn-copy-url')[ 0 ];
+		let copyBtnEl = $previewWrapper.find('.btn-copy-url')[ 0 ];
 
 		clipboard = new Clipboard(copyBtnEl);
 
-		clipboard.on('success', function (e) {
-			fm.success(fm.lg('copied'));
+		clipboard.on('success', (/*e*/) => {
+			success(lg('copied'));
 		});
 	}
 
-	initiateEditor(elements) {
+	initiateEditor(/*elements*/) {
 		let preview_model = this;
-		let fm = this.fm;
+        let $previewWrapper = this.rfp.$previewWrapper;
 
-		let textarea = fm.$previewWrapper.find('.fm-cm-editor-content')[ 0 ];
+		let textarea = $previewWrapper.find('.fm-cm-editor-content')[ 0 ];
 
 		preview_model.editor.createInstance(preview_model.cdo().extension, textarea, {
 			readOnly: false,
@@ -877,10 +985,11 @@ class PreviewModel {
 	// fires specific action by clicking toolbar buttons in detail view
 	bindToolbar(action) {
 		let preview_model = this;
-		let fm = this.fm;
+        let has_capability = this.rfp.has_capability;
+        let performAction = this.rfp.performAction;
 
-		if(fm.has_capability(preview_model.rdo(), action)) {
-			fm.performAction(action, {}, preview_model.rdo());
+		if(has_capability(preview_model.rdo(), action)) {
+			performAction(action, {}, preview_model.rdo());
 		}
 	}
 
@@ -894,9 +1003,9 @@ class PreviewModel {
 
 	saveFile() {
 		let preview_model = this;
-		let fm = this.fm;
+        let saveItem = this.rfp.saveItem;
 
-		fm.saveItem(preview_model.rdo());
+		saveItem(preview_model.rdo());
 	}
 
 	closeEditor() {
@@ -907,36 +1016,49 @@ class PreviewModel {
 	}
 
 	buttonVisibility(action) {
-		let fm = this.fm;
 		let preview_model = this;
+        let has_capability = this.rfp.has_capability;
+        let hasContext = this.rfp.hasContext;
+
 		switch(action) {
 			case 'select':
-				return (this.has_capability(preview_model.rdo(), action) && this.hasContext());
+				return (has_capability(preview_model.rdo(), action) && hasContext());
 			case 'move':
 			case 'rename':
 			case 'delete':
 			case 'download':
-				return (this.has_capability(preview_model.rdo(), action));
+				return (has_capability(preview_model.rdo(), action));
 		}
 	}
 }
+///
+class TreeModel {
+	// let tree_model: TreeModel = this;
 
-let TreeModel = function () {
-	let tree_model: TreeModel = this;
+    selectedNode;
+    treeData;
+    fullexpandedFolder; // todo: find where this came from
 
-	this.selectedNode = ko.observable(null);
+	constructor(private rfp: richFilemanagerPlugin) {
+		let fileRoot = rfp.fileRoot;
+        let tree_model: TreeModel = this;
 
-	this.treeData = {
-		id: fileRoot,
-		level: ko.observable(-1),
-		children: ko.observableArray([])
-	};
+        this.selectedNode = ko.observable(null);
 
-	this.treeData.children.subscribe(function (value) {
-		tree_model.arrangeNode(tree_model.treeData);
-	});
+        this.treeData = {
+            id: fileRoot,
+            level: ko.observable(-1),
+            children: ko.observableArray([])
+        };
 
-	let expandFolderDefault = function (parentNode) {
+        this.treeData.children.subscribe((/*value*/) => {
+            tree_model.arrangeNode(tree_model.treeData);
+        });
+	}
+
+	expandFolderDefault(parentNode) {
+        let tree_model: TreeModel = this;
+
 		if(this.fullexpandedFolder !== null) {
 			if(!parentNode)
 				parentNode = tree_model.treeData;
@@ -952,9 +1074,11 @@ let TreeModel = function () {
 				config.filetree.expandSpeed = 200;
 			}
 		}
-	};
+	}
 
-	this.mapNodes = function (filter, contextNode) {
+	mapNodes(filter, contextNode?) {
+        let tree_model: TreeModel = this;
+
 		if(!contextNode)
 			contextNode = tree_model.treeData;
 
@@ -971,9 +1095,11 @@ let TreeModel = function () {
 			filter.call(this, nodes[ i ]);
 			tree_model.findByFilter(filter, nodes[ i ]);
 		}
-	};
+	}
 
-	this.findByParam = function (key, value, contextNode) {
+	findByParam(key, value, contextNode?) {
+        let tree_model: TreeModel = this;
+
 		if(!contextNode) {
 			contextNode = tree_model.treeData;
 			if(contextNode[ key ] === value)
@@ -995,9 +1121,11 @@ let TreeModel = function () {
 				return result;
 		}
 		return null;
-	};
+	}
 
-	this.findByFilter = function (filter, contextNode) {
+	findByFilter(filter, contextNode) {
+        let tree_model: TreeModel = this;
+
 		if(!contextNode) {
 			contextNode = tree_model.treeData;
 			if(filter(contextNode))
@@ -1019,19 +1147,24 @@ let TreeModel = function () {
 				return result;
 		}
 		return null;
-	};
+	}
 
-	this.getSelected = function () {
+	getSelected() {
+        let tree_model: TreeModel = this;
+
 		let selectedItems = [];
 
 		if(tree_model.selectedNode())
 			selectedItems.push(tree_model.selectedNode());
 
 		return selectedItems;
-	};
+	}
 
-	this.loadNodes = function (targetNode, refresh) {
+	loadNodes(targetNode, refresh) {
+        let tree_model: TreeModel = this;
 		let path = targetNode ? targetNode.id : tree_model.treeData.id;
+		let buildAjaxRequest = this.rfp.buildAjaxRequest;
+		let expandFolderDefault = this.expandFolderDefault;
 
 		if(targetNode)
 			targetNode.isLoaded(false);
@@ -1056,22 +1189,26 @@ let TreeModel = function () {
 				// not root
 				if(targetNode) {
 					targetNode.isLoaded(true);
-					tree_model.expandNode(targetNode);
+					expandNode(targetNode);
 				}
 				expandFolderDefault(targetNode);
 			}
 			handleAjaxResponseErrors(response);
 		}).fail(handleAjaxError);
-	};
+	}
 
-	this.createNode = function (resourceObject) {
-		let node: TreeNodeModel = new TreeNodeModel(resourceObject);
+	createNode(resourceObject) {
+		let node: TreeNodeModel = new TreeNodeModel(this.rfp, resourceObject);
+        let fmModel = this.rfp.fmModel;
 
 		fmModel.filterModel.filterItem(node);
 		return node;
-	};
+	}
 
-	this.addNodes = function (targetNode: TreeData, newNodes) {
+	addNodes(targetNode: TreeData, newNodes) {
+        let tree_model: TreeModel = this;
+        let sortItems = this.rfp.sortItems;
+
 		if(!Array.isArray(newNodes))
 			newNodes = [ newNodes ];
 
@@ -1088,46 +1225,34 @@ let TreeModel = function () {
 		let allNodes = targetNode.children().concat(newNodes);
 
 		targetNode.children(sortItems(allNodes));
-	};
+	}
 
-	this.expandNode = function (node) {
-		if(node.isExpanded() === false && node.isLoaded() === true) {
-			node.isSliding(true);
-			return true;
-		}
-		return false;
-	};
+	toggleNode(node): void {
+		if(!collapseNode(node))
+			expandNode(node);
+	}
 
-	this.collapseNode = function (node) {
-		if(node.isExpanded() === true) {
-			node.isSliding(true);
-			return true;
-		}
-		return false;
-	};
-
-	this.toggleNode = function (node) {
-		if(!tree_model.collapseNode(node))
-			tree_model.expandNode(node);
-
-	};
-
-	this.arrangeNode = function (node) {
+	arrangeNode(node): void {
 		let childrenLength = node.children().length;
+
 		$.each(node.children(), (index, cNode) => {
 			cNode.level(node.level() + 1);
 			cNode.isFirstNode(index === 0);
 			cNode.isLastNode(index === (childrenLength - 1));
 		});
-	};
+	}
 
-	this.nodeRendered = function (elements, node) {
+	nodeRendered(elements, node): void {
+		let getContextMenuItems = this.rfp.getContextMenuItems;
+		let performAction = this.rfp.performAction;
+		let model = this.rfp.fmModel;
+
 		// attach context menu
 		$(elements[ 1 ]).contextMenu({
 			selector: '.file, .directory',
 			zIndex: 100,
 			// wrap options with "build" allows to get item element
-			build: ($triggerElement, e) => {
+			build: (/*$triggerElement, e*/) => {
 				node.selected(true);
 
 				return {
@@ -1139,9 +1264,10 @@ let TreeModel = function () {
 				}
 			}
 		});
-	};
+	}
 
-	this.actualizeNodeObject = function (node, oldFolder, newFolder) {
+	actualizeNodeObject(node, oldFolder, newFolder) {
+        let tree_model: TreeModel = this;
 		let search = new RegExp('^' + oldFolder);
 		let oldPath = node.rdo.id;
 		let newPath = oldPath.replace(search, newFolder);
@@ -1155,68 +1281,168 @@ let TreeModel = function () {
 				tree_model.actualizeNodeObject(cNode, oldFolder, newFolder);
 			});
 		}
-	};
-};
+	}
+}
 
-let TreeNodeModel = function (resourceObject) {
-	let tree_node = this;
+class TreeNodeModel {
+	// let tree_node = this;
 
-	this.id = resourceObject.id;
-	this.rdo = resourceObject;
-	this.cdo = { // computed data object
-		isFolder: (resourceObject.type === 'folder'),
-		extension: (resourceObject.type === 'file') ? getExtension(resourceObject.id) : null,
-		dimensions: resourceObject.attributes.width ? resourceObject.attributes.width + 'x' + resourceObject.attributes.height : null,
-		cssItemClass: (resourceObject.type === 'folder') ? 'directory' : 'file',
-		hiddenByType: false,
-		hiddenBySearch: false
-	};
+    id: string;
+    rdo: ReadableObject;
+    cdo: ComputedDataObject;
+    visible: KnockoutObservable<boolean>;
+    nodeTitle: KnockoutObservable<string>;
+    children: KnockoutObservableArray<any[]>;
+    parentNode;
+    isSliding: KnockoutObservable<boolean>;
+    isLoading: KnockoutObservable<boolean>;
+    isLoaded: KnockoutObservable<boolean>;
+    isExpanded: KnockoutObservable<boolean>;
+    selected: KnockoutObservable<boolean>;
+    dragHovered: KnockoutObservable<boolean>;
+    level: KnockoutObservable<number>;
+    isFirstNode: KnockoutObservable<boolean>;
+    isLastNode: KnockoutObservable<boolean>;
+    title;
+    itemClass;
+    iconClass;
+    switcherClass;
+    clusterClass;
 
-	this.visible = ko.observable(true);
-	this.nodeTitle = ko.observable(resourceObject.attributes.name);
-	this.children = ko.observableArray([]);
-	this.parentNode = ko.observable(null);
-	this.isSliding = ko.observable(false);
-	this.isLoading = ko.observable(false);
-	this.isLoaded = ko.observable(false);
-	this.isExpanded = ko.observable(false);
-	this.selected = ko.observable(false);
-	this.dragHovered = ko.observable(false);
-	// arrangable properties
-	this.level = ko.observable(0);
-	this.isFirstNode = ko.observable(false);
-	this.isLastNode = ko.observable(false);
+	constructor(private rfp: richFilemanagerPlugin, resourceObject) {
+		let model = rfp.fmModel;
+        let tree_node = this;
 
-	this.nodeTitle.subscribe(value => {
-		tree_node.rdo.attributes.name = value;
-	});
+        this.id = resourceObject.id;
+        this.rdo = resourceObject;
+        this.cdo = { // computed data object
+            isFolder: (resourceObject.type === 'folder'),
+            extension: (resourceObject.type === 'file') ? getExtension(resourceObject.id) : null,
+            dimensions: resourceObject.attributes.width ? resourceObject.attributes.width + 'x' + resourceObject.attributes.height : null,
+            cssItemClass: (resourceObject.type === 'folder') ? 'directory' : 'file',
+            hiddenByType: false,
+            hiddenBySearch: false
+        };
 
-	this.children.subscribe(value => {
-		model.treeModel.arrangeNode(tree_node);
-	});
+        this.visible = ko.observable(true);
+        this.nodeTitle = ko.observable(resourceObject.attributes.name);
+        this.children = ko.observableArray([]);
+        this.parentNode = ko.observable(null);
+        this.isSliding = ko.observable(false);
+        this.isLoading = ko.observable(false);
+        this.isLoaded = ko.observable(false);
+        this.isExpanded = ko.observable(false);
+        this.selected = ko.observable(false);
+        this.dragHovered = ko.observable(false);
+        // arrangable properties
+        this.level = ko.observable(0);
+        this.isFirstNode = ko.observable(false);
+        this.isLastNode = ko.observable(false);
 
-	this.isLoaded.subscribe(value => {
-		tree_node.isLoading(!value);
-	});
+        this.nodeTitle.subscribe((value: string) => {
+            tree_node.rdo.attributes.name = value;
+        });
 
-	this.selected.subscribe(value => {
-		if(value) {
-			if(model.treeModel.selectedNode() !== null)
-				model.treeModel.selectedNode().selected(false);
+        this.children.subscribe((/*value*/) => {
+            model.treeModel.arrangeNode(tree_node);
+        });
 
-			model.treeModel.selectedNode(tree_node);
-			model.itemsModel.unselectItems();
-		} else
-			model.treeModel.selectedNode(null);
+        this.isLoaded.subscribe((value: boolean) => {
+            tree_node.isLoading(!value);
+        });
 
-	});
+        this.selected.subscribe(value => {
+            if(value) {
+                if(model.treeModel.selectedNode() !== null)
+                    model.treeModel.selectedNode().selected(false);
 
-	this.switchNode = function (node) {
+                model.treeModel.selectedNode(tree_node);
+                model.itemsModel.unselectItems();
+            } else
+                model.treeModel.selectedNode(null);
+
+        });
+        this.title = ko.pureComputed(() => {
+            return (config.options.showTitleAttr) ? this.rdo.id : null;
+        });
+
+        this.itemClass = ko.pureComputed(() => {
+            let cssClass = [];
+
+            if(this.selected() && config.manager.selection.enabled)
+                cssClass.push('ui-selected');
+
+            if(this.dragHovered())
+                cssClass.push(model.ddModel.hoveredCssClass);
+
+            return cssClass.join(' ');
+        });
+
+        this.iconClass = ko.pureComputed(() => {
+            let cssClass;
+            let extraClass = [ 'ico' ];
+
+            if(this.cdo.isFolder === true) {
+                cssClass = 'ico_folder';
+                if(this.isLoading() === true)
+                    extraClass.push('loading');
+                else {
+                    extraClass.push('folder');
+                    if(!this.rdo.attributes.readable)
+                        extraClass.push('lock');
+                    else if(this.isExpanded() || !this.isExpanded() && this.isSliding())
+                        extraClass.push('open');
+                }
+            } else {
+                cssClass = 'ico_file';
+                if(this.rdo.attributes.readable)
+                    extraClass.push('ext', this.cdo.extension);
+                else
+                    extraClass.push('file', 'lock');
+
+            }
+            return `${cssClass} ${extraClass.join('_')}`;
+        });
+
+        this.switcherClass = ko.pureComputed(() => {
+            let cssClass = [];
+
+            if(config.filetree.showLine) {
+                if(this.level() === 0 && this.isFirstNode() && this.isLastNode())
+                    cssClass.push('root');
+                else if(this.level() === 0 && this.isFirstNode())
+                    cssClass.push('roots');
+                else if(this.isLastNode())
+                    cssClass.push('bottom');
+                else
+                    cssClass.push('center');
+
+            } else
+                cssClass.push('noline');
+
+            if(this.cdo.isFolder) {
+                let isOpen = (this.isExpanded() || !this.isExpanded() && this.isSliding());
+
+                cssClass.push(isOpen ? 'open' : 'close');
+            } else
+                cssClass.push('docu');
+
+            return cssClass.join('_');
+        });
+
+        this.clusterClass = <KnockoutObservable>ko.pureComputed(() => (config.filetree.showLine && !this.isLastNode()) ? 'line' : '');
+	}
+
+
+	switchNode(node) {
+        let tree_node = this;
+        let model = this.rfp.fmModel;
+
 		if(!node.cdo.isFolder)
 			return false;
 
 		if(!node.rdo.attributes.readable) {
-			fm.error(lg('NOT_ALLOWED_SYSTEM'));
+			error(lg('NOT_ALLOWED_SYSTEM'));
 			return false;
 		}
 		if(!node.isLoaded())
@@ -1224,25 +1450,34 @@ let TreeNodeModel = function (resourceObject) {
 		else
 			model.treeModel.toggleNode(node);
 
-	};
+	}
 
-	this.mouseDown = function (node, e) {
+    // noinspection JSMethodCanBeStatic
+	mouseDown(node/*, e*/) {
 		node.selected(true);
-	};
+	}
 
-	this.nodeClick = function (node, e) {
+	nodeClick(node/*, e*/) {
+        let tree_node = this;
+
 		if(!config.manager.dblClickOpen)
 			tree_node.openNode(node);
 
-	};
+	}
 
-	this.nodeDblClick = function (node, e) {
+	nodeDblClick(node/*, e*/) {
+        let tree_node = this;
+
 		if(config.manager.dblClickOpen)
 			tree_node.openNode(node);
 
-	};
+	}
 
-	this.openNode = function (node, e) {
+	openNode(node/*, e?*/) {
+        let model = this.rfp.fmModel;
+        let fmModel = this.rfp.fmModel;
+        let getDetailView = this.rfp.getDetailView;
+
 		if(node.rdo.type === 'file')
 			getDetailView(node.rdo);
 
@@ -1262,118 +1497,122 @@ let TreeNodeModel = function (resourceObject) {
 				model.itemsModel.setList(dataObjects);
 			}
 		}
-	};
+	}
 
-	this.remove = function () {
+	remove() {
+        let tree_node = this;
+
 		tree_node.parentNode().children.remove(tree_node);
-	};
+	}
 
-	this.isRoot = function () {
+	isRoot() {
+        let tree_node = this;
+        let model = this.rfp.fmModel;
+
 		return tree_node.level() === model.treeModel.treeData.id;
-	};
+	}
 
-	this.title = ko.pureComputed(function () {
-		return (config.options.showTitleAttr) ? this.rdo.id : null;
-	}, this);
+}
 
-	this.itemClass = ko.pureComputed(function () {
-		let cssClass = [];
+class ItemsModel {
+	// let items_model: ItemsModel = this;
+    objects;
+    objectsSize;
+    objectsNumber;
+    selectedNumber;
+    listSortField;
+    listSortOrder;
+    isSelecting;
+    continiousSelection;
+    descriptivePanel;
+    lazyLoad: LazyLoad;
 
-		if(this.selected() && config.manager.selection.enabled)
-			cssClass.push('ui-selected');
+	constructor(private rfp: richFilemanagerPlugin) {
+        let items_model: ItemsModel = this;
+        let model = rfp.fmModel;
+        let configSortField = rfp.configSortField;
+        let configSortOrder = rfp.configSortOrder;
 
-		if(this.dragHovered())
-			cssClass.push(model.ddModel.hoveredCssClass);
+        this.objects = <KnockoutObservable>ko.observableArray([]);
+        this.objectsSize = <KnockoutObservable>ko.observable(0);
+        this.objectsNumber = <KnockoutObservable>ko.observable(0);
+        this.selectedNumber = <KnockoutObservable>ko.observable(0);
+        this.listSortField = <KnockoutObservable>ko.observable(configSortField);
+        this.listSortOrder = <KnockoutObservable>ko.observable(configSortOrder);
+        this.isSelecting = <KnockoutObservable>ko.observable(false);
+        this.continiousSelection = <KnockoutObservable>ko.observable(false);
+        this.descriptivePanel = <RenderModel>new RenderModel(rfp);
+        this.lazyLoad = null;
 
-		return cssClass.join(' ');
-	}, this);
+        this.isSelecting.subscribe(state => {
+            if(!state) {
+                // means selection lasso has been dropped
+                items_model.continiousSelection(false);
+            }
+        });
+        this.objects.subscribe(items => {
+            let totalNumber = 0;
+            let totalSize = 0;
 
-	this.iconClass = ko.pureComputed(function () {
-		let cssClass;
-		let extraClass = [ 'ico' ];
+            $.each(items, (i, item) => {
+                if(item.rdo.type !== 'parent')
+                    totalNumber++;
 
-		if(this.cdo.isFolder === true) {
-			cssClass = 'ico_folder';
-			if(this.isLoading() === true)
-				extraClass.push('loading');
-			else {
-				extraClass.push('folder');
-				if(!this.rdo.attributes.readable)
-					extraClass.push('lock');
-				else if(this.isExpanded() || !this.isExpanded() && this.isSliding())
-					extraClass.push('open');
-			}
-		} else {
-			cssClass = 'ico_file';
-			if(this.rdo.attributes.readable)
-				extraClass.push('ext', this.cdo.extension);
-			else
-				extraClass.push('file', 'lock');
+                if(item.rdo.type === 'file')
+                    totalSize += Number(item.rdo.attributes.size);
 
-		}
-		return cssClass + ' ' + extraClass.join('_');
-	}, this);
+            });
+            // updates folder summary info
+            items_model.objectsNumber(totalNumber);
+            items_model.objectsSize(formatBytes(totalSize));
 
-	this.switcherClass = ko.pureComputed(function () {
-		let cssClass = [];
+            // update
+            if(items_model.lazyLoad) {
+                setTimeout(() => {
+                    items_model.lazyLoad.update();
+                }, 50);
+            }
 
-		if(config.filetree.showLine) {
-			if(this.level() === 0 && this.isFirstNode() && this.isLastNode())
-				cssClass.push('root');
-			else if(this.level() === 0 && this.isFirstNode())
-				cssClass.push('roots');
-			else if(this.isLastNode())
-				cssClass.push('bottom');
-			else
-				cssClass.push('center');
+            // context menu
+            rfp.$viewItems.contextMenu({
+                selector: '.file, .directory',
+                zIndex: 100,
+                // wrap options with "build" allows to get item element
+                build: ($triggerElement/*, e*/) => {
+                    let koItem = ko.dataFor($triggerElement[ 0 ]);
 
-		} else
-			cssClass.push('noline');
+                    if(!koItem.selected()) {
+                        model.itemsModel.unselectItems(false);
+                        koItem.selected(true);
+                    }
 
-		if(this.cdo.isFolder) {
-			let isOpen = (this.isExpanded() || !this.isExpanded() && this.isSliding());
+                    return {
+                        appendTo: '.fm-container',
+                        items: rfp.getContextMenuItems(koItem.rdo),
+                        callback: (itemKey, options) => {
+                            rfp.performAction(itemKey, options, koItem.rdo, model.fetchSelectedObjects(koItem));
+                        }
+                    }
+                }
+            });
+        });
 
-			cssClass.push(isOpen ? 'open' : 'close');
-		} else
-			cssClass.push('docu');
+    }
 
-		return cssClass.join('_');
-	}, this);
+	createObject(resourceObject) {
+		let fmModel = this.rfp.fmModel;
 
-	this.clusterClass = <KnockoutObservable>ko.pureComputed(function () {
-		return (config.filetree.showLine && !this.isLastNode()) ? 'line' : '';
-	}, this);
-};
-
-let ItemsModel = function () {
-	let items_model: ItemsModel = this;
-
-	this.objects = <KnockoutObservable>ko.observableArray([]);
-	this.objectsSize = <KnockoutObservable>ko.observable(0);
-	this.objectsNumber = <KnockoutObservable>ko.observable(0);
-	this.selectedNumber = <KnockoutObservable>ko.observable(0);
-	this.listSortField = <KnockoutObservable>ko.observable(configSortField);
-	this.listSortOrder = <KnockoutObservable>ko.observable(configSortOrder);
-	this.isSelecting = <KnockoutObservable>ko.observable(false);
-	this.continiousSelection = <KnockoutObservable>ko.observable(false);
-	this.descriptivePanel = <RenderModel>new RenderModel();
-	this.lazyLoad = null;
-
-	this.isSelecting.subscribe(state => {
-		if(!state) {
-			// means selection lasso has been dropped
-			items_model.continiousSelection(false);
-		}
-	});
-
-	this.createObject = resourceObject => {
-		let item: ItemObject = new ItemObject(resourceObject);
+		let item: ItemObject = new ItemObject(this.rfp, resourceObject);
 
 		fmModel.filterModel.filterItem(item);
 		return item;
-	};
+	}
 
-	this.addNew = function (dataObjects) {
+	addNew(dataObjects) {
+        let model = this.rfp.fmModel;
+        let rfp = this.rfp;
+        let items_model: ItemsModel = this;
+
 		// use underlying array for better performance
 		// http://www.knockmeout.net/2012/04/knockoutjs-performance-gotcha.html
 		let items = model.itemsModel.objects();
@@ -1385,11 +1624,15 @@ let ItemsModel = function () {
 			items.push(items_model.createObject(resourceObject));
 		});
 
-		items = sortItems(items);
+		items = rfp.sortItems(items);
 		model.itemsModel.objects.valueHasMutated();
-	};
+	}
 
-	this.loadList = function (path) {
+	loadList(path) {
+        let model = this.rfp.fmModel;
+        let rfp = this.rfp;
+        let _url_ = this.rfp._url_;
+
 		model.loadingView(true);
 
 		let queryParams = {
@@ -1400,7 +1643,7 @@ let ItemsModel = function () {
 		if(_url_.param('type'))
 			queryParams.type = _url_.param('type');
 
-		buildAjaxRequest('GET', queryParams).done(response => {
+		rfp.buildAjaxRequest('GET', queryParams).done(response => {
 			if(response.data) {
 				model.currentPath(path);
 				model.breadcrumbsModel.splitCurrent();
@@ -1412,12 +1655,16 @@ let ItemsModel = function () {
 			}
 			handleAjaxResponseErrors(response);
 		}).fail(handleAjaxError);
-	};
+	}
 
-	this.setList = function (dataObjects) {
+	setList(dataObjects) {
+        let model = this.rfp.fmModel;
+        let rfp = this.rfp;
+        let items_model: ItemsModel = this;
 		let objects = [];
+
 		// add parent folder object
-		if(!isFile(model.currentPath()) && model.currentPath() !== fileRoot) {
+		if(!isFile(model.currentPath()) && model.currentPath() !== rfp.fileRoot) {
 			let parentPath = getParentDirname(model.currentPath());
 			let parentItem = {
 				id: parentPath,
@@ -1435,7 +1682,7 @@ let ItemsModel = function () {
 			};
 
 			parentItem.open = (item, e) => {
-				if(isItemOpenable(e))
+				if(model.isItemOpenable(e))
 					items_model.loadList(parentItem.id);
 
 			};
@@ -1462,7 +1709,7 @@ let ItemsModel = function () {
 				items_model.descriptivePanel.setRenderer(resourceObject);
 
 				// load and render index file content
-				previewItem(items_model.descriptivePanel.rdo()).then(response => {
+				rfp.previewItem(items_model.descriptivePanel.rdo()).then(response => {
 					if(response.data)
 						items_model.descriptivePanel.render(response.data.attributes.content);
 				});
@@ -1470,17 +1717,18 @@ let ItemsModel = function () {
 			objects.push(items_model.createObject(resourceObject));
 		});
 
-		model.itemsModel.objects(sortItems(objects));
+		model.itemsModel.objects(rfp.sortItems(objects));
 		model.loadingView(false);
-	};
+	}
 
-	this.findByParam = function (key, value) {
+	findByParam(key, value) {
+        let model = this.rfp.fmModel;
 		return ko.utils.arrayFirst(model.itemsModel.objects(), object => object[ key ] === value);
-	};
+	}
 
-	this.findByFilter = function (filter, allMatches) {
+	findByFilter(filter, allMatches) {
+        let items_model: ItemsModel = this;
 		let firstMatch = !(allMatches || false);
-
 		let resultItems = [];
 		let items = items_model.objects();
 
@@ -1496,23 +1744,27 @@ let ItemsModel = function () {
 			}
 		}
 		return firstMatch ? null : resultItems;
-	};
+	}
 
-	this.sortObjects = function () {
+	sortObjects() {
+        let items_model: ItemsModel = this;
+        let sortItems = this.rfp.sortItems;
 		let sortedList = sortItems(items_model.objects());
 
 		items_model.objects(sortedList);
-	};
+	}
 
-	this.getSelected = function () {
+	getSelected() {
+        let items_model: ItemsModel = this;
 		let selectedItems = items_model.findByFilter(item => item.rdo.type !== 'parent' && item.selected(), true);
 
 		items_model.selectedNumber(selectedItems.length);
 		return selectedItems;
-	};
+	}
 
-	this.unselectItems = function (ctrlKey) {
-		let appendSelection = (config.manager.selection.enabled && config.manager.selection.useCtrlKey && ctrlKey === true);
+	unselectItems(ctrlKey?) {
+        let items_model: ItemsModel = this;
+        let appendSelection = (config.manager.selection.enabled && config.manager.selection.useCtrlKey && ctrlKey === true);
 
 		if(!appendSelection) {
 			// drop selection from selected items
@@ -1520,169 +1772,145 @@ let ItemsModel = function () {
 				itemObject.selected(false);
 			});
 		}
-	};
+	}
 
-	this.initiateLazyLoad = function () {
+	initiateLazyLoad() {
+        let items_model: ItemsModel = this;
+        let rfp = this.rfp;
+
 		// not configured or already initiated
 		if(config.viewer.image.lazyLoad !== true || items_model.lazyLoad)
 			return;
 
 		items_model.lazyLoad = new LazyLoad({
-			container: <any>$fileinfo[ 0 ], // work only for default scrollbar
+			container: <any>rfp.$fileinfo[ 0 ], // work only for default scrollbar
 			callback_load: element => {
-				fm.log('LOADED', element.getAttribute('data-original'));
+				log('LOADED', element.getAttribute('data-original'));
 			},
 			callback_set: element => {
-				fm.log('SET', element.getAttribute('data-original'));
+				log('SET', element.getAttribute('data-original'));
 			},
 			callback_processed: elementsLeft => {
-				fm.log('PROCESSED', elementsLeft + ' images left');
+				log('PROCESSED', elementsLeft + ' images left');
 			}
 		});
-	};
+	}
 
-	this.objects.subscribe(items => {
-		let totalNumber = 0;
-		let totalSize = 0;
+}
 
-		$.each(items, (i, item) => {
-			if(item.rdo.type !== 'parent')
-				totalNumber++;
+class ItemObject {
+	// let item_object = this;
+    previewWidth;
+    id;
+    rdo;
+    cdo;
+    visible;
+    selected;
+    dragHovered;
+    lazyPreview;
+    title;
+    itemClass;
+    listIconClass;
+    gridIconClass;
 
-			if(item.rdo.type === 'file')
-				totalSize += Number(item.rdo.attributes.size);
+	constructor(private rfp: richFilemanagerPlugin, private resourceObject) {
+		let model = rfp.fmModel;
 
-		});
-		// updates folder summary info
-		items_model.objectsNumber(totalNumber);
-		items_model.objectsSize(formatBytes(totalSize));
+        this.previewWidth = config.viewer.image.thumbMaxWidth;
+        if(resourceObject.attributes.width && resourceObject.attributes.width < this.previewWidth)
+            this.previewWidth = resourceObject.attributes.width;
 
-		// update
-		if(items_model.lazyLoad) {
-			setTimeout(() => {
-				items_model.lazyLoad.update();
-			}, 50);
-		}
+        this.id = resourceObject.id; // for search purpose
+        this.rdo = resourceObject; // original resource data object
+        this.cdo = { // computed data object
+            isFolder: (resourceObject.type === 'folder'),
+            sizeFormatted: formatBytes(resourceObject.attributes.size),
+            extension: (resourceObject.type === 'file') ? getExtension(resourceObject.id) : null,
+            dimensions: resourceObject.attributes.width ? resourceObject.attributes.width + 'x' + resourceObject.attributes.height : null,
+            cssItemClass: (resourceObject.type === 'folder') ? 'directory' : 'file',
+            imageUrl: rfp.createImageUrl(resourceObject, true, true),
+            previewWidth: this.previewWidth,
+            hiddenByType: false,
+            hiddenBySearch: false
+        };
+        this.visible = ko.observable(true);
+        this.selected = ko.observable(false);
+        this.dragHovered = ko.observable(false);
+        this.lazyPreview = (config.viewer.image.lazyLoad && this.cdo.imageUrl);
 
-		// context menu
-		$viewItems.contextMenu({
-			selector: '.file, .directory',
-			zIndex: 100,
-			// wrap options with "build" allows to get item element
-			build: ($triggerElement, e) => {
-				let koItem = ko.dataFor($triggerElement[ 0 ]);
+        this.selected.subscribe(value => {
+            if(value && model.treeModel.selectedNode() !== null)
+                model.treeModel.selectedNode().selected(false);
 
-				if(!koItem.selected()) {
-					model.itemsModel.unselectItems(false);
-					koItem.selected(true);
-				}
+        });
 
-				return {
-					appendTo: '.fm-container',
-					items: getContextMenuItems(koItem.rdo),
-					callback: (itemKey, options) => {
-						performAction(itemKey, options, koItem.rdo, model.fetchSelectedObjects(koItem));
-					}
-				}
-			}
-		});
-	});
-};
+        this.title = ko.pureComputed(() => {
+            return (config.options.showTitleAttr) ? this.rdo.id : null;
+        });
 
-let ItemObject = function (resourceObject) {
-	let item_object = this;
-	let previewWidth = config.viewer.image.thumbMaxWidth;
+        this.itemClass = ko.pureComputed(() => {
+            let cssClass = [];
 
-	if(resourceObject.attributes.width && resourceObject.attributes.width < previewWidth)
-		previewWidth = resourceObject.attributes.width;
+            if(this.selected() && config.manager.selection.enabled)
+                cssClass.push('ui-selected');
 
-	this.id = resourceObject.id; // for search purpose
-	this.rdo = resourceObject; // original resource data object
-	this.cdo = { // computed data object
-		isFolder: (resourceObject.type === 'folder'),
-		sizeFormatted: formatBytes(resourceObject.attributes.size),
-		extension: (resourceObject.type === 'file') ? getExtension(resourceObject.id) : null,
-		dimensions: resourceObject.attributes.width ? resourceObject.attributes.width + 'x' + resourceObject.attributes.height : null,
-		cssItemClass: (resourceObject.type === 'folder') ? 'directory' : 'file',
-		imageUrl: createImageUrl(resourceObject, true, true),
-		previewWidth: previewWidth,
-		hiddenByType: false,
-		hiddenBySearch: false
-	};
-	this.visible = ko.observable(true);
-	this.selected = ko.observable(false);
-	this.dragHovered = ko.observable(false);
-	this.lazyPreview = (config.viewer.image.lazyLoad && this.cdo.imageUrl);
+            if(this.dragHovered())
+                cssClass.push(model.ddModel.hoveredCssClass);
 
-	this.selected.subscribe(value => {
-		if(value && model.treeModel.selectedNode() !== null)
-			model.treeModel.selectedNode().selected(false);
+            return `${this.cdo.cssItemClass} ${cssClass.join(' ')}`;
+        });
 
-	});
+        this.listIconClass = ko.pureComputed(() => {
+            let cssClass;
+            let extraClass = [ 'ico' ];
 
-	this.title = ko.pureComputed(function () {
-		return (config.options.showTitleAttr) ? this.rdo.id : null;
-	}, this);
+            if(this.cdo.isFolder === true) {
+                cssClass = 'ico_folder';
+                extraClass.push('folder');
+                if(!this.rdo.attributes.readable)
+                    extraClass.push('lock');
 
-	this.itemClass = ko.pureComputed(function () {
-		let cssClass = [];
+            } else {
+                cssClass = 'ico_file';
+                if(this.rdo.attributes.readable)
+                    extraClass.push('ext', this.cdo.extension);
+                else
+                    extraClass.push('file', 'lock');
 
-		if(this.selected() && config.manager.selection.enabled)
-			cssClass.push('ui-selected');
+            }
+            return cssClass + ' ' + extraClass.join('_');
+        });
 
-		if(this.dragHovered())
-			cssClass.push(model.ddModel.hoveredCssClass);
+        this.gridIconClass = ko.pureComputed(() => {
+            let cssClass = [];
+            let extraClass = [ 'ico' ];
 
-		return `${this.cdo.cssItemClass} ${cssClass.join(' ')}`;
-	}, this);
+            if(!this.cdo.imageUrl) {
+                cssClass.push('grid-icon');
+                if(this.cdo.isFolder === true) {
+                    cssClass.push('ico_folder');
+                    extraClass.push('folder');
+                    if(!this.rdo.attributes.readable)
+                        extraClass.push('lock');
 
-	this.listIconClass = ko.pureComputed(function () {
-		let cssClass;
-		let extraClass = [ 'ico' ];
+                } else {
+                    cssClass.push('ico_file');
+                    if(this.rdo.attributes.readable)
+                        extraClass.push('ext', this.cdo.extension);
+                    else
+                        extraClass.push('file', 'lock');
 
-		if(this.cdo.isFolder === true) {
-			cssClass = 'ico_folder';
-			extraClass.push('folder');
-			if(!this.rdo.attributes.readable)
-				extraClass.push('lock');
+                }
+                cssClass.push(extraClass.join('_'));
+            }
+            return cssClass.join(' ');
+        });
 
-		} else {
-			cssClass = 'ico_file';
-			if(this.rdo.attributes.readable)
-				extraClass.push('ext', this.cdo.extension);
-			else
-				extraClass.push('file', 'lock');
+    }
 
-		}
-		return cssClass + ' ' + extraClass.join('_');
-	}, this);
+	mouseDown(item, e) {
+		let model = this.rfp.fmModel;
 
-	this.gridIconClass = ko.pureComputed(function () {
-		let cssClass = [];
-		let extraClass = [ 'ico' ];
-
-		if(!this.cdo.imageUrl) {
-			cssClass.push('grid-icon');
-			if(this.cdo.isFolder === true) {
-				cssClass.push('ico_folder');
-				extraClass.push('folder');
-				if(!this.rdo.attributes.readable)
-					extraClass.push('lock');
-
-			} else {
-				cssClass.push('ico_file');
-				if(this.rdo.attributes.readable)
-					extraClass.push('ext', this.cdo.extension);
-				else
-					extraClass.push('file', 'lock');
-
-			}
-			cssClass.push(extraClass.join('_'));
-		}
-		return cssClass.join(' ');
-	}, this);
-
-	this.mouseDown = function (item, e) {
 		// case: previously selected items are dragged instead of a newly one
 		// unselect if currently clicked item is not the one of selected items
 		if(!item.selected())
@@ -1692,7 +1920,10 @@ let ItemObject = function (resourceObject) {
 		item.selected(true);
 	};
 
-	this.open = function (item, e) {
+	open(item, e) {
+        let rfp = this.rfp;
+        let model = this.rfp.fmModel;
+
 		if(model.selectionModel.unselect) {
 			// case: click + ctrlKey on selected item
 			if(e.ctrlKey)
@@ -1705,73 +1936,105 @@ let ItemObject = function (resourceObject) {
 			}
 		}
 
-		if(isItemOpenable(e)) {
-			if(config.options.quickSelect && item.rdo.type === 'file' && has_capability(item.rdo, 'select'))
-				selectItem(item.rdo);
+		if(model.isItemOpenable(e)) {
+			if(config.options.quickSelect && item.rdo.type === 'file' && rfp.has_capability(item.rdo, 'select'))
+				rfp.selectItem(item.rdo);
 			else
-				getDetailView(item.rdo);
+				rfp.getDetailView(item.rdo);
 
 		}
 	};
 
-	this.remove = function () {
+	remove() {
+        let model = this.rfp.fmModel;
 		model.itemsModel.objects.remove(this);
 	};
-};
+}
 
-let TableViewModel = function () {
-	let SortableHeader = function (name) {
-		let thead = this;
+class TableViewModel {
+    thName: SortableHeader;
+    thType: SortableHeader;
+    thSize: SortableHeader;
+    thDimensions: SortableHeader;
+    thModified: SortableHeader;
 
-		this.column = ko.observable(name);
-		this.order = ko.observable(model.itemsModel.listSortOrder());
+	constructor(private rfp: richFilemanagerPlugin) {
+        this.thName = new SortableHeader(rfp, 'name');
+        this.thType = new SortableHeader(rfp, 'type');
+        this.thSize = new SortableHeader(rfp, 'size');
+        this.thDimensions = new SortableHeader(rfp, 'dimensions');
+        this.thModified = new SortableHeader(rfp, 'modified');
+	}
+}
 
-		this.sortClass = ko.pureComputed(function () {
-			let cssClass;
+class SortableHeader {
+    column;
+    order;
+    sortClass;
 
-			if(model.itemsModel.listSortField() === thead.column()) {
-				cssClass = `sorted sorted-${this.order()}`;
-			}
-			return cssClass;
-		}, this);
+    constructor(private rfp: richFilemanagerPlugin, name) {
+        let thead = this;
+        let model = rfp.fmModel;
 
-		this.sort = () => {
-			let isAscending = thead.order() === 'asc';
-			let isSameColumn = model.itemsModel.listSortField() === thead.column();
+        this.column = ko.observable(name);
+        this.order = ko.observable(model.itemsModel.listSortOrder());
 
-			thead.order(isSameColumn ? (isAscending ? 'desc' : 'asc') : model.itemsModel.listSortOrder());
-			model.itemsModel.listSortField(thead.column());
-			model.itemsModel.listSortOrder(thead.order());
-			model.itemsModel.sortObjects();
-		};
-	};
+        this.sortClass = ko.pureComputed(() => {
+            let cssClass;
 
-	this.thName = <SortableHeader>new SortableHeader('name');
-	this.thType = <SortableHeader>new SortableHeader('type');
-	this.thSize = <SortableHeader>new SortableHeader('size');
-	this.thDimensions = <SortableHeader>new SortableHeader('dimensions');
-	this.thModified = <SortableHeader>new SortableHeader('modified');
-};
+            if(model.itemsModel.listSortField() === thead.column()) {
+                cssClass = `sorted sorted-${this.order()}`;
+            }
+            return cssClass;
+        });
+	}
 
-let HeaderModel = function () {
-	let header_model = this;
+    sort() {
+        let thead = this;
+        let model = this.rfp.fmModel;
 
-	this.closeButton = ko.observable(false);
-	this.langSwitcher = Array.isArray(config.language.available) && config.language.available.length > 0;
+        let isAscending = thead.order() === 'asc';
+        let isSameColumn = model.itemsModel.listSortField() === thead.column();
 
-	this.closeButtonOnClick = () => {
-		fm.log('CLOSE button is clicked');
-	};
+        thead.order(isSameColumn ? (isAscending ? 'desc' : 'asc') : model.itemsModel.listSortOrder());
+        model.itemsModel.listSortField(thead.column());
+        model.itemsModel.listSortOrder(thead.order());
+        model.itemsModel.sortObjects();
+    }
+}
 
-	this.navHome = function () {
+class HeaderModel {
+	// let header_model = this;
+
+    closeButton;
+    langSwitcher;
+
+	constructor(private rfp) {
+        this.closeButton = ko.observable(false);
+        this.langSwitcher = Array.isArray(config.language.available) && config.language.available.length > 0;
+	}
+
+	closeButtonOnClick() {
+		let log = this.rfp.log;
+
+		log('CLOSE button is clicked');
+	}
+
+	navHome(){
+        let model = this.rfp.fmModel;
+        let fileRoot = this.rfp.fileRoot;
+
 		model.previewFile(false);
 		model.itemsModel.loadList(fileRoot);
-	};
+	}
 
-	this.navLevelUp = () => {
+	navLevelUp() {
+        let model = this.rfp.fmModel;
+        let rfp = this.rfp;
+
 		let parentFolder = model.previewFile()
-			? getDirname(model.previewModel.rdo().id)
-			: getParentDirname(model.currentPath());
+			? rfp.getDirname(model.previewModel.rdo().id)
+			: rfp.getParentDirname(model.currentPath());
 
 		if(model.previewFile())
 			model.previewFile(false);
@@ -1779,34 +2042,39 @@ let HeaderModel = function () {
 		if(parentFolder !== model.currentPath())
 			model.itemsModel.loadList(parentFolder);
 
-	};
+	}
 
-	this.navRefresh = function () {
+	navRefresh(){
+        let model = this.rfp.fmModel;
+
 		if(model.previewFile()) {
 			model.previewFile(false);
 			model.previewFile(true);
 		} else
 			model.itemsModel.loadList(model.currentPath());
+	}
 
-	};
+	displayGrid(){
+        let model = this.rfp.fmModel;
 
-	this.displayGrid = function () {
 		model.viewMode('grid');
 		model.previewFile(false);
 
 		if(model.itemsModel.lazyLoad)
 			model.itemsModel.lazyLoad.update();
+	}
 
-	};
+	displayList(){
+        let model = this.rfp.fmModel;
 
-	this.displayList = function () {
 		model.viewMode('list');
 		model.previewFile(false);
-	};
+	}
 
-	this.switchLang = function (e) {
+	switchLang(e) {
 		let langNew = e.target.value;
-		let langCurrent = langModel.getLang();
+		let langCurrent = LangModel.getLang();
+        let _url_ = this.rfp._url_;
 
 		if(langNew && langNew.toLowerCase() !== langCurrent.toLowerCase()) {
 			let newUrl;
@@ -1820,14 +2088,23 @@ let HeaderModel = function () {
 
 			window.location.href = newUrl;
 		}
-	};
+	}
 
-	this.createFolder = function () {
+	createFolder(){
+	    let rfp = this.rfp;
+        let fmModel = this.rfp.fmModel;
+        let error = this.rfp.error;
+        let success = this.rfp.success;
+        let lg = this.rfp.lg;
+        let buildAjaxRequest = this.rfp.buildAjaxRequest;
+        let handleAjaxResponseErrors = this.rfp.handleAjaxResponseErrors;
+        let handleAjaxError = this.rfp.handleAjaxError;
+
 		let makeFolder = function (e, ui: AleritfyDialogUI) {
 			let folderName = ui.getInputValue();
 
 			if(!folderName) {
-				fm.error(lg('no_foldername'));
+				error(lg('no_foldername'));
 				return;
 			}
 
@@ -1841,14 +2118,14 @@ let HeaderModel = function () {
 
 					ui.closeDialog();
 					if(config.options.showConfirmation)
-						fm.success(lg('successful_added_folder'));
+						success(lg('successful_added_folder'));
 
 				}
 				handleAjaxResponseErrors(response);
-			}).fail(handleAjaxError);
+			}).fail(handleAjaxError.bind(rfp));
 		};
 
-		fm.prompt({
+		prompt({
 			message: lg('prompt_foldername'),
 			value: lg('default_foldername'),
 			okBtn: {
@@ -1860,44 +2137,58 @@ let HeaderModel = function () {
 				label: lg('cancel')
 			}
 		});
-	};
-};
+	}
+}
 
-let SummaryModel = function () {
-	this.files = ko.observable(null);
-	this.folders = ko.observable(null);
-	this.size = ko.observable(null);
-	this.enabled = ko.observable(false);
+class SummaryModel {
+    public files: KnockoutObservable;
+    public folders: KnockoutObservable;
+    public size: KnockoutObservable;
+    public enabled: KnockoutObservable;
 
-	this.doSummarize = () => {
-		summarizeItems();
-	};
-};
+	constructor(private rfp: richFilemanagerPlugin) {
+        this.files = ko.observable(null);
+        this.folders = ko.observable(null);
+        this.size = ko.observable(null);
+        this.enabled = ko.observable(false);
+	}
 
-let FilterModel = function () {
-	let filter_model = this;
+	doSummarize(): void {
+	    let summarizeItems = this.rfp.summarizeItems;
 
-	this.name = ko.observable(null);
+        summarizeItems();
+	}
+}
 
-	this.setName = function (filterName) {
-		if(filterName &&
-			config.filter &&
-			Array.isArray(config.filter[ filterName ])
-		) {
+class FilterModel {
+    public name: KnockoutObservable;
+
+	constructor(private rfp: richFilemanagerPlugin) {
+		this.name = ko.observable(null);
+	}
+
+	setName(filterName) {
+        let filter_model = this;
+
+		if(filterName && config.filter && Array.isArray(config.filter[ filterName ])) {
 			filter_model.name(filterName);
 		}
-	};
+	}
 
 	// return extensions which are match a filter name
-	this.getExtensions = function () {
+	getExtensions() {
+        let filter_model = this;
+
 		if(filter_model.name())
 			return config.filter[ filter_model.name() ];
 
 		return null;
-	};
+	}
 
 	// check whether file item should be filtered out of the output based on it's extension
-	this.filterItem = function (itemObject) {
+	filterItem(itemObject) {
+        let filter_model = this;
+
 		if(itemObject.rdo.type === 'parent')
 			return;
 
@@ -1912,9 +2203,12 @@ let FilterModel = function () {
 			itemObject.cdo.hiddenByType = !matchByType;
 		}
 		itemObject.visible(visibility);
-	};
+	}
 
-	this.filter = function (filterName) {
+	filter(filterName) {
+        let filter_model = this;
+        let model = this.rfp.fmModel;
+
 		model.searchModel.reset();
 		filter_model.setName(filterName);
 
@@ -1929,26 +2223,35 @@ let FilterModel = function () {
 		if(model.itemsModel.lazyLoad)
 			model.itemsModel.lazyLoad.update();
 
-	};
+	}
 
-	this.reset = function () {
+	reset() {
+        let filter_model = this;
+
 		filter_model.name(null);
 		filter_model.filter(null);
-	};
-};
+	}
+}
 
-let SearchModel = function () {
-	let search_model = this;
+class SearchModel {
+	// let search_model = this;
+	value;
 
-	this.value = ko.observable('');
+	constructor(private rfp: richFilemanagerPlugin) {
+		this.value = ko.observable('');
+	}
 
-	this.findAll = function (data, event) {
+	// noinspection JSUnusedLocalSymbols
+    findAll(data, event) {
 		let delay = 200;
 		let insensitive = true;
+        let search_model = this;
+        let model = this.rfp.fmModel;
+        let rfp = this.rfp;
 
 		search_model.value(event.target.value);
 
-		delayCallback(() => {
+        rfp.delayCallback(() => {
 			let searchString = insensitive ? search_model.value().toLowerCase() : search_model.value();
 
 			$.each(model.itemsModel.objects(), (i, itemObject) => {
@@ -1966,9 +2269,12 @@ let SearchModel = function () {
 				itemObject.visible(visibility);
 			});
 		}, delay);
-	};
+	}
 
-	this.reset = function (data, event) {
+	reset(/*data?, event?*/) {
+        let search_model = this;
+        let model = this.rfp.fmModel;
+
 		search_model.value('');
 		$.each(model.itemsModel.objects(), (i, itemObject) => {
 			if(itemObject.rdo.type === 'parent')
@@ -1977,9 +2283,9 @@ let SearchModel = function () {
 			itemObject.cdo.hiddenBySearch = false;
 			itemObject.visible(!itemObject.cdo.hiddenByType);
 		});
-	};
-};
-
+	}
+}
+///
 class ClipboardModel {
 	// let clipboard_model = this;
     cbMode;
@@ -2025,38 +2331,38 @@ class ClipboardModel {
 	paste() {
         let clipboard_model = this;
         let model = this.rfp.fmModel;
-        let rfp = this.rfp;
+        let processMultipleActions = this.rfp.processMultipleActions;
+        let moveItem = this.rfp.moveItem;
+        let copyItem = this.rfp.copyItem;
 
 		if(!clipboard_model.hasCapability('paste') || clipboard_model.isEmpty())
 			return;
 
 		if(this.cbMode === null || this.cbObjects.length === 0) {
-			model.warning(rfp.lg('clipboard_empty'));
+			warning(lg('clipboard_empty'));
 			return;
 		}
 
 		let targetPath = model.currentPath();
 
-		rfp.processMultipleActions(this.cbObjects, (i, itemObject) => {
+		processMultipleActions(this.cbObjects, (i, itemObject) => {
 			if(this.cbMode === 'cut')
-				return rfp.moveItem(itemObject, targetPath);
+				return moveItem(itemObject, targetPath);
 
 			if(this.cbMode === 'copy')
-				return rfp.copyItem(itemObject, targetPath);
+				return copyItem(itemObject, targetPath);
 
 		}, this.clearClipboard.bind(this));
 	}
 
 	clear() {
         let clipboard_model = this;
-        let model = this.rfp.fmModel;
-        let rfp = this.rfp;
 
 		if(!clipboard_model.hasCapability('clear') || clipboard_model.isEmpty())
 			return;
 
 		this.clearClipboard();
-		model.success(rfp.lg('clipboard_cleared'));
+		success(lg('clipboard_cleared'));
 	}
 
 	isEmpty() {
@@ -2099,6 +2405,7 @@ class BreadcrumbsModel {
 
 	add(path, label) {
         let bc_model = this;
+        // noinspection UnnecessaryLocalVariableJS
         let rfp = this.rfp;
 
 		bc_model.items.push(<BcItem>new BcItem(rfp, path, label));
@@ -2152,7 +2459,7 @@ class BcItem {
         return cssClass.join(' ');
     }
 
-    goto(item, e) {
+    goto(item/*, e*/) {
     	let model = this.rfp.fmModel;
 
         if(!item.active)
@@ -2189,7 +2496,7 @@ class RenderModel {
 
         render_model.rdo(resourceObject);
 
-		if(rfp.isMarkdownFile(resourceObject.attributes.name))
+		if(isMarkdownFile(resourceObject.attributes.name))
 		// markdown renderer
 			render_model.renderer(<MarkdownRenderer>new MarkdownRenderer(rfp, render_model));
 		else
@@ -2233,11 +2540,10 @@ class CodeMirrorRenderer {
 
     processDomElements($container) {
         let render_model = this.render_model;
-        let rfp = this.rfp;
 
         if(!this.instance.instance) {
             let textarea = $container.find('.fm-cm-renderer-content')[ 0 ];
-            let extension = rfp.getExtension(render_model.rdo().id);
+            let extension = getExtension(render_model.rdo().id);
 
             this.instance.createInstance(extension, textarea, {
                 readOnly: 'nocursor',
@@ -2278,17 +2584,17 @@ class MarkdownRenderer {
             },
 
             // custom link function to enable <img ...> and file d/ls:
-            replaceLink: (link, env) => {
+            replaceLink: (link/*, env*/) => {
 
                 // do not change if link as http:// or ftp:// or mailto: etc.
-                if(link.search('://') != -1 || rfp.startsWith(link, 'mailto:'))
+                if(link.search('://') != -1 || startsWith(link, 'mailto:'))
                     return link;
 
                 // define path depending on absolute / relative link type
-                let basePath = (rfp.startsWith(link, '/')) ? rfp.fileRoot : rfp.getDirname(render_model.rdo().id);
-                let path = basePath + rfp.ltrim(link, '/');
+                let basePath = (startsWith(link, '/')) ? rfp.fileRoot : getDirname(render_model.rdo().id);
+                let path = basePath + ltrim(link, '/');
 
-                if(rfp.isMarkdownFile(path))
+                if(isMarkdownFile(path))
                 // to open file in preview mode upon click
                     return path;
                 else {
@@ -2311,7 +2617,8 @@ class MarkdownRenderer {
         this.setLinksBehavior();
     }
 
-    processDomElements($container) {
+    processDomElements(/*$container*/) {
+	    // todo: why is this empty?
     }
 
     setLinksBehavior() {
@@ -2329,12 +2636,12 @@ class MarkdownRenderer {
                 $(this).off('click');
                 $(this).on('click', () => false); // prevent onClick event
             } else {
-                if(href.search('://') != -1 || rfp.startsWith(href, 'mailto:'))
+                if(href.search('://') != -1 || startsWith(href, 'mailto:'))
                     return; // do nothing
 
-                if(rfp.isMarkdownFile(href)) {
+                if(isMarkdownFile(href)) {
                     // open file in preview mode for clicked link
-                    $(this).on('click', e => {
+                    $(this).on('click', (/*e*/) => {
                         rfp.getItemInfo(href).then(response => {
                             if(response.data)
                                 rfp.getDetailView(response.data);
@@ -2390,7 +2697,6 @@ class EditorModel {
 
 	createInstance(extension, element, options) {
         let editor_model = this;
-		let config = this.rfp.config;
 		let cm;
 		let defaults = {
 			readOnly: 'nocursor',
@@ -2413,7 +2719,7 @@ class EditorModel {
 
 		cm = CodeMirror.fromTextArea(element, $.extend({}, defaults, options));
 
-		cm.on('changes', (cm, change) => {
+		cm.on('changes', (cm/*, change*/) => {
 			editor_model.content(cm.getValue());
 		});
 
@@ -2436,7 +2742,6 @@ class EditorModel {
 	includeAssets(extension) {
 		let assets = [];
 		let currentMode = 'default';
-		let config = this.rfp.config;
         let editor_model = this;
         let rfp = this.rfp;
 
@@ -2534,7 +2839,7 @@ class DragAndDropModel {
     isScrolled;
     hoveredCssClass;
 
-	constructor(private rfp: richFilemanagerPlugin, private fm: FmModel) {
+	constructor(private rfp: richFilemanagerPlugin) {
         this.restrictedCssClass = 'drop-restricted';
         this.$dragHelperTemplate = $('#drag-helper-template');
         this.items = [];
@@ -2547,6 +2852,7 @@ class DragAndDropModel {
 
 	makeDraggable(item, element) {
         let drag_model = this;
+        let fetchSelectedItems = this.rfp.fmModel.fetchSelectedItems;
 
         if(item.rdo.type === 'file' || item.rdo.type === 'folder') {
 			$(element).draggable({
@@ -2564,12 +2870,12 @@ class DragAndDropModel {
 					let $cloned;
 					let iconClass;
 
-					if(this.fm.fetchSelectedItems(item.constructor.name).length > 1)
+					if(fetchSelectedItems(item.constructor.name).length > 1)
 						iconClass = 'ico_multiple';
 					else
 						iconClass = (item.rdo.type === 'folder')
 							? 'ico_folder'
-							: 'ico_file ico_ext_' + this.rfp.getExtension(item.rdo.id);
+							: 'ico_file ico_ext_' + getExtension(item.rdo.id);
 
 					$cloned = drag_model.$dragHelperTemplate.children('.drag-helper').clone();
 					$cloned.find('.clip').addClass(iconClass);
@@ -2577,14 +2883,14 @@ class DragAndDropModel {
 					drag_model.dragHelper = $cloned;
 					return $cloned;
 				},
-				start: (event, ui) => {
-					drag_model.items = this.fm.fetchSelectedItems(item.constructor.name);
+				start: (/*event, ui*/) => {
+					drag_model.items = fetchSelectedItems(item.constructor.name);
 				},
-				drag: function (event, ui) {
+				drag: function (/*event, ui*/) {
 					$(this).draggable('option', 'refreshPositions', drag_model.isScrolling || drag_model.isScrolled);
 					drag_model.isScrolled = false;
 				},
-				stop: (event, ui) => {
+				stop: (/*event, ui*/) => {
 					drag_model.items = [];
 					drag_model.dragHelper = null;
 				}
@@ -2623,7 +2929,7 @@ class DragAndDropModel {
 					drag_model.markHovered(null);
 					drag_model.markRestricted(ui.helper, false);
 				},
-				drop: (event, ui) => {
+				drop: (/*event, ui*/) => {
 					drag_model.markHovered(null);
 
 					if(!drag_model.isDropAllowed(targetItem))
@@ -2638,16 +2944,15 @@ class DragAndDropModel {
 	// check whether draggable items can be accepted by target item
 	isDropAllowed(targetItem) {
         let drag_model = this;
-        let rfp = this.rfp;
 
-		let matches = $.grep(drag_model.items, (itemObject, i) => {
+		let matches = $.grep(drag_model.items, (itemObject/*, i*/) => {
 			if(targetItem.rdo.type === 'folder' || targetItem.rdo.type === 'parent') {
 				// drop folder inside descending folders (filetree)
-				if(rfp.startsWith(targetItem.rdo.id, itemObject.rdo.id))
+				if(startsWith(targetItem.rdo.id, itemObject.rdo.id))
 					return true;
 
 				// drop items inside the same folder (filetree)
-				if(targetItem.rdo.id === rfp.getClosestNode(itemObject.rdo.id))
+				if(targetItem.rdo.id === getClosestNode(itemObject.rdo.id))
 					return true;
 
 			}
@@ -2694,14 +2999,13 @@ class SelectionModel {
 class FmModel {
 	// let model: any = this;
 
-	config;
-	loadingView;
-	previewFile;
-	viewMode;
-	currentPath;
-	browseOnly;
-	previewModel;
-	currentLang;
+    config: KnockoutObservable<Config>;
+	loadingView: KnockoutObservable<boolean>;
+	previewFile: KnockoutObservable<boolean>;
+	viewMode: KnockoutObservable;
+	currentPath: KnockoutObservable<string>;
+	browseOnly: KnockoutObservable;
+	previewModel: KnockoutObservable;
 	lg;
 	treeModel: TreeModel;
 	itemsModel: ItemsModel;
@@ -2716,18 +3020,16 @@ class FmModel {
 	ddModel: DragAndDropModel;
 	selectionModel: SelectionModel;
 
-	constructor(config, private langModel, private fileRoot) {
+	constructor(private rfp: richFilemanagerPlugin) {
 		let model = this;
+		let fileRoot = rfp.fileRoot;
 
-		this.config = ko.observable(config);
 		this.loadingView = ko.observable(true);
 		this.previewFile = ko.observable(false);
-		this.viewMode = ko.observable(config.manager.defaultViewMode);
+		this.viewMode = ko.observable(this.config.manager.defaultViewMode);
 		this.currentPath = ko.observable(fileRoot);
-		this.browseOnly = ko.observable(config.options.browseOnly);
+		this.browseOnly = ko.observable(this.config.options.browseOnly);
 		this.previewModel = ko.observable(null);
-		this.currentLang = langModel.getLang();
-		this.lg = langModel.getTranslations();
 
 		(<any>this).previewFile.subscribe(enabled => {
 			if(!enabled) {
@@ -2741,17 +3043,17 @@ class FmModel {
 			}
 		});
 
-		this.treeModel = <TreeModel>new TreeModel();
-		this.itemsModel = <ItemsModel>new ItemsModel();
-		this.tableViewModel = <TableViewModel>new TableViewModel();
-		this.previewModel = <PreviewModel>new PreviewModel();
-		this.headerModel = <HeaderModel>new HeaderModel();
-		this.summaryModel = <SummaryModel>new SummaryModel();
-		this.filterModel = <FilterModel>new FilterModel();
-		this.searchModel = <SearchModel>new SearchModel();
-		this.clipboardModel = <ClipboardModel>new ClipboardModel();
-		this.breadcrumbsModel = <BreadcrumbsModel>new BreadcrumbsModel();
-		this.ddModel = <DragAndDropModel>new DragAndDropModel();
+		this.treeModel = <TreeModel>new TreeModel(rfp);
+		this.itemsModel = <ItemsModel>new ItemsModel(rfp);
+		this.tableViewModel = <TableViewModel>new TableViewModel(rfp);
+		this.previewModel = <PreviewModel>new PreviewModel(rfp);
+		this.headerModel = <HeaderModel>new HeaderModel(rfp);
+		this.summaryModel = <SummaryModel>new SummaryModel(rfp);
+		this.filterModel = <FilterModel>new FilterModel(rfp);
+		this.searchModel = <SearchModel>new SearchModel(rfp);
+		this.clipboardModel = <ClipboardModel>new ClipboardModel(rfp);
+		this.breadcrumbsModel = <BreadcrumbsModel>new BreadcrumbsModel(rfp);
+		this.ddModel = <DragAndDropModel>new DragAndDropModel(rfp);
 		this.selectionModel = <SelectionModel>new SelectionModel();
 	}
 
@@ -2822,7 +3124,7 @@ class FmModel {
 	}
 
 	// check whether view item can be opened based on the event and configuration options
-	private isItemOpenable(event) {
+	isItemOpenable(event) {
 		// selecting with Ctrl key
 		if(this.config.manager.selection.enabled && this.config.manager.selection.useCtrlKey && event.ctrlKey === true)
 			return false;
@@ -2835,67 +3137,55 @@ class FmModel {
 
 class richFilemanagerPlugin {
 	public settings: Settings;
-	public write;
-	public error;
-	public warning;
-	public success;
-	public alert;
-	public confirm;
-	public prompt;
-	public dialog;
-	public setDimensions;
-	public log;
 
-	public $container: any;
-	public $wrapper: any;
-	public $header: any;
-	public $uploader: any;
-	public $splitter: any;
-	public $footer: any;
-	public $fileinfo: any;
-	public $filetree: any;
-	public $viewItemsWrapper: any;
-	public $previewWrapper: any;
-	public $viewItems: any;
-	public $uploadButton: any;
+	public $container: JQuery;
+	public $wrapper: JQuery;
+	public $header: JQuery;
+	public $uploader: JQuery;
+	public $splitter: JQuery;
+	public $footer: JQuery;
+	public $fileinfo: JQuery;
+	public $filetree: JQuery;
+	public $viewItemsWrapper: JQuery;
+	public $previewWrapper: JQuery;
+	public $viewItems: JQuery;
+	public $uploadButton: JQuery;
 
-	public config: Config = null;				// configuration options
 	public fileRoot: any = '/';				// relative files root, may be changed with some query params
 	public apiConnector: string = null;		// API connector URL to perform requests to server
 	public capabilities: any = [];			// allowed actions to perform in FM
 	public configSortField: any = null;		// items sort field name
 	public configSortOrder: any = null;		// items sort order 'asc'/'desc'
 	public fmModel: FmModel = null;				// filemanager knockoutJS model
-	public langModel: LangModel = null;			// language model
 	public _url_ = purl();
 	public timeStart = new Date().getTime();
+
+    delayCallback: Function;
 
 	fullexpandedFolder: string;
 
 	/**
 	 * The "constructor" method that gets called when the object is created
 	 */
-	constructor(element: HTMLElement, pluginOptions) {
+	constructor(element: any, pluginOptions) {
 		/** variables to keep request options data **/
 		this.fullexpandedFolder = null;	// path to be automatically expanded by filetree plugin
 
 		/**
 		 * Private properties accessible only from inside the plugin
 		 */
-		let $c = this.$container = $(element);	// reference to the jQuery version of DOM element the plugin is attached to
-		let $w = this.$wrapper = $c.children('.fm-wrapper');
-		let $h = this.$header = $w.find('.fm-header');
-		let $u = this.$uploader = $h.find('.fm-uploader');
-		let $s = this.$splitter = $w.children('.fm-splitter');
-		this.$footer = $w.children('.fm-footer');
-		let $f = this.$fileinfo = $s.children('.fm-fileinfo');
-		this.$filetree = $s.children('.fm-filetree');
-		let $v = this.$viewItemsWrapper = $f.find('.view-items-wrapper');
-		this.$previewWrapper = $f.find('.fm-preview-wrapper');
-		this.$viewItems = $v.find('.view-items');
-		this.$uploadButton = $u.children('.fm-upload');
-
-
+		let $container: JQuery = this.$container = <JQuery>$(element);	// reference to the jQuery version of DOM element the plugin is attached to
+		let $wrapper: JQuery = this.$wrapper = $container.children('.fm-wrapper');
+		let $header: JQuery = this.$header = $wrapper.find('.fm-header');
+		let $uploader: JQuery = this.$uploader = $header.find('.fm-uploader');
+		let $splitter: JQuery = this.$splitter = $wrapper.children('.fm-splitter');
+		this.$footer = $wrapper.children('.fm-footer');
+		let $fileinfo: JQuery = this.$fileinfo = $splitter.children('.fm-fileinfo');
+		this.$filetree = $splitter.children('.fm-filetree');
+		let $viewItemsWrapper: JQuery = this.$viewItemsWrapper = $fileinfo.find('.view-items-wrapper');
+		this.$previewWrapper = $fileinfo.find('.fm-preview-wrapper');
+		this.$viewItems = $viewItemsWrapper.find('.view-items');
+		this.$uploadButton = $uploader.children('.fm-upload');
 
 		/** service variables **/
 		this._url_ = purl();
@@ -2912,12 +3202,9 @@ class richFilemanagerPlugin {
 		// The plugin's final settings, contains the merged default and user-provided options (if any)
 		this.settings = $.extend(true, defaults, pluginOptions);
 
-
-
 		/*---------------------------------------------------------
-	 Helper functions
-	 ---------------------------------------------------------*/
-
+	 	  Helper functions
+	 	  ---------------------------------------------------------*/
 
 		// http://stackoverflow.com/questions/3390930/any-way-to-make-jquery-inarray-case-insensitive
 		(function ($) {
@@ -2954,9 +3241,8 @@ class richFilemanagerPlugin {
 			});
 		})(jQuery);
 
-
 		// Delays execution of function that is passed as argument
-		const delayCallback = (function () {
+		this.delayCallback = (() => {
 			let timer = 0;
 
 			return (callback, ms) => {
@@ -2967,15 +3253,21 @@ class richFilemanagerPlugin {
 
 		// call the "constructor" method
 		let deferred = $.Deferred();
+        let configure = this.configure;
+        let localize = this.localize;
+        let performInitialRequest = this.performInitialRequest;
+        let includeTemplates = this.includeTemplates;
+        let includeAssets = this.includeAssets;
+        let initialize = this.initialize;
 
 		deferred
-			.then(() => this.configure())
-			.then(() => this.localize())
-			.then((/*conf_d, conf_u*/) => this.performInitialRequest())
-			.then(() => this.includeTemplates())
+			.then(() => configure())
+			.then(() => localize())
+			.then((/*conf_d, conf_u*/) => performInitialRequest())
+			.then(() => includeTemplates())
 			.then(() => {
-				this.includeAssets(() => {
-					this.initialize();
+				includeAssets(() => {
+					initialize();
 				});
 			});
 
@@ -2984,40 +3276,39 @@ class richFilemanagerPlugin {
 		$((<any>window)).resize(this.setDimensions.bind(this));
 	}
 
-	configure() {
-		return $.when(this.loadConfigFile('default'), this.loadConfigFile('user')).done((confd, confu) => {
-			let config_default = confd[ 0 ];
-			let config_user = confu[ 0 ];
-			let config = this.config;
+	public configure() {
+		let loadConfigFile = this.loadConfigFile;
 
-			// remove version from user config file
-			if(config_user !== undefined && config_user !== null)
-				delete config_user.version;
+        return $.when(loadConfigFile('default'), loadConfigFile('user'))
+			.done((confd, confu) => {
+				let config_default = confd[ 0 ];
+				let config_user = confu[ 0 ];
 
-			// merge default config and user config file
-			config = $.extend({}, config_default, config_user);
+				// remove version from user config file
+				if(config_user !== undefined && config_user !== null)
+					delete config_user.version;
 
-			// setup apiConnector
-			if(config.api.connectorUrl)
-				this.apiConnector = config.api.connectorUrl;
-			else {
-				let connectorUrl = location.origin + location.pathname;
-				let langConnector = `connectors/${config.api.lang}/filemanager.${config.api.lang}`;
+				// merge default config and user config file
+                config = $.extend({}, config_default, config_user);
 
-				// for url like http://site.com/index.html
-				if(this.getExtension(connectorUrl).length > 0)
-					connectorUrl = connectorUrl.substring(0, connectorUrl.lastIndexOf('/') + 1);
+				// setup apiConnector
+				if(config.api.connectorUrl)
+					this.apiConnector = <string>config.api.connectorUrl;
+				else {
+					let connectorUrl = location.origin + location.pathname;
+					let langConnector = `connectors/${config.api.lang}/filemanager.${config.api.lang}`;
 
-				this.apiConnector = connectorUrl + langConnector;
-			}
-		});
+					// for url like http://site.com/index.html
+					if(getExtension(connectorUrl).length > 0)
+						connectorUrl = connectorUrl.substring(0, connectorUrl.lastIndexOf('/') + 1);
+
+					this.apiConnector = connectorUrl + langConnector;
+				}
+			});
 	}
 
 	// performs initial request to server to retrieve initial params
-	performInitialRequest() {
-		let config = this.config;
-		let fm = this;
-
+	public performInitialRequest() {
 		return this.buildAjaxRequest('GET', {
 			mode: 'initiate'
 		}).done((response) => {
@@ -3039,9 +3330,9 @@ class richFilemanagerPlugin {
 					config.options.browseOnly = true;
 
 			}
-			this.handleAjaxResponseErrors(response);
+			handleAjaxResponseErrors(response);
 		}).fail(() => {
-			fm.error('Unable to perform initial request to server.');
+			error('Unable to perform initial request to server.');
 		}).then(response => {
 			// noinspection TypeScriptUnresolvedVariable
 			if(response.errors) { // todo: errors does not exist in the jquery type definition
@@ -3051,11 +3342,10 @@ class richFilemanagerPlugin {
 	}
 
 	// localize messages based on configuration or URL value
-	localize() {
-		let fm = this;
-		let langModel = this.langModel = new LangModel(fm);
-		let config = this.config;
+	public localize() {
 		let _url_ = this._url_;
+
+		LangModel.init(this.settings.baseUrl);
 
 		return $.ajax()
 			.then(() => {
@@ -3063,30 +3353,30 @@ class richFilemanagerPlugin {
 
 				if(urlLangCode) {
 					// try to load lang file based on langCode in query params
-					return this.file_exists(langModel.buildLangFileUrl(urlLangCode))
+					return file_exists(LangModel.buildLangFileUrl(urlLangCode))
 						.done(() => {
-							langModel.setLang(urlLangCode);
+							LangModel.setLang(urlLangCode);
 						})
 						.fail(() => {
 							setTimeout(function () {
-								fm.error(`Given language file (${langModel.buildLangFileUrl(urlLangCode)}) does not exist!`);
+								error(`Given language file (${LangModel.buildLangFileUrl(urlLangCode)}) does not exist!`);
 							}, 500);
 						});
 				} else
-					langModel.setLang(config.language.default);
+					LangModel.setLang(config.language.default);
 			})
 			.then(() => {
 				return $.ajax({
 					type: 'GET',
-					url: langModel.buildLangFileUrl(langModel.getLang()),
+					url: LangModel.buildLangFileUrl(LangModel.getLang()),
 					dataType: 'json'
 				}).done(function (jsonTrans) {
-					langModel.setTranslations(jsonTrans);
+					LangModel.setTranslations(jsonTrans);
 				});
 			});
 	}
 
-	includeTemplates() {
+	public includeTemplates() {
 		return $.when(this.loadTemplate('upload-container'), this.loadTemplate('upload-item')).done(function (uc, ui) {
 			let tmpl_upload_container = uc[ 0 ];
 			let tmpl_upload_item = ui[ 0 ];
@@ -3097,10 +3387,9 @@ class richFilemanagerPlugin {
 		});
 	}
 
-	includeAssets(callback) {
+	public includeAssets(callback) {
 		let primary = [];
 		let secondary = [];
-		let config = this.config;
 
 		// theme defined in configuration file
 		primary.push(`/themes/${config.options.theme}/styles/theme.css`);
@@ -3177,10 +3466,9 @@ class richFilemanagerPlugin {
 
 	}
 
-	initialize() {
-		let config = this.config;
+	public initialize() {
 		let _url_ = this._url_;
-		let fm = this;
+        let setDimensions = this.setDimensions;
 
 		// reads capabilities from config files if exists else apply default settings
 		this.capabilities = config.options.capabilities || [ 'upload', 'select', 'download', 'rename', 'copy', 'move', 'delete', 'extract' ];
@@ -3199,7 +3487,7 @@ class richFilemanagerPlugin {
 
 		if(exclusiveFolder) {
 			this.fileRoot = `/${exclusiveFolder}/`;
-			this.fileRoot = this.normalizePath(this.fileRoot);
+			this.fileRoot = normalizePath(this.fileRoot);
 		}
 
 		// get folder that should be expanded after filemanager is loaded
@@ -3207,11 +3495,11 @@ class richFilemanagerPlugin {
 
 		if(expandedFolder) {
 			this.fullexpandedFolder = this.fileRoot + expandedFolder + '/';
-			this.fullexpandedFolder = this.normalizePath(this.fullexpandedFolder);
+			this.fullexpandedFolder = normalizePath(this.fullexpandedFolder);
 		}
 
 		// Activates knockout.js
-		let fmModel = this.fmModel = new FmModel(this.config, this.langModel, this.fileRoot);
+		let fmModel = this.fmModel = new FmModel(this);
 		ko.applyBindings(fmModel);
 
 		fmModel.itemsModel.initiateLazyLoad();
@@ -3279,7 +3567,7 @@ class richFilemanagerPlugin {
 			else
 				$panes = this.$splitter.children('.splitter-pane');
 
-			$panes.each(function (i) {
+			$panes.each(function (/*i*/) {
 				let $pane: JQuery = (<JQuery>$)(this);
 				let top = $pane.offset().top;
 				let left = $pane.offset().left;
@@ -3327,12 +3615,12 @@ class richFilemanagerPlugin {
 			disabled: !config.manager.selection.enabled,
 			appendTo: this.$viewItems,
 
-			start: (event, ui) => {
-				this.clearSelection();
+			start: (/*event, ui*/) => {
+				clearSelection();
 				fmModel.itemsModel.isSelecting(true);
 			},
 
-			stop: (event, ui) => {
+			stop: (/*event, ui*/) => {
 				fmModel.itemsModel.isSelecting(false);
 			},
 
@@ -3353,14 +3641,14 @@ class richFilemanagerPlugin {
 			selector: '.view-items',
 			zIndex: 10,
 			// wrap options with "build" allows to get item element
-			build: ($triggerElement, e) => {
+			build: (/*$triggerElement, e*/) => {
 				let contextMenuItems = {
 					createFolder: {
-						name: this.lg('create_folder'),
+						name: lg('create_folder'),
 						className: 'create-folder'
 					},
 					paste: {
-						name: this.lg('clipboard_paste'),
+						name: lg('clipboard_paste'),
 						className: 'paste',
 						disabled: (key, options) => fmModel.clipboardModel.isEmpty()
 					}
@@ -3373,7 +3661,7 @@ class richFilemanagerPlugin {
 					appendTo: '.fm-container',
 					items: contextMenuItems,
 					reposition: false,
-					callback: (itemKey, options) => {
+					callback: (itemKey/*, options*/) => {
 						switch(itemKey) {
 							case 'createFolder':
 								fmModel.headerModel.createFolder();
@@ -3485,7 +3773,6 @@ class richFilemanagerPlugin {
 							// set flag if selection lasso is active
 							if(fmModel.itemsModel.isSelecting())
 								fmModel.itemsModel.continiousSelection(true);
-
 							let yIncrement = Math.abs(this.mcs.top) - Math.abs(this.yStartPosition);
 							this.$viewItems.selectable('repositionCssHelper', yIncrement, 0);
 						}
@@ -3515,17 +3802,12 @@ class richFilemanagerPlugin {
 		let $loading = this.$container.find('.fm-loading-wrap');
 		// remove loading screen div
 		$loading.fadeOut(800, function () {
-			fm.setDimensions();
+			setDimensions();
 		});
-		fm.setDimensions();
+		setDimensions();
 	}
 
-	// Wrapper for translate method
-	lg(key) {
-		return this.langModel.translate(key);
-	}
-
-	sortItems(items) {
+	public sortItems(items) {
 		let fmModel = this.fmModel;
 		let parentItem;
 		let sortOrder = (fmModel.viewMode() === 'list') ? fmModel.itemsModel.listSortOrder() : this.configSortOrder;
@@ -3657,11 +3939,11 @@ class richFilemanagerPlugin {
 				items.splice(i, 1);
 			}
 		}
-		if(this.config.options.folderPosition !== 'top')
+		if(config.options.folderPosition !== 'top')
 			folderItems.reverse();
 
 		for(let k = 0, fl = folderItems.length; k < fl; k++) {
-			if(this.config.options.folderPosition === 'top')
+			if(config.options.folderPosition === 'top')
 				items.unshift(folderItems[ k ]);
 			else
 				items.push(folderItems[ k ]);
@@ -3674,286 +3956,60 @@ class richFilemanagerPlugin {
 		return items;
 	}
 
-	// Test if a given url exists
-	file_exists(url) {
-		return $.ajax({
-			type: 'HEAD',
-			url: url
-		});
-	}
 
 	// Retrieves config settings from config files
-	loadConfigFile(type) {
+	public loadConfigFile(type: string) {
 		let url = null;
-		let fm = this;
+		let settings = this.settings;
 
 		type = (typeof type === 'undefined') ? 'user' : type;
 
 		if(type === 'user') {
 			if(this._url_.param('config'))
-				url = `${fm.settings.baseUrl}/config/${this._url_.param('config')}`;
+				url = `${settings.baseUrl}/config/${this._url_.param('config')}`;
 			else
-				url = `${fm.settings.baseUrl}/config/filemanager.config.json`;
+				url = `${settings.baseUrl}/config/filemanager.config.json`;
 
 		} else
-			url = `${fm.settings.baseUrl}/config/filemanager.config.default.json`;
+			url = `${settings.baseUrl}/config/filemanager.config.default.json`;
 
 		return $.ajax({
 			type: 'GET',
 			url: url,
 			dataType: 'json',
 			cache: false,
-			error: response => {
-				fm.error(`Given config file (${url}) does not exist!`);
+			error: (/*response*/) => {
+				error(`Given config file (${url}) does not exist!`);
 			}
 		});
 	}
 
 	// Loads a given js/css files dynamically into header
-	loadAssets(assets) {
-		let fm = this;
+	public loadAssets(assets) {
+		let settings = this.settings;
 
 		for(let i = 0, l = assets.length; i < l; i++) {
 			if(typeof assets[ i ] === 'string')
-				assets[ i ] = fm.settings.baseUrl + assets[ i ];
-
+				assets[ i ] = settings.baseUrl + assets[ i ];
 		}
 
 		toast.apply(this, assets);
 	}
 
 	// Loads a given js template file into header if not already included
-	loadTemplate(id/*, data*/) {
-		let fm = this;
+	public loadTemplate(id/*, data*/) {
+        let settings = this.settings;
 
 		return $.ajax({
 			type: 'GET',
-			url: `${fm.settings.baseUrl}/scripts/templates/${id}.html`,
-			error: this.handleAjaxError.bind(this)
+			url: `${settings.baseUrl}/scripts/templates/${id}.html`,
+			error: handleAjaxError
 		});
-	}
-
-	// Converts bytes to KB, MB, or GB as needed for display
-	formatBytes(bytes, round?) {
-		if(!bytes) return '';
-		round = round || false;
-		let n = parseFloat(bytes);
-		let d = parseFloat(<any>(round ? 1000 : 1024));
-		let c = 0;
-		let u = [ this.lg('unit_bytes'), this.lg('unit_kb'), this.lg('unit_mb'), this.lg('unit_gb') ];
-
-		while(true) {
-			if(n < d) {
-				n = Math.round(n * 100) / 100;
-				return n + ' ' + u[ c ];
-			} else {
-				n /= d;
-				c += 1;
-			}
-		}
-	}
-
-	// Format server-side response single error object
-	formatServerError(errorObject: any) {
-		let message;
-		// look for message in case an error CODE is provided
-		if(this.langModel.getLang() && this.lg(errorObject.message)) {
-			message = this.lg(errorObject.message);
-			$.each(errorObject.arguments, (i, argument) => {
-				message = message.replace('%s', argument);
-			});
-		} else
-			message = errorObject.message;
-
-		return message;
-	}
-
-	// Handle ajax request error.
-	handleAjaxError(response) {
-		let fm = this;
-
-		fm.log(response.responseText || response);
-		fm.error(this.lg('ERROR_SERVER'));
-		fm.error(response.responseText);
-	}
-
-	// Handle ajax json response error.
-	handleAjaxResponseErrors(response) {
-		let fm = this;
-
-		if(response.errors) {
-			fm.log(response.errors);
-			$.each(response.errors, (i, errorObject) => {
-				fm.error(this.formatServerError(errorObject));
-
-				if(errorObject.arguments.redirect)
-					window.location.href = errorObject.arguments.redirect;
-
-			});
-		}
-	}
-
-
-	// Test if file is authorized, based on extension only
-	isAuthorizedFile(filename) {
-		let ext = this.getExtension(filename);
-		let config = this.config;
-
-		if(config.security.extensions.ignoreCase) {
-			if(config.security.extensions.policy == 'ALLOW_LIST')
-				if((<JQuery>$).inArrayInsensitive(ext, config.security.extensions.restrictions) !== -1) return true;
-
-			if(config.security.extensions.policy == 'DISALLOW_LIST')
-				if((<JQuery>$).inArrayInsensitive(ext, config.security.extensions.restrictions) === -1) return true;
-
-		} else {
-			if(config.security.extensions.policy == 'ALLOW_LIST')
-				if($.inArray(ext, config.security.extensions.restrictions) !== -1) return true;
-
-			if(config.security.extensions.policy == 'DISALLOW_LIST')
-				if($.inArray(ext, config.security.extensions.restrictions) === -1) return true;
-
-		}
-
-		return false;
-	}
-
-	// Test if path is dir
-	public isFile(path) {
-		return path.charAt(path.length - 1) !== '/';
-	}
-
-	// Replace all leading or trailing chars with an empty string
-	public trim(string, char) {
-		let regExp = new RegExp(`^${char}+|${char}+$`, 'g');
-
-		return string.replace(regExp, '');
-	}
-
-	// Replace all leading chars with an empty string
-	public ltrim(string, char) {
-		let regExp = new RegExp(`^${char}+`, 'g');
-
-		return string.replace(regExp, '');
-	}
-
-	// Replace all trailing chars with an empty string
-	public rtrim(string, char) {
-		let regExp = new RegExp(`${char}+$`, 'g');
-
-		return string.replace(regExp, '');
-	}
-
-	public startsWith(string: String, searchString, position?) {
-		position = position || 0;
-		return string.substr(position, searchString.length) === searchString;
-	}
-
-	public encodePath(path) {
-		let parts = [];
-		$.each(path.split('/'), (i, part) => {
-			parts.push(encodeURIComponent(part));
-		});
-		return parts.join('/');
-	}
-
-	// invert backslashes and remove duplicated ones
-	public normalizePath(path) {
-		return path.replace(/\\/g, '/').replace(/\/+/g, '/');
-	}
-
-	// return filename extension
-	public getExtension(filename) {
-		if(filename.split('.').length === 1)
-			return '';
-
-		return filename.split('.').pop().toLowerCase();
-	}
-
-	// return filename without extension
-	public getFilename(filename) {
-		if(filename.lastIndexOf('.') !== -1)
-			return filename.substring(0, filename.lastIndexOf('.'));
-		else
-			return filename;
-
-	}
-
-	// return path without filename
-	// "/dir/to/" 		  --> "/dir/to/"
-	// "/dir/to/file.txt" --> "/dir/to/"
-	public getDirname(path) {
-		if(path.lastIndexOf('/') !== path.length - 1)
-			return path.substr(0, path.lastIndexOf('/') + 1);
-		else
-			return path;
-
-	}
-
-	// return parent folder for path, if folder is passed it should ends with '/'
-	// "/dir/to/"          -->  "/dir/"
-	// "/dir/to/file.txt"  -->  "/dir/"
-	public getParentDirname(path) {
-		return path.split('/').reverse().slice(2).reverse().join('/') + '/';
-	}
-
-	// return closest node for path
-	// "/dir/to/"          -->  "/dir/"
-	// "/dir/to/file.txt"  -->  "/dir/to/"
-	public getClosestNode(path) {
-		return path.substring(0, path.slice(0, -1).lastIndexOf('/')) + '/';
-	}
-
-	// Test if is editable file
-	public isEditableFile(filename) {
-		return ($.inArray(this.getExtension(filename), this.config.editor.extensions) !== -1);
-	}
-
-	// Test if is image file
-	public isImageFile(filename) {
-		return ($.inArray(this.getExtension(filename), this.config.viewer.image.extensions) !== -1);
-	}
-
-	// Test if file is supported web video file
-	public isVideoFile(filename) {
-		return ($.inArray(this.getExtension(filename), this.config.viewer.video.extensions) !== -1);
-	}
-
-	// Test if file is supported web audio file
-	public isAudioFile(filename) {
-		return ($.inArray(this.getExtension(filename), this.config.viewer.audio.extensions) !== -1);
-	}
-
-	// Test if file is openable in iframe
-	public isIFrameFile(filename) {
-		return ($.inArray(this.getExtension(filename), this.config.viewer.iframe.extensions) !== -1);
-	}
-
-	// Test if file is opendoc file
-	// Supported file types: http://viewerjs.org/examples/
-	public isOpenDocFile(filename) {
-		return ($.inArray(this.getExtension(filename), this.config.viewer.opendoc.extensions) !== -1);
-	}
-
-	// Test if file is supported by Google Docs viewer
-	// Supported file types: http://stackoverflow.com/q/24325363/1789808
-	public isGoogleDocsFile(filename) {
-		return ($.inArray(this.getExtension(filename), this.config.viewer.google.extensions) !== -1);
-	}
-
-	// Test if file is supported by CodeMirror renderer
-	public isCodeMirrorFile(filename) {
-		return ($.inArray(this.getExtension(filename), this.config.viewer.codeMirrorRenderer.extensions) !== -1);
-	}
-
-	// Test if file is supported by Markdown-it renderer, which renders .md files to HTML
-	public isMarkdownFile(filename) {
-		return ($.inArray(this.getExtension(filename), this.config.viewer.markdownRenderer.extensions) !== -1);
 	}
 
 	public extendRequestParams(method, parameters) {
 		let methodParams;
-		let configParams = this.config.api.requestParams;
+		let configParams = config.api.requestParams;
 
 		method = method.toUpperCase();
 
@@ -3989,9 +4045,9 @@ class richFilemanagerPlugin {
 		});
 	}
 
-	public getFilteredFileExtensions() {
+	// noinspection JSUnusedGlobalSymbols
+    public getFilteredFileExtensions() {
 		let shownExtensions;
-		let config = this.config;
 		let _url_ = this._url_;
 
 		if(_url_.param('filter')) {
@@ -4012,14 +4068,14 @@ class richFilemanagerPlugin {
 	}
 
 	// Build url to preview files
-	public createPreviewUrl(resourceObject, encode) {
-		let fm = this;
+	public createPreviewUrl(resourceObject: ReadableObject, encode) {
+	    let settings = this.settings;
 		let previewUrl;
 		let objectPath = resourceObject.attributes.path;
 
-		if(this.config.viewer.absolutePath && objectPath) {
+		if(config.viewer.absolutePath && objectPath) {
 			if(encode)
-				objectPath = this.encodePath(objectPath);
+				objectPath = encodePath(objectPath);
 
 			previewUrl = this.buildAbsolutePath(objectPath, false);
 		} else {
@@ -4030,27 +4086,26 @@ class richFilemanagerPlugin {
 			previewUrl = this.buildConnectorUrl(queryParams);
 		}
 
-		previewUrl = fm.settings.callbacks.beforeCreatePreviewUrl(resourceObject, previewUrl);
+		previewUrl = settings.callbacks.beforeCreatePreviewUrl(resourceObject, previewUrl);
 		return previewUrl;
 	}
 
 	// Build url to display image or its thumbnail
-	public createImageUrl(resourceObject, thumbnail, disableCache) {
-		let fm = this;
+	public createImageUrl(resourceObject: ReadableObject, thumbnail, disableCache) {
 		let imageUrl;
-		let config = this.config;
+		let settings = this.settings;
 
-		if(this.isImageFile(resourceObject.id) &&
+		if(isImageFile(resourceObject.id) &&
 			resourceObject.attributes.readable && (
 				(thumbnail && config.viewer.image.showThumbs) ||
 				(!thumbnail && config.viewer.image.enabled === true)
 			)) {
 			if(config.viewer.absolutePath && !thumbnail && resourceObject.attributes.path)
-				imageUrl = this.buildAbsolutePath(this.encodePath(resourceObject.attributes.path), disableCache);
+				imageUrl = this.buildAbsolutePath(encodePath(resourceObject.attributes.path), disableCache);
 			else {
 				let queryParams = {path: resourceObject.id, mode: undefined, thumbnail: undefined};
 
-				if(this.getExtension(resourceObject.id) === 'svg')
+				if(getExtension(resourceObject.id) === 'svg')
 					queryParams.mode = 'readfile';
 				else {
 					queryParams.mode = 'getimage';
@@ -4061,16 +4116,15 @@ class richFilemanagerPlugin {
 				queryParams = this.extendRequestParams('GET', queryParams);
 				imageUrl = this.buildConnectorUrl(queryParams);
 			}
-			imageUrl = fm.settings.callbacks.beforeCreateImageUrl(resourceObject, imageUrl);
+			imageUrl = settings.callbacks.beforeCreateImageUrl(resourceObject, imageUrl);
 		}
 		return imageUrl;
 	}
 
 	public buildAbsolutePath(path, disableCache) {
-		let config = this.config;
 		let url = (typeof config.viewer.previewUrl === 'string') ? config.viewer.previewUrl : location.origin;
 
-		url = this.trim(url, '/') + path;
+		url = trim(url, '/') + path;
 		// add timestamp-based query parameter to disable browser caching
 		if(disableCache)
 			url += '?time=' + (new Date().getTime());
@@ -4078,12 +4132,12 @@ class richFilemanagerPlugin {
 		return url;
 	}
 
-	public createCopyUrl(resourceObject) {
+	public createCopyUrl(resourceObject: ReadableObject) {
 		function encodeCopyUrl(path) {
-			return (this.config.clipboard.encodeCopyUrl) ? this.encodePath(path) : path;
+			return (config.clipboard.encodeCopyUrl) ? this.encodePath(path) : path;
 		}
 
-		if(this.config.viewer.absolutePath && resourceObject.attributes.path) {
+		if(config.viewer.absolutePath && resourceObject.attributes.path) {
 			let path = encodeCopyUrl(resourceObject.attributes.path);
 
 			return this.buildAbsolutePath(path, false);
@@ -4096,22 +4150,22 @@ class richFilemanagerPlugin {
 	}
 
 	// Returns container for filetree or fileinfo section based on scrollbar plugin state
-	public getSectionContainer($section) {
+	// noinspection JSUnusedGlobalSymbols
+    public getSectionContainer($section) {
 		// if scrollbar plugin is enabled
-		if(this.config.customScrollbar.enabled)
+		if(config.customScrollbar.enabled)
 			return $section.find('.mCSB_container');
 		else
 			return $section;
 
 	}
 
-
 	// Handle multiple actions in loop with deferred object
 	public processMultipleActions(items, callbackFunction: (a: any, b: any) => JQuery.PromiseBase<any>, finishCallback?) {
-		let fm = this;
 		let successCounter = 0;
 		let totalCounter = items.length;
 		let deferred: JQuery.Deferred<any> | JQuery.PromiseBase<any> = $.Deferred().resolve();
+		let lg = lg;
 
 		$.each(items, (i, item) => {
 			deferred = (<JQuery.Deferred>deferred)
@@ -4125,7 +4179,7 @@ class richFilemanagerPlugin {
 
 		if(totalCounter > 1) {
 			(<JQuery.Deferred>deferred).then(() => {
-				fm.write(this.lg('successful_processed').replace('%s', successCounter).replace('%s', totalCounter));
+				write(lg('successful_processed').replace('%s', <string>successCounter).replace('%s', <string>totalCounter));
 			});
 		}
 
@@ -4136,21 +4190,9 @@ class richFilemanagerPlugin {
 		});
 	}
 
-	// Clears browser window selection
-	public clearSelection() {
-		if((<any>document).selection && (<any>document).selection.empty)
-			(<any>document).selection.empty();
-		else if(window.getSelection) {
-			let sel = window.getSelection();
-
-			sel.removeAllRanges();
-		}
-	}
-
 	// Build FileTree and bind events
 	public prepareFileTree() {
 		let fmModel = this.fmModel;
-		let config = this.config;
 
 		if(!config.filetree.enabled)
 			return;
@@ -4192,13 +4234,13 @@ class richFilemanagerPlugin {
 	// Triggered by clicking the "Select" button in detail views
 	// or choosing the "Select" contextual menu option in list views.
 	// NOTE: closes the window when finished.
-	public selectItem(resourceObject) {
-		let fm = this;
+	public selectItem(resourceObject: ReadableObject) {
 		let contextWindow: any = null;
 		let previewUrl = this.createPreviewUrl(resourceObject, true);
 		let _url_ = this._url_;
+		let settings = this.settings;
 
-		previewUrl = fm.settings.callbacks.beforeSelectItem(resourceObject, previewUrl);
+		previewUrl = settings.callbacks.beforeSelectItem(resourceObject, previewUrl);
 
 		// tinyMCE > 3.0 integration method
 		if((<any>window).tinyMCEPopup) {
@@ -4241,7 +4283,7 @@ class richFilemanagerPlugin {
 					instance.modal.close();
 					instance.buffer.set(); // for undo action
 
-					if(this.isImageFile(resourceObject.attributes.name))
+					if(isImageFile(resourceObject.attributes.name))
 						instance.insert.html('<img src="' + previewUrl + '">');
 					else
 						instance.insert.html('<a href="' + previewUrl + '">' + resourceObject.attributes.name + '</a>');
@@ -4291,27 +4333,27 @@ class richFilemanagerPlugin {
 			);
 		}
 
-		fm.settings.callbacks.afterSelectItem(resourceObject, previewUrl, contextWindow);
+		settings.callbacks.afterSelectItem(resourceObject, previewUrl, contextWindow);
 	}
 
 	// Renames the current item and returns the new name.
 	// Called by clicking the "Rename" button in detail views
 	// or choosing the "Rename" contextual menu option in list views.
-	public renameItem(resourceObject) {
+	public renameItem(resourceObject: ReadableObject) {
 		let fmModel = this.fmModel;
-		let fm = this;
-		let config = this.config;
-		let doRename = function (e, ui: AleritfyDialogUI) {
+		let lg = lg;
+
+        let doRename = function (e, ui: AleritfyDialogUI) {
 			let oldPath = resourceObject.id;
 			let givenName = ui.getInputValue();
 
 			if(!givenName) {
 				// TODO: file/folder message depending on file type
-				fm.error(this.lg('new_filename'));
+				error(lg('new_filename'));
 				return;
 			}
 
-			if(!this.config.options.allowChangeExtensions) {
+			if(!config.options.allowChangeExtensions) {
 				let suffix = this.getExtension(resourceObject.attributes.name);
 
 				if(suffix.length > 0)
@@ -4321,20 +4363,21 @@ class richFilemanagerPlugin {
 
 			// File only - Check if file extension is allowed
 			if(this.isFile(oldPath) && !this.isAuthorizedFile(givenName)) {
-				let str = '<p>' + this.lg('INVALID_FILE_TYPE') + '</p>';
+				let str = '<p>' + lg('INVALID_FILE_TYPE') + '</p>';
 
 				if(config.security.extensions.policy == 'ALLOW_LIST')
-					str += '<p>' + this.lg('ALLOWED_FILE_TYPE').replace('%s', config.security.extensions.restrictions.join(', ')) + '.</p>';
+					str += '<p>' + lg('ALLOWED_FILE_TYPE').replace('%s', config.security.extensions.restrictions.join(', ')) + '.</p>';
 
 				if(config.security.extensions.policy == 'DISALLOW_LIST')
-					str += '<p>' + this.lg('DISALLOWED_FILE_TYPE').replace('%s', config.security.extensions.restrictions.join(', ')) + '.</p>';
+					str += '<p>' + lg('DISALLOWED_FILE_TYPE').replace('%s', config.security.extensions.restrictions.join(', ')) + '.</p>';
 
 				$('#filepath').val('');
-				fm.error(str);
+				error(str);
 				return;
 			}
 
-			this.buildAjaxRequest('GET', {
+			// noinspection ReservedWordAsName
+            this.buildAjaxRequest('GET', {
 				mode: 'rename',
 				old: oldPath,
 				new: givenName
@@ -4384,23 +4427,23 @@ class richFilemanagerPlugin {
 
 					ui.closeDialog();
 					if(config.options.showConfirmation)
-						fm.success(lg('successful_rename'));
+						success(lg('successful_rename'));
 
 				}
-				this.handleAjaxResponseErrors(response);
+				handleAjaxResponseErrors(response);
 			}).fail(this.handleAjaxError.bind(this));
 		};
 
-		fm.prompt({
-			message: this.lg('new_filename'),
-			value: config.options.allowChangeExtensions ? resourceObject.attributes.name : this.getFilename(resourceObject.attributes.name),
+		prompt({
+			message: lg('new_filename'),
+			value: config.options.allowChangeExtensions ? resourceObject.attributes.name : getFilename(resourceObject.attributes.name),
 			okBtn: {
-				label: this.lg('action_rename'),
+				label: lg('action_rename'),
 				autoClose: false,
 				click: doRename
 			},
 			cancelBtn: {
-				label: this.lg('cancel')
+				label: lg('cancel')
 			}
 		});
 	}
@@ -4410,45 +4453,40 @@ class richFilemanagerPlugin {
 	// or choosing the "Move" contextual menu option in list views.
 	public moveItemPrompt(objects, successCallback) {
 		let fmModel = this.fmModel;
-		let fm = this;
-		let doMove = (e, ui: AleritfyDialogUI) => {
-			let targetPath = ui.getInputValue();
-
-			if(!targetPath) {
-				fm.error(this.lg('prompt_foldername'));
-				return;
-			}
-			targetPath = this.rtrim(targetPath, '/') + '/';
-			successCallback(targetPath);
-		};
-
 		let objectsTotal = objects.length;
-		let message = (objectsTotal > 1) ? this.lg('prompt_move_multiple').replace('%s', objectsTotal) : this.lg('prompt_move');
+		let message = (objectsTotal > 1) ? lg('prompt_move_multiple').replace('%s', objectsTotal) : lg('prompt_move');
 
-		fm.prompt({
+		prompt({
 			message: message,
 			value: fmModel.currentPath(),
 			okBtn: {
-				label: this.lg('action_move'),
+				label: lg('action_move'),
 				autoClose: false,
-				click: doMove
+				click: (e, ui: AleritfyDialogUI) => {
+                    let targetPath = ui.getInputValue();
+
+                    if(!targetPath) {
+                        error(lg('prompt_foldername'));
+                        return;
+                    }
+                    targetPath = rtrim(targetPath, '/') + '/';
+                    successCallback(targetPath);
+                }
 			},
 			cancelBtn: {
-				label: this.lg('cancel')
+				label: lg('cancel')
 			},
 			template: {
-				dialogInput:
-				'<input data-alertify-input type="text" value="" />' +
-				'<div class="prompt-info">' + this.lg('help_move') + '</div>'
+				dialogInput: `<input data-alertify-input type="text" value="" /><div class="prompt-info">${lg('help_move')}</div>`
 			}
 		});
 	}
 
 	// Copy the current item to specified dir and returns the new name.
 	// Called upon paste copied items via clipboard.
-	public copyItem(resourceObject, targetPath) {
+	public copyItem(resourceObject: ReadableObject, targetPath) {
 		let fmModel = this.fmModel;
-		let fm = this;
+
 		return this.buildAjaxRequest('GET', {
 			mode: 'copy',
 			source: resourceObject.id,
@@ -4460,21 +4498,22 @@ class richFilemanagerPlugin {
 				fmModel.addItem(newItem, targetPath);
 
 				alertify.clearDialogs();
-				if(this.config.options.showConfirmation)
-					fm.success(this.lg('successful_copied'));
+				if(config.options.showConfirmation)
+					success(lg('successful_copied'));
 
 			}
-			this.handleAjaxResponseErrors(response);
-		}).fail(this.handleAjaxError.bind(this));
+			handleAjaxResponseErrors(response);
+		}).fail(handleAjaxError);
 	}
 
 	// Move the current item to specified dir and returns the new name.
 	// Called by clicking the "Move" button in detail views
 	// or choosing the "Move" contextual menu option in list views.
-	public moveItem(resourceObject, targetPath) {
+	public moveItem(resourceObject: ReadableObject, targetPath) {
 		let fmModel = this.fmModel;
-		let fm = this;
-		return this.buildAjaxRequest('GET', {
+
+		// noinspection ReservedWordAsName
+        return this.buildAjaxRequest('GET', {
 			mode: 'move',
 			old: resourceObject.id,
 			new: targetPath
@@ -4494,30 +4533,29 @@ class richFilemanagerPlugin {
 					fmModel.previewFile(false);
 
 				alertify.clearDialogs();
-				if(this.config.options.showConfirmation)
-					fm.success(this.lg('successful_moved'));
+				if(config.options.showConfirmation)
+					success(lg('successful_moved'));
 
 			}
-			this.handleAjaxResponseErrors(response);
-		}).fail(this.handleAjaxError.bind(this));
+			handleAjaxResponseErrors(response);
+		}).fail(handleAjaxError);
 	}
 
 	// Prompts for confirmation, then deletes the current item.
 	public deleteItemPrompt(objects, successCallback) {
-		let fm = this;
 		let objectsTotal = objects.length;
-		let message = (objectsTotal > 1) ? this.lg('confirm_delete_multiple').replace('%s', objectsTotal) : this.lg('confirm_delete');
+		let message = (objectsTotal > 1) ? lg('confirm_delete_multiple').replace('%s', objectsTotal) : lg('confirm_delete');
 
-		fm.confirm({
+		confirm({
 			message: message,
 			okBtn: {
-				label: this.lg('yes'),
-				click: (e, ui: AleritfyDialogUI) => {
+				label: lg('yes'),
+				click: (/*e, ui: AleritfyDialogUI*/) => {
 					successCallback();
 				}
 			},
 			cancelBtn: {
-				label: this.lg('no')
+				label: lg('no')
 			}
 		});
 	}
@@ -4525,7 +4563,7 @@ class richFilemanagerPlugin {
 	// Delete item by path
 	public deleteItem(path) {
 		let fmModel = this.fmModel;
-		let fm = this;
+
 		return this.buildAjaxRequest('GET', {
 			mode: 'delete',
 			path: path
@@ -4539,18 +4577,18 @@ class richFilemanagerPlugin {
 				if(fmModel.previewFile() && fmModel.previewModel.rdo().id === targetItem.id)
 					fmModel.previewFile(false);
 
-				if(this.config.options.showConfirmation)
-					fm.success(this.lg('successful_delete'));
+				if(config.options.showConfirmation)
+					success(lg('successful_delete'));
 
 			}
-			this.handleAjaxResponseErrors(response);
-		}).fail(this.handleAjaxError.bind(this));
+			handleAjaxResponseErrors(response);
+		}).fail(handleAjaxError);
 	}
 
 	// Starts file download process.
 	// Called by clicking the "Download" button in detail views
 	// or choosing the "Download" contextual menu item in list views.
-	public downloadItem(resourceObject) {
+	public downloadItem(resourceObject: ReadableObject) {
 		let queryParams = {
 			mode: 'download',
 			path: resourceObject.id
@@ -4561,24 +4599,24 @@ class richFilemanagerPlugin {
 				//window.location = buildConnectorUrl(queryParams);
 				(<JQuery>$).fileDownload(this.buildConnectorUrl(queryParams));
 			}
-			this.handleAjaxResponseErrors(response);
-		}).fail(this.handleAjaxError.bind(this));
+			handleAjaxResponseErrors(response);
+		}).fail(handleAjaxError);
 	}
 
 	// Creates CodeMirror instance to let user change the content of the file
-	public previewItem(resourceObject) {
+	public previewItem(resourceObject: ReadableObject) {
 		return this.buildAjaxRequest('GET', {
 			mode: 'editfile',
 			path: resourceObject.id
 		}).done(response => {
-			this.handleAjaxResponseErrors(response);
-		}).fail(this.handleAjaxError.bind(this));
+			handleAjaxResponseErrors(response);
+		}).fail(handleAjaxError);
 	}
 
 	// Save CodeMirror editor content to file
-	public saveItem(resourceObject) {
+    // noinspection JSUnusedLocalSymbols
+    public saveItem(resourceObject: ReadableObject) {
 		let fmModel = this.fmModel;
-		let fm = this;
 		let formParams = $('#fm-js-editor-form').serializeArray();
 
 		this.buildAjaxRequest('POST', formParams).done(response => {
@@ -4600,10 +4638,10 @@ class richFilemanagerPlugin {
 
 				fmModel.itemsModel.objects.replace(originalItem, newItem);
 
-				fm.success(this.lg('successful_edit'));
+				success(lg('successful_edit'));
 			}
-			this.handleAjaxResponseErrors(response);
-		}).fail(this.handleAjaxError.bind(this));
+			handleAjaxResponseErrors(response);
+		}).fail(handleAjaxError);
 	}
 
 	public getItemInfo(targetPath) {
@@ -4611,28 +4649,27 @@ class richFilemanagerPlugin {
 			mode: 'getfile',
 			path: targetPath
 		}).done(response => {
-			this.handleAjaxResponseErrors(response);
-		}).fail(this.handleAjaxError.bind(this));
+			handleAjaxResponseErrors(response);
+		}).fail(handleAjaxError);
 	}
 
 	// Display storage summary info
 	public summarizeItems() {
 		let fmModel = this.fmModel;
-		let fm = this;
 
 		return this.buildAjaxRequest('GET', {
 			mode: 'summarize'
 		}).done(response => {
 			if(response.data) {
 				let data = response.data.attributes;
-				let size = this.formatBytes(data.size, true);
+				let size = formatBytes(data.size, true);
 
 				if(data.sizeLimit > 0) {
-					let sizeTotal = this.formatBytes(data.sizeLimit, true);
+					let sizeTotal = formatBytes(data.sizeLimit, true);
 					let ratio = data.size * 100 / data.sizeLimit;
 					let percentage = Math.round(ratio * 100) / 100;
 
-					size += ' (' + percentage + '%) ' + this.lg('of') + ' ' + sizeTotal;
+					size += ' (' + percentage + '%) ' + lg('of') + ' ' + sizeTotal;
 				}
 
 				fmModel.summaryModel.files(data.files);
@@ -4644,46 +4681,44 @@ class richFilemanagerPlugin {
 
 				fmModel.summaryModel.enabled(false);
 
-				fm.alert((<HTMLElement>$summary[ 0 ]).outerHTML);
+				alert((<HTMLElement>$summary[ 0 ]).outerHTML);
 			}
-			this.handleAjaxResponseErrors(response);
-		}).fail(this.handleAjaxError.bind(this));
+			handleAjaxResponseErrors(response);
+		}).fail(handleAjaxError);
 	}
 
 	// Prompts for confirmation, then extracts the current archive.
-	public extractItemPrompt(resourceObject) {
+	public extractItemPrompt(resourceObject: ReadableObject) {
 		let fmModel = this.fmModel;
-		let fm = this;
 
-		fm.prompt({
-			message: this.lg('prompt_extract'),
+		prompt({
+			message: lg('prompt_extract'),
 			value: fmModel.currentPath(),
 			okBtn: {
-				label: this.lg('action_extract'),
+				label: lg('action_extract'),
 				autoClose: false,
 				click: (e, ui: AleritfyDialogUI) => {
 					let targetPath = ui.getInputValue();
 
 					if(!targetPath) {
-						fm.error(this.lg('prompt_foldername'));
+						error(lg('prompt_foldername'));
 						return;
 					}
-					targetPath = this.rtrim(targetPath, '/') + '/';
+					targetPath = rtrim(targetPath, '/') + '/';
 
 					this.extractItem(resourceObject, targetPath)
 				}
 			},
 			cancelBtn: {
-				label: this.lg('cancel')
+				label: lg('cancel')
 			}
 		});
 	}
 
 	// Extract files and folders from archive.
 	// Called by choosing the "Extract" contextual menu option in list views.
-	public extractItem(resourceObject, targetPath) {
+	public extractItem(resourceObject: ReadableObject, targetPath) {
 		let fmModel = this.fmModel;
-		let fm = this;
 
 		this.buildAjaxRequest('POST', {
 			mode: 'extract',
@@ -4697,12 +4732,12 @@ class richFilemanagerPlugin {
 				});
 
 				alertify.clearDialogs();
-				if(this.config.options.showConfirmation)
-					fm.success(this.lg('successful_extracted'));
+				if(config.options.showConfirmation)
+					success(lg('successful_extracted'));
 
 			}
-			this.handleAjaxResponseErrors(response);
-		}).fail(this.handleAjaxError.bind(this));
+			handleAjaxResponseErrors(response);
+		}).fail(handleAjaxError);
 	}
 
 	/*---------------------------------------------------------
@@ -4710,12 +4745,11 @@ class richFilemanagerPlugin {
  ---------------------------------------------------------*/
 
 	// Retrieves file or folder info based on the path provided.
-	public getDetailView(resourceObject) {
+	public getDetailView(resourceObject: ReadableObject) {
 		let fmModel = this.fmModel;
-		let fm = this;
 
 		if(!resourceObject.attributes.readable) {
-			fm.error(this.lg('NOT_ALLOWED_SYSTEM'));
+			error(lg('NOT_ALLOWED_SYSTEM'));
 			return false;
 		}
 		if(resourceObject.type === 'file')
@@ -4728,22 +4762,22 @@ class richFilemanagerPlugin {
 	}
 
 	// Options for context menu plugin
-	public getContextMenuItems(resourceObject) {
+	public getContextMenuItems(resourceObject: ReadableObject) {
 		let fmModel = this.fmModel;
 		let clipboardDisabled = !fmModel.clipboardModel.enabled();
-		let contextMenuItems = {
-			select: {name: this.lg('action_select'), className: 'select'},
-			download: {name: this.lg('action_download'), className: 'download'},
-			rename: {name: this.lg('action_rename'), className: 'rename'},
-			move: {name: this.lg('action_move'), className: 'move'},
+		// noinspection ReservedWordAsName
+        let contextMenuItems = {
+			select: {name: lg('action_select'), className: 'select'},
+			download: {name: lg('action_download'), className: 'download'},
+			rename: {name: lg('action_rename'), className: 'rename'},
+			move: {name: lg('action_move'), className: 'move'},
 			separator1: '-----',
-			copy: {name: this.lg('clipboard_copy'), className: 'copy'},
-			cut: {name: this.lg('clipboard_cut'), className: 'cut'},
-			delete: {name: this.lg('action_delete'), className: 'delete'},
-			extract: {name: this.lg('action_extract'), className: 'extract'},
-			copyUrl: {name: this.lg('copy_to_clipboard'), className: 'copy-url'}
+			copy: {name: lg('clipboard_copy'), className: 'copy'},
+			cut: {name: lg('clipboard_cut'), className: 'cut'},
+			delete: {name: lg('action_delete'), className: 'delete'},
+			extract: {name: lg('action_extract'), className: 'extract'},
+			copyUrl: {name: lg('copy_to_clipboard'), className: 'copy-url'}
 		};
-		let config = this.config;
 
 		if(!this.has_capability(resourceObject, 'download')) delete contextMenuItems.download;
 		if(!this.has_capability(resourceObject, 'select') || !this.hasContext()) delete contextMenuItems.select;
@@ -4760,11 +4794,10 @@ class richFilemanagerPlugin {
 	}
 
 	// Binds contextual menu to items in list and grid views.
-	public performAction(action, options, targetObject: KnockoutObservable, selectedObjects?) {
+	public performAction(action, options, targetObject: ReadableObject, selectedObjects?) {
 		let fmModel = this.fmModel;
 		// suppose that target object is part of selected objects while multiple selection
 		let objects = selectedObjects ? selectedObjects : [ targetObject ];
-		let fm = this;
 
 		switch(action) {
 			case 'select':
@@ -4797,12 +4830,12 @@ class richFilemanagerPlugin {
 				this.extractItemPrompt(targetObject);
 				break;
 
-			case 'copy':
-				fmModel.clipboardModel.copy(objects);
+            case 'copy':
+				fmModel.clipboardModel.copy(/*objects*/); // todo: this doesn't take an argument
 				break;
 
 			case 'cut':
-				fmModel.clipboardModel.cut(objects);
+				fmModel.clipboardModel.cut(/*objects*/); // todo: this doesn't take an argument
 				break;
 
 			case 'copyUrl':
@@ -4810,8 +4843,8 @@ class richFilemanagerPlugin {
 					text: trigger => this.createCopyUrl(targetObject)
 				});
 
-				clipboard.on('success', e => {
-					fm.success(this.lg('copied'));
+				clipboard.on('success', (/*e*/) => {
+					success(lg('copied'));
 					clipboard.destroy();
 				});
 				break;
@@ -4821,8 +4854,8 @@ class richFilemanagerPlugin {
 	// Handling file uploads
 	public setupUploader() {
 		let fmModel = this.fmModel;
-		let config = this.config;
-		let fm = this;
+		let lg = lg;
+		let settings = this.settings;
 
 		if(config.options.browseOnly)
 			return false;
@@ -4834,43 +4867,43 @@ class richFilemanagerPlugin {
 
 			this.$uploadButton.unbind().click(() => {
 				if(this.capabilities.indexOf('upload') === -1) {
-					fm.error(this.lg('NOT_ALLOWED'));
+					error(lg('NOT_ALLOWED'));
 					return false;
 				}
 
 				let allowedFileTypes = null;
 				let currentPath = fmModel.currentPath();
 				let templateContainer = tmpl('tmpl-fileupload-container', {
-					folder: this.lg('current_folder') + currentPath,
-					info: this.lg('upload_files_number_limit').replace('%s', config.upload.maxNumberOfFiles) + ' ' + this.lg('upload_file_size_limit').replace('%s', this.formatBytes(config.upload.fileSizeLimit, true)),
-					lang: this.langModel.getTranslations()
+					folder: lg('current_folder') + currentPath,
+					info: lg('upload_files_number_limit').replace('%s', <string>config.upload.maxNumberOfFiles) + ' ' + lg('upload_file_size_limit').replace('%s', formatBytes(config.upload.fileSizeLimit, true)),
+					lang: LangModel.getTranslations()
 				});
 
 				if(config.security.extensions.policy == 'ALLOW_LIST')
 					allowedFileTypes = new RegExp('(\\.|\\/)(' + config.security.extensions.restrictions.join('|') + ')$', 'i');
 
-				fm.dialog({
+				dialog({
 					message: templateContainer,
 					width: 'auto',
 					buttons: [ {
 						type: 'ok',
-						label: this.lg('action_upload'),
+						label: lg('action_upload'),
 						autoClose: false,
-						click: (e, ui: AleritfyDialogUI) => {
+						click: (/*e, ui: AleritfyDialogUI*/) => {
 							if($dropzone.children('.upload-item').length > 0)
 								$dropzone.find('.button-start').trigger('click');
 							else
-								fm.error(this.lg('upload_choose_file'));
+								error(lg('upload_choose_file'));
 						}
 					}, {
-						label: this.lg('action_select'),
+						label: lg('action_select'),
 						closeOnClick: false,
-						click: (e, ui: AleritfyDialogUI) => {
+						click: (/*e, ui: AleritfyDialogUI*/) => {
 							$('#fileupload', $uploadContainer).trigger('click');
 						}
 					}, {
 						type: 'cancel',
-						label: this.lg('close')
+						label: lg('close')
 					} ]
 				});
 
@@ -4914,7 +4947,7 @@ class richFilemanagerPlugin {
 				/**
 				 * Start uploading process.
 				 */
-				$dropzone.on('click', '.button-start', function (e) {
+				$dropzone.on('click', '.button-start', function (/*e*/) {
 					let $target = $(this);
 					let $buttons = $target.parent().parent();
 					let data = $buttons.data();
@@ -4926,14 +4959,14 @@ class richFilemanagerPlugin {
 				/**
 				 * Abort uploading process.
 				 */
-				$dropzone.on('click', '.button-abort', function (e) {
+				$dropzone.on('click', '.button-abort', function (/*e*/) {
 					let $target = $(this);
 					let $buttons = $target.parent().parent();
 					let data = $buttons.data();
 					let $node = data.files[ 0 ].context;
 
 					data.abort();
-					$node.find('.error-message').text(this.lg('upload_aborted'));
+					$node.find('.error-message').text(lg('upload_aborted'));
 					$node.addClass('aborted');
 				});
 
@@ -4973,7 +5006,7 @@ class richFilemanagerPlugin {
 				 * Remove file from upload query.
 				 * Also remove uploaded file chunks if were uploaded.
 				 */
-				$dropzone.on('click', '.button-remove', function (e) {
+				$dropzone.on('click', '.button-remove', function (/*e*/) {
 					let $target = $(this);
 					let $buttons = $target.parent().parent();
 					let data = $buttons.data();
@@ -4986,14 +5019,14 @@ class richFilemanagerPlugin {
 					updateDropzoneView();
 				});
 
-				$dropzone.on('click', '.button-info', function (e) {
+				$dropzone.on('click', '.button-info', function (/*e*/) {
 					let $target = $(this);
 					let $node = $target.closest('.upload-item');
 
 					if($node.hasClass('error')) {
 						let $message = $node.find('.error-message');
 
-						fm.error($message.text());
+						error($message.text());
 					}
 				});
 
@@ -5032,9 +5065,9 @@ class richFilemanagerPlugin {
 						acceptFileTypes: allowedFileTypes,
 						maxFileSize: config.upload.fileSizeLimit,
 						messages: {
-							maxNumberOfFiles: this.lg('upload_files_number_limit').replace('%s', config.upload.maxNumberOfFiles),
-							acceptFileTypes: this.lg('upload_file_type_invalid'),
-							maxFileSize: this.lg('upload_file_too_big') + ' ' + this.lg('upload_file_size_limit').replace('%s', this.formatBytes(config.upload.fileSizeLimit, true))
+							maxNumberOfFiles: lg('upload_files_number_limit').replace('%s', <string>config.upload.maxNumberOfFiles),
+							acceptFileTypes: lg('upload_file_type_invalid'),
+							maxFileSize: `${lg('upload_file_too_big')} ${lg('upload_file_size_limit').replace('%s', formatBytes(config.upload.fileSizeLimit, true))}`
 						},
 						// image preview options
 						previewMaxHeight: 120,
@@ -5047,18 +5080,18 @@ class richFilemanagerPlugin {
 						$.each(data.files, (index, file) => {
 							// skip selected files if total files number exceed "maxNumberOfFiles"
 							if($items.length >= config.upload.maxNumberOfFiles) {
-								fm.error(this.lg('upload_files_number_limit').replace('%s', config.upload.maxNumberOfFiles), {
+								error(lg('upload_files_number_limit').replace('%s', <string>config.upload.maxNumberOfFiles), {
 									logClass: 'fileuploadadd',
 									unique: true
 								});
 								return false;
 							}
 							// to display in item template
-							file.formattedSize = this.formatBytes(file.size);
+							file.formattedSize = formatBytes(file.size);
 							let $template = $(tmpl('tmpl-upload-item', {
 								file: file,
-								lang: this.langModel.getTranslations(),
-								imagesPath: fm.settings.baseUrl + '/scripts/jQuery-File-Upload/img'
+								lang: LangModel.getTranslations(),
+								imagesPath: `${settings.baseUrl}/scripts/jQuery-File-Upload/img`
 							}));
 							file.context = $template;
 							$template.find('.buttons').data(data);
@@ -5082,7 +5115,7 @@ class richFilemanagerPlugin {
 
 					.on('fileuploadfail', (e, data) => {
 						$.each(data.files, (index, file) => {
-							file.error = this.lg('upload_failed');
+							file.error = lg('upload_failed');
 							let $node = file.context;
 							$node.removeClass('added process').addClass('error');
 						});
@@ -5095,7 +5128,7 @@ class richFilemanagerPlugin {
 							// handle server-side errors
 							if(response && response.errors) {
 								$node.removeClass('added process').addClass('error');
-								$node.find('.error-message').text(this.formatServerError(response.errors[ 0 ]));
+								$node.find('.error-message').text(formatServerError(response.errors[ 0 ]));
 								$node.find('.button-start').remove();
 							} else
 							// remove file preview item on success upload
@@ -5106,7 +5139,7 @@ class richFilemanagerPlugin {
 
 					.on('fileuploadalways', (e, data) => {
 						let response = data.result;
-						$.each(data.files, (index, file) => {
+						$.each(data.files, (index/*, file*/) => {
 							if(response && response.data && response.data[ index ]) {
 								let resourceObject = response.data[ index ];
 
@@ -5123,12 +5156,12 @@ class richFilemanagerPlugin {
 								alertify.clearDialogs();
 
 								if(config.options.showConfirmation)
-									fm.success(this.lg('upload_successful_files'));
+									success(lg('upload_successful_files'));
 
 							}
 							// errors occurred
 							if($items.filter('.error').length)
-								fm.error(this.lg('upload_partially') + '<br>' + this.lg('upload_failed_details'));
+								error(lg('upload_partially') + '<br>' + lg('upload_failed_details'));
 
 						}
 						updateDropzoneView();
@@ -5195,14 +5228,14 @@ class richFilemanagerPlugin {
 
 			this.$uploadButton.click(function () {
 				if(this.capabilities.indexOf('upload') === -1) {
-					fm.error(this.lg('NOT_ALLOWED'));
+					error(lg('NOT_ALLOWED'));
 					return false;
 				}
 
 				let data = $(this).data();
 
 				if($.isEmptyObject(data))
-					fm.error(this.lg('upload_choose_file'));
+					error(lg('upload_choose_file'));
 				else
 					data.submit();
 
@@ -5227,18 +5260,18 @@ class richFilemanagerPlugin {
 						path: fmModel.currentPath()
 					});
 					this.$uploadButton.addClass('loading').prop('disabled', true);
-					this.$uploadButton.children('span').text(this.lg('loading_data'));
+					this.$uploadButton.children('span').text(lg('loading_data'));
 				})
 
 				.on('fileuploadalways', (e: JQueryEventObject, data: JQueryFileUploadXhr) => {
 					$('#filepath').val('');
 					this.$uploadButton.removeData().removeClass('loading').prop('disabled', false);
-					this.$uploadButton.children('span').text(this.lg('action_upload'));
+					this.$uploadButton.children('span').text(lg('action_upload'));
 					let response = data.result;
 
 					// handle server-side errors
 					if(response && response.errors)
-						fm.error(this.lg('upload_failed') + '<br>' + this.formatServerError(response.errors[ 0 ]));
+						error(lg('upload_failed') + '<br>' + formatServerError(response.errors[ 0 ]));
 
 					if(response && response.data) {
 						let resourceObject = response.data[ 0 ];
@@ -5247,7 +5280,7 @@ class richFilemanagerPlugin {
 						fmModel.addItem(resourceObject, fmModel.currentPath());
 
 						if(config.options.showConfirmation)
-							fm.success(this.lg('upload_successful_file'));
+							success(lg('upload_successful_file'));
 
 					}
 				})
@@ -5263,131 +5296,30 @@ class richFilemanagerPlugin {
 					}
 				})
 
-				.on('fileuploadfail', (e, data) => {
+				.on('fileuploadfail', (/*e, data*/) => {
 					// server error 500, etc.
-					fm.error(this.lg('upload_failed'));
+					error(lg('upload_failed'));
 				});
 		}
 	}
 
 	// Test if item has the 'cap' capability
 	// 'cap' is one of 'select', 'rename', 'delete', 'download', 'copy', 'move'
-	public has_capability(resourceObject, cap) {
+	public has_capability(resourceObject: ReadableObject, cap) {
 		if(this.capabilities.indexOf(cap) === -1) return false;
 		if(cap === 'select' && resourceObject.type === 'folder') return false;
 		if(cap === 'extract') {
-			let extension = this.getExtension(resourceObject.attributes.name);
+			let extension = getExtension(resourceObject.attributes.name);
 
 			return (resourceObject.type === 'file' && extension === 'zip');
 		}
 		if(cap === 'download' && resourceObject.type === 'folder')
-			return (this.config.options.allowFolderDownload === true);
+			return (config.options.allowFolderDownload === true);
 
 		if(typeof(resourceObject.attributes.capabilities) !== 'undefined')
-			return $.inArray(cap, resourceObject.attributes.capabilities) > -1
+			return $.inArray(cap, resourceObject.attributes.capabilities) > -1;
 
 		return true;
-	}
-
-
-	/*--------------------------------------------------------------------------------------------------------------
- Public methods
- Can be called like:
- - fm.methodName(arg1, arg2, ... argn) from inside the plugin
- - element.data('richFilemanager').publicMethod(arg1, arg2, ... argn) from outside the plugin,
-   where "element" is the element the plugin is attached to
---------------------------------------------------------------------------------------------------------------*/
-
-	public write(message, obj) {
-		let log = alertify;
-		let options: any = $.extend({}, {
-			reset: true,
-			delay: 5000,
-			logMaxItems: 5,
-			logPosition: 'bottom right',
-			logContainerClass: 'fm-log',
-			parent: $('.fm-popup').is(':visible') ? document.body : this.$fileinfo[ 0 ],
-			onClick: undefined,
-			unique: false,
-			type: 'log'
-		}, obj);
-
-		// display only one log for the specified 'logClass'
-		if(options.logClass && options.unique && $('.fm-log').children('.' + options.logClass).length > 0)
-			return log;
-
-		if(options.reset)
-			log.reset();
-
-		if(options.parent)
-			log.parent(options.parent);
-
-		log.logDelay(options.delay);
-		log.logMaxItems(options.logMaxItems);
-		log.logPosition(options.logPosition);
-		log.logContainerClass(options.logContainerClass);
-		log[ options.type ](message, options.onClick);
-
-		return log;
-	}
-
-	public error(message, options) {
-		let fm = this;
-		return fm.write(message, $.extend({}, {
-			type: 'error',
-			delay: 10000
-		}, options));
-	}
-
-	public warning(message, options) {
-		let fm = this;
-		return fm.write(message, $.extend({}, {
-			type: 'warning',
-			delay: 10000
-		}, options));
-	}
-
-	public success(message, options) {
-		let fm = this;
-		return fm.write(message, $.extend({}, {
-			type: 'success',
-			delay: 6000
-		}, options));
-	}
-
-	public alert(message) {
-		alertify
-			.reset()
-			.dialogContainerClass('fm-popup')
-			.alert(message);
-	}
-
-	public confirm(obj: Message) {
-		alertify
-			.reset()
-			.dialogWidth(obj.width)
-			.dialogPersistent(obj.persistent)
-			.dialogContainerClass('fm-popup')
-			.confirm(obj.message, obj.okBtn, obj.cancelBtn);
-	}
-
-	public prompt(obj: Message) {
-		alertify
-			.reset()
-			.dialogWidth(obj.width)
-			.dialogPersistent(obj.persistent)
-			.dialogContainerClass('fm-popup')
-			.theme(obj.template)
-			.prompt(obj.message, obj.value || '', obj.okBtn, obj.cancelBtn);
-	}
-
-	public dialog(obj: Message) {
-		alertify
-			.reset()
-			.dialogWidth(obj.width)
-			.dialogPersistent(obj.persistent)
-			.dialogContainerClass('fm-popup')
-			.dialog(obj.message, obj.buttons);
 	}
 
 	// Forces columns to fill the layout vertically.
@@ -5399,13 +5331,6 @@ class richFilemanagerPlugin {
 
 		this.$splitter.height(newH);
 		this.$fileinfo.width(newW);
-	}
-
-	public log() {
-		if(this.config.options.logger && arguments) {
-			[].unshift.call(arguments, new Date().getTime());
-			console.log.apply(this, arguments);
-		}
 	}
 
 }
