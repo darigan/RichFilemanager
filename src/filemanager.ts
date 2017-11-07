@@ -1,5 +1,28 @@
+import * as CodeMirror from "codemirror";
+import * as purl from "purl";
+
+/// <reference types="alertify"/>
+/// <reference types="jquery"/>
+/// <reference types="jqueryui"/>
+/// <reference types="types.d.ts"/>
+
+type ConfigOptions = {
+    allowChangeExtensions: boolean;
+    allowFolderDownload: boolean;
+    browseOnly: boolean;
+    capabilities: string[]
+    fileSorting: string;
+    folderPosition: string;
+    logger: boolean;
+    quickSelect: boolean;
+    searchBox: boolean;
+    showConfirmation: boolean;
+    showTitleAttr: boolean;
+    theme: string;
+}
+
 interface Config {
-	api?: {
+	api: {
 		connectorUrl: boolean | string;
 		lang: string;
 		requestParams: {
@@ -8,16 +31,16 @@ interface Config {
             MIXED: any
         };
 	};
-	clipboard?: {
+	clipboard: {
 		encodeCopyUrl: boolean;
 		enabled: boolean;
 	};
-	customScrollbar?: {
+	customScrollbar: {
 		button: boolean;
 		enabled: boolean;
 		theme: string;
 	};
-	editor?: {
+	editor: {
 		codeHighlight: boolean;
 		enabled: boolean;
 		extensions: string[];
@@ -26,11 +49,11 @@ interface Config {
 		matchBrackets: boolean;
 		theme: string;
 	};
-	extras?: {
+	extras: {
 		extra_js: any[];
 		extra_js_async: boolean;
 	};
-	filetree?: {
+	filetree: {
 		enabled: boolean;
 		expandSpeed: number;
 		foldersOnly: boolean;
@@ -39,15 +62,15 @@ interface Config {
 		showLine: boolean;
 		width: number;
 	};
-	filter?: {
+	filter: {
 		[name: string]: string[];
 	};
-	language?: {
+	language: {
 		available: string[];
         // noinspection ReservedWordAsName
         default: string;
 	};
-	manager?: {
+	manager: {
 		dblClickOpen: boolean;
 		defaultViewMode: string;
 		renderer: {
@@ -59,21 +82,8 @@ interface Config {
 			useCtrlKey: boolean;
 		};
 	};
-	options ?: {
-        allowChangeExtensions: false;
-        allowFolderDownload: true;
-        browseOnly: false;
-        capabilities: string[]
-        fileSorting: string;
-        folderPosition: string;
-        logger: false;
-        quickSelect: false;
-        searchBox: true;
-        showConfirmation: true;
-        showTitleAttr: false;
-        theme: string;
-	};
-	security?: {
+	options : ConfigOptions;
+	security: {
 		extensions: {
 			ignoreCase: boolean;
 			policy: any;
@@ -81,13 +91,13 @@ interface Config {
 		}
 		readOnly: boolean;
 	};
-	upload?: {
+	upload: {
 		chunkSize: boolean;
 		fileSizeLimit: number;
 		maxNumberOfFiles: number;
 		multiple: boolean;
 	};
-	viewer?: {
+	viewer: {
 		absolutePath: boolean;
 		audio: {
 			enabled: boolean;
@@ -137,180 +147,31 @@ interface Config {
 }
 
 interface ReadableObject {
-    id?: string;
-    type?: string
-    attributes?: {
-    	size?: number;
-        name?: string;
-        path?: string;
-        readable?: boolean;
-        writable?: boolean;
-        width?: string | null;
-        height?: string | null;
-        capabilities?: any;
+    id: string;
+    type: string
+    attributes: {
+    	size: number;
+        name: string;
+        path: string;
+        readable: boolean;
+        writable: boolean;
+        width: string | number;
+        height: string | number;
+        capabilities: any;
+        timestamp: any;
     }
 }
 
 interface ComputedDataObject {
-    isFolder?: boolean;
-    extension?: string | null;
-    dimensions?: string | null;
-    cssItemClass?: string;
-    hiddenByType?: boolean;
-    hiddenBySearch?: boolean;
-}
-
-interface mCustomScrollbarOptions {
-    setTop: number;
-    setLeft: number;
-    axis: string;
-    scrollbarPosition: string;
-    scrollInertia: number;
-    autoDraggerLength: boolean;
-    alwaysShowScrollbar: number;
-    snapOffset: number;
-    mouseWheel:{
-        enable:true,
-        scrollAmount: string,
-        axis: string,
-        deltaFactor: string,
-        disableOver: string[]
-    };
-    scrollButtons:{
-        scrollType: string,
-        scrollAmount: string
-    };
-    keyboard:{
-        enable:true,
-        scrollType: string,
-        scrollAmount: string
-    };
-    contentTouchScroll: number;
-    documentTouchScroll: boolean;
-    advanced:{
-        autoScrollOnFocus: string,
-        updateOnContentResize: boolean,
-        updateOnImageLoad: string,
-        autoUpdateTimeout: number
-    };
-    theme: string;
-    callbacks:{
-        onScrollStart: (this: mCustomScrollbar) => { };
-        onScroll: (this: mCustomScrollbar) => { };
-        whileScrolling: (this: mCustomScrollbar) => { };
-        onTotalScrollOffset: number,
-        onTotalScrollBackOffset: number,
-        alwaysTriggerOffsets: boolean
-    };
-}
-
-interface mCustomScrollbar {
-    defaults: mCustomScrollbarOptions;
-    totalInstances: number;
-    liveTimers: any;
-    oldIE: boolean;
-    touchActive: boolean;
-    touchable: any;
-    classes: string[];
-    yStartPosition: number;
-    mcs: {
-        content: any;
-        top: number;
-        left: number;
-        draggerTop: number;
-        draggerLeft: number;
-        topPct: number;
-        leftPct: number;
-        direction: string;
-	};
-    (options: mCustomScrollbarOptions): JQuery;
-}
-
-interface JQuery {
-	mCustomScrollbar: mCustomScrollbar;
-	mCustomScrollbar: (method: 'update', el: any, cb?: any) => {};
-    mCustomScrollbar: (method: 'scrollTo', options?: mCustomScrollbarOptions) => {};
-    mCustomScrollbar: (method: 'stop') => {};
-    mCustomScrollbar: (method: 'disable', r?: boolean) => {};
-    mCustomScrollbar: (method: 'destroy') => {};
-
-	fileupload: {
-		(opts: any): JQuery;
-	};
-
-	inArrayInsensitive<T>(value: T, array: T[], fromIndex?: number): number;
-
-	fileDownload(a: any): any;
-
-	blueimp: any;
-
-    splitter: any;
-}
-
-interface LazyLoad {
-	(instanceSettings);
-    handleScroll();
-    update();
-    destroy();
-}
-
-interface Alertify {
-    parent(elem);
-    reset();
-    dialog(message, buttons);
-    alert(message, okButton);
-    confirm(message, okButton, cancelButton);
-    prompt(message, defaultValue, okButton, cancelButton);
-    log(message, click);
-    success(message, click);
-    warning(message, click);
-    error(message, click);
-    dialogWidth(width);
-    dialogPersistent(bool);
-    dialogContainerClass(str);
-    logDelay(time);
-    logMaxItems(num);
-    logPosition(str);
-    logContainerClass(str);
-    logMessageTemplate(templateMethod);
-    theme(theme);
-    clearDialogs();
-    clearLogs();
-}
-
-interface AlertifyBtn {
-    type?: string;
-    label?: string;
-    autoClose?: boolean;
-    closeOnClick?: boolean;
-    template?: string;
-    click?: (e, ui: AleritfyDialogUI) => {};
-}
-
-interface AleritfyDialogUI {
-    dom: any;
-    closeDialog(): void;
-    centerDialog(): void;
-    setMessage(message: string): void;
-    setContent(content: string): void;
-    getInputValue(): string | undefined;
-}
-interface AlertifyTemplates {
-    dialogButtonsHolder?: string;
-    dialogMessage?: string;
-    dialogInput?: string;
-    logMessage?: string;
-}
-interface Message {
-	message?: string;
-	width?: any;
-	persistent?: boolean;
-	template?: AlertifyTemplates;
-	message?: string;
-	value?: string;
-	okBtn?: AlertifyBtn;
-	cancelBtn?: AlertifyBtn;
-	buttons?: AlertifyBtn[];
+    isFolder: boolean;
+    sizeFormatted?: string;
+    extension: string;
+    dimensions: string;
+    cssItemClass: string;
+    imageUrl?: string;
+    previewWidth?: number;
+    hiddenByType: boolean;
+    hiddenBySearch: boolean;
 }
 
 interface Settings {
@@ -324,63 +185,40 @@ interface Editor {
 }
 
 interface Viewer {
-    type?: string;
-    isEditable?: boolean;
-    url?: string | null;
-    pureUrl?: any;
-    options?: {
+    type: string;
+    isEditable: boolean;
+    url: string;
+    pureUrl: any;
+    options: {
     	width?: number;
     	height?: number;
         is_writable?: boolean;
 	};
-    content?: any;
-    codeMirror?: any;
+    content: any;
+    codeMirror: any;
 }
 
-interface KnockoutObservableViewer {
-    type?: KnockoutObservable;
-    isEditable?: KnockoutObservable;
-    url?: KnockoutObservable;
-    pureUrl?: KnockoutObservable;
-    options?: KnockoutObservable;
-    content?: KnockoutObservable;
-    codeMirror?: KnockoutObservable;
-}
+type Params = {
+  mode?: string;
+  path: string;
+  type?: string;
+  thumbnail?: any;
+};
 
-interface TreeData {
-    id: any;
-    level: KnockoutObservable<number>;
-    children: KnockoutObservableArray;
-}
-
-declare class Clipboard {
-    constructor(elm, opts?);
-
-    destroy();
-
-    on: (a, b) => Clipboard;
-}
-
-declare function tmpl(t: string, data: any): string;
-
-declare function toast();
-
-declare const hljs: any;
-declare const tinyMCEPopup: any;
-declare const alertify: Alertify;
-declare const $: JQueryStatic;
+let config: Config;
+let $fileinfo: JQuery; // Temporary Workaround
 
 ////////////////////////
 
 // Test if a given url exists
-function file_exists(url) {
+function file_exists(url: string): JQuery.jqXHR {
     return $.ajax({
         type: 'HEAD',
         url: url
     });
 }
 
-function expandNode(node): boolean {
+function expandNode(node: TreeNodeObject): boolean {
     if (node.isExpanded() === false && node.isLoaded() === true) {
         node.isSliding(true);
         return true;
@@ -388,7 +226,7 @@ function expandNode(node): boolean {
     return false;
 }
 
-function collapseNode(node): boolean {
+function collapseNode(node: TreeNodeObject): boolean {
     if (node.isExpanded() === true) {
         node.isSliding(true);
         return true;
@@ -397,51 +235,52 @@ function collapseNode(node): boolean {
 }
 
 // Test if path is dir
-function isFile(path) {
+function isFile(path: string) {
     return path.charAt(path.length - 1) !== '/';
 }
 
 // Replace all leading or trailing chars with an empty string
-function trim(string, char) {
+function trim(string: string, char: string): string {
     let regExp = new RegExp(`^${char}+|${char}+$`, 'g');
 
     return string.replace(regExp, '');
 }
 
 // Replace all leading chars with an empty string
-function ltrim(string, char) {
+function ltrim(string: string, char: string): string {
     let regExp = new RegExp(`^${char}+`, 'g');
 
     return string.replace(regExp, '');
 }
 
 // Replace all trailing chars with an empty string
-function rtrim(string, char) {
+function rtrim(string: string, char: string): string {
     let regExp = new RegExp(`${char}+$`, 'g');
 
     return string.replace(regExp, '');
 }
 
-function startsWith(string: String, searchString, position?) {
+function startsWith(string: string, searchString: string, position?: number): boolean {
     position = position || 0;
     return string.substr(position, searchString.length) === searchString;
 }
 
 // invert backslashes and remove duplicated ones
-function normalizePath(path) {
+function normalizePath(path: string): string {
     return path.replace(/\\/g, '/').replace(/\/+/g, '/');
 }
 
 // return filename extension
-function getExtension(filename) {
+function getExtension(filename: string): string {
+
     if (filename.split('.').length === 1)
         return '';
 
-    return filename.split('.').pop().toLowerCase();
+    return (<string>filename.split('.').pop()).toLowerCase();
 }
 
 // return filename without extension
-function getFilename(filename) {
+function getFilename(filename: string): string {
     if (filename.lastIndexOf('.') !== -1)
         return filename.substring(0, filename.lastIndexOf('.'));
     else
@@ -452,7 +291,7 @@ function getFilename(filename) {
 // return path without filename
 // "/dir/to/" 		  --> "/dir/to/"
 // "/dir/to/file.txt" --> "/dir/to/"
-function getDirname(path) {
+function getDirname(path: string): string {
     if (path.lastIndexOf('/') !== path.length - 1)
         return path.substr(0, path.lastIndexOf('/') + 1);
     else
@@ -463,14 +302,14 @@ function getDirname(path) {
 // return parent folder for path, if folder is passed it should ends with '/'
 // "/dir/to/"          -->  "/dir/"
 // "/dir/to/file.txt"  -->  "/dir/"
-function getParentDirname(path) {
+function getParentDirname(path: string): string {
     return path.split('/').reverse().slice(2).reverse().join('/') + '/';
 }
 
 // return closest node for path
 // "/dir/to/"          -->  "/dir/"
 // "/dir/to/file.txt"  -->  "/dir/to/"
-function getClosestNode(path) {
+function getClosestNode(path: string): string {
     return path.substring(0, path.slice(0, -1).lastIndexOf('/')) + '/';
 }
 
@@ -485,15 +324,14 @@ function clearSelection() {
     }
 }
 
-function write(message, obj?) {
-    let log = alertify;
-    let options: any = $.extend({}, {
+function write(message: string, obj?: AlertifyOptions): IAlertify {
+    let options: AlertifyOptions = $.extend({}, {
         reset: true,
         delay: 5000,
         logMaxItems: 5,
         logPosition: 'bottom right',
         logContainerClass: 'fm-log',
-        parent: $('.fm-popup').is(':visible') ? document.body : this.$fileinfo[0],
+        parent: $('.fm-popup').is(':visible') ? document.body : $fileinfo[0],
         onClick: undefined,
         unique: false,
         type: 'log'
@@ -501,45 +339,45 @@ function write(message, obj?) {
 
     // display only one log for the specified 'logClass'
     if (options.logClass && options.unique && $('.fm-log').children('.' + options.logClass).length > 0)
-        return log;
+        return alertify;
 
     if (options.reset)
-        log.reset();
+        alertify.reset();
 
     if (options.parent)
-        log.parent(options.parent);
+        alertify.parent(options.parent);
 
-    log.logDelay(options.delay);
-    log.logMaxItems(options.logMaxItems);
-    log.logPosition(options.logPosition);
-    log.logContainerClass(options.logContainerClass);
-    log[options.type](message, options.onClick);
+    alertify.logDelay(options.delay);
+    alertify.logMaxItems(options.logMaxItems);
+    alertify.logPosition(options.logPosition);
+    alertify.logContainerClass(options.logContainerClass);
+    (<any>alertify[options.type])(message, options.onClick);
 
-    return log;
+    return alertify;
 }
 
-function error(message, options?) {
+function error(message: string, options?: AlertifyOptions) {
     return write(message, $.extend({}, {
         type: 'error',
         delay: 10000
     }, options));
 }
 
-function warning(message, options?) {
+function warning(message: string, options?: AlertifyOptions) {
     return write(message, $.extend({}, {
         type: 'warning',
         delay: 10000
     }, options));
 }
 
-function success(message, options?) {
+function success(message: string, options?: AlertifyOptions) {
     return write(message, $.extend({}, {
         type: 'success',
         delay: 6000
     }, options));
 }
 
-function alert(message) {
+function alert(message: string) {
     alertify
         .reset()
         .dialogContainerClass('fm-popup')
@@ -550,28 +388,28 @@ function confirm(obj: Message) {
     alertify
         .reset()
         .dialogWidth(obj.width)
-        .dialogPersistent(obj.persistent)
+        .dialogPersistent(<boolean>obj.persistent)
         .dialogContainerClass('fm-popup')
-        .confirm(obj.message, obj.okBtn, obj.cancelBtn);
+        .confirm(<string>obj.message, obj.okBtn, obj.cancelBtn);
 }
 
 function prompt(obj: Message) {
     alertify
         .reset()
         .dialogWidth(obj.width) // dialogWidth
-        .dialogPersistent(obj.persistent) // dialogPersistent
+        .dialogPersistent(<boolean>obj.persistent) // dialogPersistent
         .dialogContainerClass('fm-popup')
-        .theme(obj.template)
-        .prompt(obj.message, obj.value || '', obj.okBtn, obj.cancelBtn);
+        .theme(<AlertifyTemplates>obj.template)
+        .prompt(<string>obj.message, obj.value || '', obj.okBtn, obj.cancelBtn);
 }
 
 function dialog(obj: Message) {
     alertify
         .reset()
         .dialogWidth(obj.width)
-        .dialogPersistent(obj.persistent)
+        .dialogPersistent(<boolean>obj.persistent)
         .dialogContainerClass('fm-popup')
-        .dialog(obj.message, obj.buttons);
+        .dialog(<string>obj.message, obj.buttons);
 }
 
 // Wrapper for translate method
@@ -579,11 +417,11 @@ function lg(key: string): string {
     return LangModel.translate(key);
 }
 // Converts bytes to KB, MB, or GB as needed for display
-function formatBytes(bytes: number | string, round?): string {
+function formatBytes(bytes: number | string, round?: boolean): string {
     if(!bytes) return '';
     round = round || false;
     let n = parseFloat(<string>bytes);
-    let d = parseFloat(<string>(round ? 1000 : 1024));
+    let d = parseFloat(<any>(round ? 1000 : 1024));
     let c = 0;
     let u = [ lg('unit_bytes'), lg('unit_kb'), lg('unit_mb'), lg('unit_gb') ];
 
@@ -598,21 +436,20 @@ function formatBytes(bytes: number | string, round?): string {
     }
 }
 
-function log() {
-    if(config.options.logger && arguments) {
+function log(..._args: any[]): void {
+    if((<ConfigOptions>config.options).logger && arguments) {
         [].unshift.call(arguments, new Date().getTime());
-        console.log.apply(this, arguments);
+        console.log.apply(console, arguments);
     }
 }
 
-
 // Format server-side response single error object
-function formatServerError(errorObject: any) {
-    let message;
+function formatServerError(errorObject: any): string {
+    let message: string;
     // look for message in case an error CODE is provided
     if(LangModel.getLang() && lg(errorObject.message)) {
         message = lg(errorObject.message);
-        $.each(errorObject.arguments, (i, argument) => {
+        $.each(errorObject.arguments, (_i, argument) => {
             message = message.replace('%s', argument);
         });
     } else
@@ -622,7 +459,7 @@ function formatServerError(errorObject: any) {
 }
 
 // Handle ajax request error.
-function handleAjaxError(response) {
+function handleAjaxError(response: JQuery.jqXHR): void {
 
     log(response.responseText || response);
     error(lg('ERROR_SERVER'));
@@ -630,11 +467,11 @@ function handleAjaxError(response) {
 }
 
 // Handle ajax json response error.
-function handleAjaxResponseErrors(response) {
+function handleAjaxResponseErrors(response: any) { // todo: no errors in JQuery.jqXHR
     if(response.errors) {
         log(response.errors);
-        $.each(response.errors, (i, errorObject) => {
-            error(this.formatServerError(errorObject));
+        $.each(response.errors, (_i, errorObject) => {
+            error(formatServerError(errorObject));
 
             if(errorObject.arguments.redirect)
                 window.location.href = errorObject.arguments.redirect;
@@ -644,15 +481,15 @@ function handleAjaxResponseErrors(response) {
 }
 
 // Test if file is authorized, based on extension only
-function isAuthorizedFile(filename) {
-    let ext = getExtension(filename);
+function isAuthorizedFile(filename: string): boolean {
+    let ext: string = getExtension(filename);
 
     if(config.security.extensions.ignoreCase) {
         if(config.security.extensions.policy == 'ALLOW_LIST')
-            if((<JQuery>$).inArrayInsensitive(ext, config.security.extensions.restrictions) !== -1) return true;
+            if(inArrayInsensitive(ext, config.security.extensions.restrictions) !== -1) return true;
 
         if(config.security.extensions.policy == 'DISALLOW_LIST')
-            if((<JQuery>$).inArrayInsensitive(ext, config.security.extensions.restrictions) === -1) return true;
+            if(inArrayInsensitive(ext, config.security.extensions.restrictions) === -1) return true;
 
     } else {
         if(config.security.extensions.policy == 'ALLOW_LIST')
@@ -666,76 +503,97 @@ function isAuthorizedFile(filename) {
     return false;
 }
 
-function encodePath(path) {
-    let parts = [];
-    $.each(path.split('/'), (i, part) => {
+function encodePath(path: string): string {
+    let parts: string[] = [];
+    $.each(path.split('/'), (_i, part) => {
         parts.push(encodeURIComponent(part));
     });
     return parts.join('/');
 }
 
 // Test if is editable file
-function isEditableFile(filename) {
+function isEditableFile(filename: string): boolean {
     return ($.inArray(getExtension(filename), config.editor.extensions) !== -1);
 }
 
 // Test if is image file
-function isImageFile(filename) {
+function isImageFile(filename: string): boolean {
     return ($.inArray(getExtension(filename), config.viewer.image.extensions) !== -1);
 }
 
 // Test if file is supported web video file
-function isVideoFile(filename) {
+function isVideoFile(filename: string): boolean {
     return ($.inArray(getExtension(filename), config.viewer.video.extensions) !== -1);
 }
 
 // Test if file is supported web audio file
-function isAudioFile(filename) {
+function isAudioFile(filename: string): boolean {
     return ($.inArray(getExtension(filename), config.viewer.audio.extensions) !== -1);
 }
 
 // Test if file is openable in iframe
-function isIFrameFile(filename) {
+function isIFrameFile(filename: string): boolean {
     return ($.inArray(getExtension(filename), config.viewer.iframe.extensions) !== -1);
 }
 
 // Test if file is opendoc file
 // Supported file types: http://viewerjs.org/examples/
-function isOpenDocFile(filename) {
+function isOpenDocFile(filename: string): boolean {
     return ($.inArray(getExtension(filename), config.viewer.opendoc.extensions) !== -1);
 }
 
 // Test if file is supported by Google Docs viewer
 // Supported file types: http://stackoverflow.com/q/24325363/1789808
-function isGoogleDocsFile(filename) {
+function isGoogleDocsFile(filename: string): boolean {
     return ($.inArray(getExtension(filename), config.viewer.google.extensions) !== -1);
 }
 
 // Test if file is supported by CodeMirror renderer
-function isCodeMirrorFile(filename) {
+function isCodeMirrorFile(filename: string): boolean {
     return ($.inArray(getExtension(filename), config.viewer.codeMirrorRenderer.extensions) !== -1);
 }
 
 // Test if file is supported by Markdown-it renderer, which renders .md files to HTML
-function isMarkdownFile(filename) {
+function isMarkdownFile(filename: string): boolean {
     return ($.inArray(getExtension(filename), config.viewer.markdownRenderer.extensions) !== -1);
 }
 
+function inArrayInsensitive(elem: any, arr: any[], i?: number): number {
+    if(typeof elem !== 'string')
+        return $.inArray.apply(null, arguments);
+
+    // confirm array is populated
+    if(arr) {
+        let len = arr.length;
+
+        i = i ? (i < 0 ? Math.max(0, len + i) : i) : 0;
+        elem = elem.toLowerCase();
+        for(; i < len; i++) {
+            if(i in arr && arr[ i ].toLowerCase() == elem)
+                return i;
+
+        }
+    }
+    // stick with inArray/indexOf and return -1 on no match
+    return -1;
+}
 ///////////////////////
 
 /**
  * Plugin's default options
  */
-const defaults: Settings = {
+let defaults: Settings = {
 	baseUrl: '.',	// relative path to the FM plugin folder
-	config: {},		// configuration options
+	config: <Config>{},		// configuration options
 	callbacks: {
-		beforeCreateImageUrl: (resourceObject, url) => url,
-		beforeCreatePreviewUrl: (resourceObject, url) => url,
-		beforeSelectItem: (resourceObject, url) => url,
+		beforeCreateImageUrl: (_resourceObject: ReadableObject, url: string): string => url,
+		beforeCreatePreviewUrl: (_resourceObject: ReadableObject, url: string): string => url,
+		beforeSelectItem: (_resourceObject: ReadableObject, url: string): string => url,
 		afterSelectItem: (/*resourceObject, url, contextWindow*/) => { }
 	}
 };
+
+type LangKV = {[key: string]: string};
 
 /**
  * Language model
@@ -743,7 +601,7 @@ const defaults: Settings = {
  */
 namespace LangModel {
 	export let currentLang: string = null;
-	export let translationsHash = {};
+	export let translationsHash: LangKV = { };
 	export let translationsPath: string;
 
 	export function init(baseUrl: string) {
@@ -759,10 +617,10 @@ namespace LangModel {
 	}
 
 	export function getLang(): string {
-		return currentLang;
+		return <string>currentLang;
 	}
 
-	export function setTranslations(json) {
+	export function setTranslations(json: LangKV) {
 		translationsHash = json;
 	}
 
@@ -775,23 +633,22 @@ namespace LangModel {
 	}
 }
 
-let config: Config;
-
 class PreviewModel {
 	// let preview_model: PreviewModel = this;
 	// let clipboard: Clipboard = null;
 
+    clipboard: Clipboard;
 	rdo: KnockoutObservable<ReadableObject>;
 	cdo: KnockoutObservable<ComputedDataObject>;
 	viewer: KnockoutObservableViewer;
 	renderer: RenderModel;
 	editor: EditorModel;
-	previewIconClass: KnockoutComputed;
+	previewIconClass: KnockoutComputed<string>;
 
 	constructor(private rfp: richFilemanagerPlugin) {
-		this.rdo = ko.observable({});
+		this.rdo = ko.observable(<ReadableObject>{});
 		// computed resource data object
-		this.cdo = ko.observable({});
+		this.cdo = ko.observable(<ComputedDataObject>{});
 
 		this.viewer = {
 			type: ko.observable('default'),
@@ -806,8 +663,8 @@ class PreviewModel {
 		this.renderer = new RenderModel(rfp);
 		this.editor = new EditorModel(rfp);
 
-		this.rdo.subscribe(resourceObject => {
-            this.cdo({
+		this.rdo.subscribe((resourceObject: ReadableObject) => {
+            this.cdo(<ComputedDataObject>{
 				isFolder: (resourceObject.type === 'folder'),
 				sizeFormatted: formatBytes(resourceObject.attributes.size),
 				extension: (resourceObject.type === 'file') ? getExtension(resourceObject.id) : null,
@@ -852,7 +709,6 @@ class PreviewModel {
 
 
 	applyObject(resourceObject: ReadableObject) {
-		let preview_model = this;
 		let settings = this.rfp.settings;
         let createCopyUrl = this.rfp.createCopyUrl;
         let createImageUrl = this.rfp.createImageUrl;
@@ -860,8 +716,8 @@ class PreviewModel {
         let previewItem = this.rfp.previewItem;
         let previewFile = this.rfp.fmModel.previewFile;
 
-		if(clipboard)
-			clipboard.destroy();
+		if(this.clipboard)
+			this.clipboard.destroy();
 
 		previewFile(false);
 
@@ -869,13 +725,13 @@ class PreviewModel {
 		let editorObject: Editor = {
 			interactive: false
 		};
-		let viewerObject: Viewer = {
+		let viewerObject: Viewer = <Viewer> {
 			type: 'default',
 			url: null,
 			options: {}
 		};
 
-		preview_model.rdo(resourceObject);
+		this.rdo(resourceObject);
 
 		if(isImageFile(filename)) {
 			viewerObject.type = 'image';
@@ -930,23 +786,23 @@ class PreviewModel {
 			viewerObject.options = {
 				is_writable: resourceObject.attributes.writable
 			};
-			preview_model.renderer.setRenderer(resourceObject);
-			editorObject.interactive = preview_model.renderer.renderer().interactive;
+			this.renderer.setRenderer(resourceObject);
+			editorObject.interactive = (<MarkdownRenderer | CodeMirrorRenderer>this.renderer.renderer()).interactive;
 		}
 
-		preview_model.viewer.type(viewerObject.type);
-		preview_model.viewer.url(viewerObject.url);
-		preview_model.viewer.options(viewerObject.options);
-		preview_model.viewer.pureUrl(createCopyUrl(resourceObject));
-		preview_model.viewer.isEditable(isEditableFile(filename) && config.editor.enabled === true);
-		preview_model.editor.isInteractive(editorObject.interactive);
+		this.viewer.type(viewerObject.type);
+		this.viewer.url(viewerObject.url);
+		this.viewer.options(viewerObject.options);
+		this.viewer.pureUrl(createCopyUrl(resourceObject));
+		this.viewer.isEditable(isEditableFile(filename) && config.editor.enabled === true);
+		this.editor.isInteractive(editorObject.interactive);
 
-		if(viewerObject.type === 'renderer' || preview_model.viewer.isEditable()) {
-			previewItem(resourceObject).then(function (response) {
+		if(viewerObject.type === 'renderer' || this.viewer.isEditable()) {
+			previewItem(resourceObject).then((response) => {
 				if(response.data) {
 					let content = response.data.attributes.content;
 
-					preview_model.viewer.content(content);
+					this.viewer.content(content);
 					previewFile(true);
 				}
 			});
@@ -957,118 +813,108 @@ class PreviewModel {
 
 	afterRender() {
 		let preview_model = this;
-		let $previewWrapper = this.rfp.$previewWrapper;
+		let $previewWrapper: JQuery = this.rfp.$previewWrapper;
 
 		preview_model.renderer.render(preview_model.viewer.content());
 
 		let copyBtnEl = $previewWrapper.find('.btn-copy-url')[ 0 ];
 
-		clipboard = new Clipboard(copyBtnEl);
+		this.clipboard = new Clipboard(copyBtnEl, undefined);
 
-		clipboard.on('success', (/*e*/) => {
+		this.clipboard.on('success', (/*e*/) => {
 			success(lg('copied'));
 		});
 	}
 
 	initiateEditor(/*elements*/) {
-		let preview_model = this;
         let $previewWrapper = this.rfp.$previewWrapper;
 
-		let textarea = $previewWrapper.find('.fm-cm-editor-content')[ 0 ];
+		let textarea: HTMLTextAreaElement = <HTMLTextAreaElement>$previewWrapper.find('.fm-cm-editor-content')[ 0 ];
 
-		preview_model.editor.createInstance(preview_model.cdo().extension, textarea, {
+		this.editor.createInstance(<string>(<ComputedDataObject>this.cdo()).extension, textarea, {
 			readOnly: false,
 			styleActiveLine: true
 		});
 	}
 
 	// fires specific action by clicking toolbar buttons in detail view
-	bindToolbar(action) {
-		let preview_model = this;
+	bindToolbar(action: string) {
         let has_capability = this.rfp.has_capability;
         let performAction = this.rfp.performAction;
 
-		if(has_capability(preview_model.rdo(), action)) {
-			performAction(action, {}, preview_model.rdo());
+		if(has_capability(this.rdo(), action)) {
+			performAction(action, {}, this.rdo());
 		}
 	}
 
 	editFile() {
-		let preview_model = this;
-		let content = preview_model.viewer.content();
+		let content = this.viewer.content();
 
-		preview_model.renderer.render(content);
-		preview_model.editor.render(content);
+		this.renderer.render(content);
+		this.editor.render(content);
 	}
 
 	saveFile() {
-		let preview_model = this;
         let saveItem = this.rfp.saveItem;
 
-		saveItem(preview_model.rdo());
+		saveItem(this.rdo());
 	}
 
 	closeEditor() {
-		let preview_model = this;
-		preview_model.editor.enabled(false);
+		this.editor.enabled(false);
 		// re-render viewer content
-		preview_model.renderer.render(preview_model.viewer.content());
+		this.renderer.render(this.viewer.content());
 	}
 
-	buttonVisibility(action) {
-		let preview_model = this;
+	buttonVisibility(action: string) {
         let has_capability = this.rfp.has_capability;
         let hasContext = this.rfp.hasContext;
 
 		switch(action) {
 			case 'select':
-				return (has_capability(preview_model.rdo(), action) && hasContext());
+				return (has_capability(this.rdo(), action) && hasContext());
 			case 'move':
 			case 'rename':
 			case 'delete':
 			case 'download':
-				return (has_capability(preview_model.rdo(), action));
+				return (has_capability(this.rdo(), action));
 		}
 	}
 }
 ///
-class TreeModel {
-	// let tree_model: TreeModel = this;
 
-    selectedNode;
-    treeData;
-    fullexpandedFolder; // todo: find where this came from
+class TreeModel {
+    selectedNode: KnockoutObservable<TreeNodeObject>;
+    treeData: TreeNodeObject;
+    fullexpandedFolder: any; // todo: find where this came from
 
 	constructor(private rfp: richFilemanagerPlugin) {
 		let fileRoot = rfp.fileRoot;
-        let tree_model: TreeModel = this;
 
         this.selectedNode = ko.observable(null);
 
-        this.treeData = {
+        this.treeData = <TreeNodeObject>{
             id: fileRoot,
             level: ko.observable(-1),
             children: ko.observableArray([])
         };
 
         this.treeData.children.subscribe((/*value*/) => {
-            tree_model.arrangeNode(tree_model.treeData);
+            this.arrangeNode(<TreeNodeObject>this.treeData);
         });
 	}
 
-	expandFolderDefault(parentNode) {
-        let tree_model: TreeModel = this;
-
+	expandFolderDefault(parentNode: TreeNodeObject) {
 		if(this.fullexpandedFolder !== null) {
 			if(!parentNode)
-				parentNode = tree_model.treeData;
+				parentNode = <TreeNodeObject>this.treeData;
 
 			// looking for node that starts with specified path
-			let node = tree_model.findByFilter(node => (this.fullexpandedFolder.indexOf(node.id) === 0), parentNode);
+			let node = this.findByFilter((node: TreeNodeObject) => (this.fullexpandedFolder.indexOf(node.id) === 0), parentNode);
 
 			if(node) {
 				config.filetree.expandSpeed = 10;
-				tree_model.loadNodes(node, false);
+				this.loadNodes(node, false);
 			} else {
 				this.fullexpandedFolder = null;
 				config.filetree.expandSpeed = 200;
@@ -1076,14 +922,12 @@ class TreeModel {
 		}
 	}
 
-	mapNodes(filter, contextNode?) {
-        let tree_model: TreeModel = this;
-
+	mapNodes(filter: Function, contextNode?: TreeNodeObject): any {
 		if(!contextNode)
-			contextNode = tree_model.treeData;
+			contextNode = <TreeNodeObject>this.treeData;
 
 		// don't apply callback function to the treeData root node
-		if(contextNode.id !== tree_model.treeData.id)
+		if(contextNode.id !== this.treeData.id)
 			filter.call(this, contextNode);
 
 		let nodes = contextNode.children();
@@ -1093,29 +937,26 @@ class TreeModel {
 
 		for(let i = 0, l = nodes.length; i < l; i++) {
 			filter.call(this, nodes[ i ]);
-			tree_model.findByFilter(filter, nodes[ i ]);
+			this.findByFilter(filter, nodes[ i ]);
 		}
 	}
 
-	findByParam(key, value, contextNode?) {
-        let tree_model: TreeModel = this;
-
+	findByParam(key: string, value: any, contextNode?: TreeNodeObject): TreeNodeObject {
 		if(!contextNode) {
-			contextNode = tree_model.treeData;
-			if(contextNode[ key ] === value)
+			contextNode = <TreeNodeObject>this.treeData;
+			if((<any>contextNode)[ key ] === value)
 				return contextNode;
-
 		}
-		let nodes = contextNode.children();
+		let nodes: TreeNodeObject[] = contextNode.children();
 
 		if(!nodes || nodes.length === 0)
 			return null;
 
 		for(let i = 0, l = nodes.length; i < l; i++) {
-			if(nodes[ i ][ key ] === value)
+			if((<any>nodes[ i ])[ key ] === value)
 				return nodes[ i ];
 
-			let result = tree_model.findByParam(key, value, nodes[ i ]);
+			let result = this.findByParam(key, value, nodes[ i ]);
 
 			if(result)
 				return result;
@@ -1123,16 +964,14 @@ class TreeModel {
 		return null;
 	}
 
-	findByFilter(filter, contextNode) {
-        let tree_model: TreeModel = this;
-
+	findByFilter(filter: Function, contextNode: TreeNodeObject): TreeNodeObject {
 		if(!contextNode) {
-			contextNode = tree_model.treeData;
+			contextNode = <TreeNodeObject>this.treeData;
 			if(filter(contextNode))
 				return contextNode;
 
 		}
-		let nodes = contextNode.children();
+		let nodes: TreeNodeObject[] = contextNode.children();
 
 		if(!nodes || nodes.length === 0)
 			return null;
@@ -1141,7 +980,7 @@ class TreeModel {
 			if(filter(nodes[ i ]))
 				return nodes[ i ];
 
-			let result = tree_model.findByFilter(filter, nodes[ i ]);
+			let result: TreeNodeObject = this.findByFilter(filter, nodes[ i ]);
 
 			if(result)
 				return result;
@@ -1149,20 +988,17 @@ class TreeModel {
 		return null;
 	}
 
-	getSelected() {
-        let tree_model: TreeModel = this;
+	getSelected(): TreeNodeObject[] {
+		let selectedItems: TreeNodeObject[] = [];
 
-		let selectedItems = [];
-
-		if(tree_model.selectedNode())
-			selectedItems.push(tree_model.selectedNode());
+		if(this.selectedNode())
+			selectedItems.push(<TreeNodeObject>this.selectedNode());
 
 		return selectedItems;
 	}
 
-	loadNodes(targetNode, refresh) {
-        let tree_model: TreeModel = this;
-		let path = targetNode ? targetNode.id : tree_model.treeData.id;
+	loadNodes(targetNode: TreeNodeObject, refresh: boolean) {
+		let path: string = <string>(targetNode ? targetNode.id : this.treeData.id);
 		let buildAjaxRequest = this.rfp.buildAjaxRequest;
 		let expandFolderDefault = this.expandFolderDefault;
 
@@ -1176,16 +1012,16 @@ class TreeModel {
 
 		buildAjaxRequest('GET', queryParams).done(response => {
 			if(response.data) {
-				let nodes = [];
-				$.each(response.data, (i, resourceObject) => {
-					let nodeObject = tree_model.createNode(resourceObject);
+				let nodes: TreeNodeObject[] = [];
+				$.each(response.data, (_i, resourceObject) => {
+					let nodeObject: TreeNodeObject = this.createNode(resourceObject);
 
 					nodes.push(nodeObject);
 				});
 				if(refresh)
 					targetNode.children([]);
 
-				tree_model.addNodes(targetNode, nodes);
+				this.addNodes(targetNode, nodes);
 				// not root
 				if(targetNode) {
 					targetNode.isLoaded(true);
@@ -1197,55 +1033,54 @@ class TreeModel {
 		}).fail(handleAjaxError);
 	}
 
-	createNode(resourceObject) {
-		let node: TreeNodeModel = new TreeNodeModel(this.rfp, resourceObject);
-        let fmModel = this.rfp.fmModel;
+	createNode(resourceObject: ReadableObject): TreeNodeObject {
+		let node: TreeNodeObject = new TreeNodeObject(this.rfp, resourceObject);
+        let fmModel: FmModel = this.rfp.fmModel;
 
 		fmModel.filterModel.filterItem(node);
 		return node;
 	}
 
-	addNodes(targetNode: TreeData, newNodes) {
-        let tree_model: TreeModel = this;
+	addNodes(targetNode: TreeNodeObject, newNodes: TreeNodeObject[] | TreeNodeObject): void {
         let sortItems = this.rfp.sortItems;
 
 		if(!Array.isArray(newNodes))
 			newNodes = [ newNodes ];
 
 		if(!targetNode)
-			targetNode = tree_model.treeData;
+			targetNode = <TreeNodeObject>this.treeData;
 
 		// list only folders in tree
 		if(config.filetree.foldersOnly)
-			newNodes = $.grep(newNodes, node => (node.cdo.isFolder));
+			newNodes = $.grep(newNodes, (node: TreeNodeObject) => (node.cdo.isFolder)); // todo: ??
 
-		$.each(newNodes, (i, node) => {
+		$.each(newNodes, (_i, node: TreeNodeObject) => {
 			node.parentNode(targetNode);
 		});
-		let allNodes = targetNode.children().concat(newNodes);
+		let allNodes: TreeNodeObject[] = targetNode.children().concat(newNodes);
 
-		targetNode.children(sortItems(allNodes));
+		targetNode.children(<TreeNodeObject[]>sortItems(allNodes));
 	}
 
-	toggleNode(node): void {
+	toggleNode(node: TreeNodeObject): void {
 		if(!collapseNode(node))
 			expandNode(node);
 	}
 
-	arrangeNode(node): void {
+	arrangeNode(node: TreeNodeObject): void {
 		let childrenLength = node.children().length;
 
-		$.each(node.children(), (index, cNode) => {
+		$.each(node.children(), (index, cNode: TreeNodeObject) => {
 			cNode.level(node.level() + 1);
 			cNode.isFirstNode(index === 0);
 			cNode.isLastNode(index === (childrenLength - 1));
 		});
 	}
 
-	nodeRendered(elements, node): void {
+	nodeRendered(elements: Element[], node: TreeNodeObject): void {
 		let getContextMenuItems = this.rfp.getContextMenuItems;
 		let performAction = this.rfp.performAction;
-		let model = this.rfp.fmModel;
+		let model: FmModel = this.rfp.fmModel;
 
 		// attach context menu
 		$(elements[ 1 ]).contextMenu({
@@ -1258,7 +1093,7 @@ class TreeModel {
 				return {
 					appendTo: '.fm-container',
 					items: getContextMenuItems(node.rdo),
-					callback: (itemKey, options) => {
+					callback: (itemKey: string, options: any) => {
 						performAction(itemKey, options, node.rdo, model.fetchSelectedObjects(node));
 					}
 				}
@@ -1266,34 +1101,29 @@ class TreeModel {
 		});
 	}
 
-	actualizeNodeObject(node, oldFolder, newFolder) {
-        let tree_model: TreeModel = this;
-		let search = new RegExp('^' + oldFolder);
-		let oldPath = node.rdo.id;
-		let newPath = oldPath.replace(search, newFolder);
+	actualizeNodeObject(node: TreeNodeObject, oldFolder: string, newFolder: string): void {
+		let search: RegExp = new RegExp(`^${oldFolder}`);
+		let oldPath: string = node.rdo.id;
+		let newPath: string = oldPath.replace(search, newFolder);
 
 		node.id = newPath;
 		node.rdo.id = newPath;
-		node.rdo.attributes.path = node.rdo.attributes.path.replace(new RegExp(oldPath + '$'), newPath);
+		node.rdo.attributes.path = node.rdo.attributes.path.replace(new RegExp(`${oldPath}$`), newPath);
 
-		if(node.children().length) {
-			$.each(node.children(), function (index, cNode) {
-				tree_model.actualizeNodeObject(cNode, oldFolder, newFolder);
-			});
-		}
+        node.children().forEach((cNode: TreeNodeObject) => {
+            this.actualizeNodeObject(cNode, oldFolder, newFolder);
+        });
 	}
 }
 
-class TreeNodeModel {
-	// let tree_node = this;
-
-    id: string;
+class TreeNodeObject {
+    id: string | number;
     rdo: ReadableObject;
     cdo: ComputedDataObject;
     visible: KnockoutObservable<boolean>;
     nodeTitle: KnockoutObservable<string>;
-    children: KnockoutObservableArray<any[]>;
-    parentNode;
+    children: KnockoutObservableArray<TreeNodeObject>;
+    parentNode: KnockoutObservable<TreeNodeObject>;
     isSliding: KnockoutObservable<boolean>;
     isLoading: KnockoutObservable<boolean>;
     isLoaded: KnockoutObservable<boolean>;
@@ -1303,15 +1133,14 @@ class TreeNodeModel {
     level: KnockoutObservable<number>;
     isFirstNode: KnockoutObservable<boolean>;
     isLastNode: KnockoutObservable<boolean>;
-    title;
-    itemClass;
-    iconClass;
-    switcherClass;
-    clusterClass;
+    title: KnockoutComputed<string>;
+    itemClass: KnockoutComputed<string>;
+    iconClass: KnockoutComputed<string>;
+    switcherClass: KnockoutComputed<string>;
+    clusterClass: KnockoutComputed<string>;
 
-	constructor(private rfp: richFilemanagerPlugin, resourceObject) {
-		let model = rfp.fmModel;
-        let tree_node = this;
+	constructor(private rfp: richFilemanagerPlugin, resourceObject: ReadableObject) {
+		let model: FmModel = rfp.fmModel;
 
         this.id = resourceObject.id;
         this.rdo = resourceObject;
@@ -1340,23 +1169,23 @@ class TreeNodeModel {
         this.isLastNode = ko.observable(false);
 
         this.nodeTitle.subscribe((value: string) => {
-            tree_node.rdo.attributes.name = value;
+            this.rdo.attributes.name = value;
         });
 
         this.children.subscribe((/*value*/) => {
-            model.treeModel.arrangeNode(tree_node);
+            model.treeModel.arrangeNode(this);
         });
 
         this.isLoaded.subscribe((value: boolean) => {
-            tree_node.isLoading(!value);
+            this.isLoading(!value);
         });
 
         this.selected.subscribe(value => {
             if(value) {
                 if(model.treeModel.selectedNode() !== null)
-                    model.treeModel.selectedNode().selected(false);
+                    (<TreeNodeObject>model.treeModel.selectedNode()).selected(false);
 
-                model.treeModel.selectedNode(tree_node);
+                model.treeModel.selectedNode(this);
                 model.itemsModel.unselectItems();
             } else
                 model.treeModel.selectedNode(null);
@@ -1396,7 +1225,7 @@ class TreeNodeModel {
             } else {
                 cssClass = 'ico_file';
                 if(this.rdo.attributes.readable)
-                    extraClass.push('ext', this.cdo.extension);
+                    extraClass.push('ext', <string>this.cdo.extension);
                 else
                     extraClass.push('file', 'lock');
 
@@ -1430,13 +1259,12 @@ class TreeNodeModel {
             return cssClass.join('_');
         });
 
-        this.clusterClass = <KnockoutObservable>ko.pureComputed(() => (config.filetree.showLine && !this.isLastNode()) ? 'line' : '');
+        this.clusterClass = ko.pureComputed(() => (config.filetree.showLine && !this.isLastNode()) ? 'line' : '');
 	}
 
 
-	switchNode(node) {
-        let tree_node = this;
-        let model = this.rfp.fmModel;
+	switchNode(node: TreeNodeObject): any { // todo: check this
+        let model: FmModel = this.rfp.fmModel;
 
 		if(!node.cdo.isFolder)
 			return false;
@@ -1446,35 +1274,31 @@ class TreeNodeModel {
 			return false;
 		}
 		if(!node.isLoaded())
-			tree_node.openNode(node);
+			this.openNode(node);
 		else
 			model.treeModel.toggleNode(node);
 
 	}
 
     // noinspection JSMethodCanBeStatic
-	mouseDown(node/*, e*/) {
+	mouseDown(node: TreeNodeObject/*, e*/): void {
 		node.selected(true);
 	}
 
-	nodeClick(node/*, e*/) {
-        let tree_node = this;
-
+	nodeClick(node: TreeNodeObject/*, e*/): void {
 		if(!config.manager.dblClickOpen)
-			tree_node.openNode(node);
+			this.openNode(node);
 
 	}
 
-	nodeDblClick(node/*, e*/) {
-        let tree_node = this;
-
+	nodeDblClick(node: TreeNodeObject/*, e*/): void {
 		if(config.manager.dblClickOpen)
-			tree_node.openNode(node);
+			this.openNode(node);
 
 	}
 
-	openNode(node/*, e?*/) {
-        let model = this.rfp.fmModel;
+	openNode(node: TreeNodeObject/*, e?*/): void {
+        let model: FmModel = this.rfp.fmModel;
         let fmModel = this.rfp.fmModel;
         let getDetailView = this.rfp.getDetailView;
 
@@ -1488,10 +1312,12 @@ class TreeNodeModel {
 			} else {
 				model.treeModel.toggleNode(node);
 
-				fmModel.currentPath(node.id);
+				fmModel.currentPath(<string>node.id);
 				fmModel.breadcrumbsModel.splitCurrent();
-				let dataObjects = [];
-				$.each(node.children(), (i, cnode) => {
+
+				let dataObjects: ReadableObject[] = [];
+
+				$.each(node.children(), (_i, cnode: TreeNodeObject) => {
 					dataObjects.push(cnode.rdo);
 				});
 				model.itemsModel.setList(dataObjects);
@@ -1500,61 +1326,57 @@ class TreeNodeModel {
 	}
 
 	remove() {
-        let tree_node = this;
-
-		tree_node.parentNode().children.remove(tree_node);
+        (<TreeNodeObject>this.parentNode()).children.remove(this);
 	}
 
 	isRoot() {
-        let tree_node = this;
-        let model = this.rfp.fmModel;
+        let model: FmModel = this.rfp.fmModel;
 
-		return tree_node.level() === model.treeModel.treeData.id;
+		return this.level() === model.treeModel.treeData.id;
 	}
 
 }
 
 class ItemsModel {
-	// let items_model: ItemsModel = this;
-    objects;
-    objectsSize;
-    objectsNumber;
-    selectedNumber;
-    listSortField;
-    listSortOrder;
-    isSelecting;
-    continiousSelection;
-    descriptivePanel;
-    lazyLoad: LazyLoad;
+    objects: KnockoutObservableArray<ItemObject>;
+    objectsSize: KnockoutObservable<number | string>;
+    objectsNumber: KnockoutObservable<number>;
+    selectedNumber: KnockoutObservable<number>;
+    listSortField: KnockoutObservable<string>;
+    listSortOrder: KnockoutObservable<string>;
+    isSelecting: KnockoutObservable<boolean>;
+    continiousSelection: KnockoutObservable<boolean>;
+    descriptivePanel: RenderModel;
+    lazyLoad: ILazyLoad;
 
 	constructor(private rfp: richFilemanagerPlugin) {
         let items_model: ItemsModel = this;
-        let model = rfp.fmModel;
-        let configSortField = rfp.configSortField;
-        let configSortOrder = rfp.configSortOrder;
+        let model: FmModel = rfp.fmModel;
+        let configSortField: string = rfp.configSortField;
+        let configSortOrder: string = rfp.configSortOrder;
 
-        this.objects = <KnockoutObservable>ko.observableArray([]);
-        this.objectsSize = <KnockoutObservable>ko.observable(0);
-        this.objectsNumber = <KnockoutObservable>ko.observable(0);
-        this.selectedNumber = <KnockoutObservable>ko.observable(0);
-        this.listSortField = <KnockoutObservable>ko.observable(configSortField);
-        this.listSortOrder = <KnockoutObservable>ko.observable(configSortOrder);
-        this.isSelecting = <KnockoutObservable>ko.observable(false);
-        this.continiousSelection = <KnockoutObservable>ko.observable(false);
-        this.descriptivePanel = <RenderModel>new RenderModel(rfp);
+        this.objects = ko.observableArray([]);
+        this.objectsSize = ko.observable(0);
+        this.objectsNumber = ko.observable(0);
+        this.selectedNumber = ko.observable(0);
+        this.listSortField = ko.observable(configSortField);
+        this.listSortOrder = ko.observable(configSortOrder);
+        this.isSelecting = ko.observable(false);
+        this.continiousSelection = ko.observable(false);
+        this.descriptivePanel = new RenderModel(rfp);
         this.lazyLoad = null;
 
-        this.isSelecting.subscribe(state => {
+        this.isSelecting.subscribe((state: boolean) => {
             if(!state) {
                 // means selection lasso has been dropped
                 items_model.continiousSelection(false);
             }
         });
-        this.objects.subscribe(items => {
-            let totalNumber = 0;
-            let totalSize = 0;
+        this.objects.subscribe((items: ItemObject[]) => {
+            let totalNumber: number = 0;
+            let totalSize: number = 0;
 
-            $.each(items, (i, item) => {
+            items.forEach((item: ItemObject) => {
                 if(item.rdo.type !== 'parent')
                     totalNumber++;
 
@@ -1578,7 +1400,7 @@ class ItemsModel {
                 selector: '.file, .directory',
                 zIndex: 100,
                 // wrap options with "build" allows to get item element
-                build: ($triggerElement/*, e*/) => {
+                build: ($triggerElement: JQuery/*, e*/) => {
                     let koItem = ko.dataFor($triggerElement[ 0 ]);
 
                     if(!koItem.selected()) {
@@ -1589,7 +1411,7 @@ class ItemsModel {
                     return {
                         appendTo: '.fm-container',
                         items: rfp.getContextMenuItems(koItem.rdo),
-                        callback: (itemKey, options) => {
+                        callback: (itemKey: string, options: any) => {
                             rfp.performAction(itemKey, options, koItem.rdo, model.fetchSelectedObjects(koItem));
                         }
                     }
@@ -1599,43 +1421,42 @@ class ItemsModel {
 
     }
 
-	createObject(resourceObject) {
+	createObject(resourceObject: ReadableObject): ItemObject {
 		let fmModel = this.rfp.fmModel;
-
 		let item: ItemObject = new ItemObject(this.rfp, resourceObject);
 
 		fmModel.filterModel.filterItem(item);
+
 		return item;
 	}
 
-	addNew(dataObjects) {
-        let model = this.rfp.fmModel;
-        let rfp = this.rfp;
-        let items_model: ItemsModel = this;
+	addNew(dataObjects: ReadableObject | ReadableObject[]) {
+        let model: FmModel = this.rfp.fmModel;
+        let sortItems = this.rfp.sortItems;
 
 		// use underlying array for better performance
 		// http://www.knockmeout.net/2012/04/knockoutjs-performance-gotcha.html
-		let items = model.itemsModel.objects();
+		let items: ItemObject[] = model.itemsModel.objects();
 
 		if(!Array.isArray(dataObjects))
 			dataObjects = [ dataObjects ];
 
-		$.each(dataObjects, (i, resourceObject) => {
-			items.push(items_model.createObject(resourceObject));
+		$.each(dataObjects, (_i, resourceObject: ReadableObject) => {
+			items.push(this.createObject(resourceObject));
 		});
 
-		items = rfp.sortItems(items);
+		items = <ItemObject[]>sortItems(items);
 		model.itemsModel.objects.valueHasMutated();
 	}
 
-	loadList(path) {
-        let model = this.rfp.fmModel;
+	loadList(path: string) {
+        let model: FmModel = this.rfp.fmModel;
         let rfp = this.rfp;
-        let _url_ = this.rfp._url_;
+        let _url_: purl.Url = this.rfp._url_;
 
 		model.loadingView(true);
 
-		let queryParams = {
+		let queryParams: Params = {
 			mode: 'getfolder',
 			path: path,
 			type: undefined
@@ -1657,16 +1478,17 @@ class ItemsModel {
 		}).fail(handleAjaxError);
 	}
 
-	setList(dataObjects) {
-        let model = this.rfp.fmModel;
-        let rfp = this.rfp;
-        let items_model: ItemsModel = this;
-		let objects = [];
+	setList(dataObjects: ReadableObject[]) {
+        let model: FmModel = this.rfp.fmModel;
+        let sortItems = this.rfp.sortItems;
+        let fileRoot = this.rfp.fileRoot;
+        let previewItem = this.rfp.previewItem;
+		let objects: ItemObject[] = [];
 
 		// add parent folder object
-		if(!isFile(model.currentPath()) && model.currentPath() !== rfp.fileRoot) {
-			let parentPath = getParentDirname(model.currentPath());
-			let parentItem = {
+		if(!isFile(model.currentPath()) && model.currentPath() !== fileRoot) {
+			let parentPath: string = getParentDirname(model.currentPath());
+			let parentItem = <ItemObject>{
 				id: parentPath,
 				rdo: {
 					id: parentPath,
@@ -1677,60 +1499,54 @@ class ItemsModel {
 					}
 				},
 				dragHovered: ko.observable(false),
-				open: undefined,
-				itemClass: undefined
+				open: (_item: any, e: JQueryEventObject) => {
+                    if(model.isItemOpenable(e))
+                        this.loadList(parentItem.id);
+                },
+				itemClass: ko.pureComputed(() => {
+                    let cssClass = [];
+
+                    if(parentItem.dragHovered())
+                        cssClass.push(model.ddModel.hoveredCssClass);
+
+                    return cssClass.join(' ');
+                })
 			};
-
-			parentItem.open = (item, e) => {
-				if(model.isItemOpenable(e))
-					items_model.loadList(parentItem.id);
-
-			};
-
-			parentItem.itemClass = ko.pureComputed(() => {
-				let cssClass = [];
-
-				if(parentItem.dragHovered())
-					cssClass.push(model.ddModel.hoveredCssClass);
-
-				return cssClass.join(' ');
-			});
 
 			objects.push(parentItem);
 		}
 
 		// clear previously rendered content
-		items_model.descriptivePanel.content(null);
+		this.descriptivePanel.content(null);
 
-		$.each(dataObjects, (i, resourceObject) => {
+		$.each(dataObjects, (_i, resourceObject: ReadableObject) => {
 			if(config.manager.renderer.position && typeof config.manager.renderer.indexFile === 'string' &&
 				resourceObject.attributes.name.toLowerCase() === config.manager.renderer.indexFile.toLowerCase()
 			) {
-				items_model.descriptivePanel.setRenderer(resourceObject);
+				this.descriptivePanel.setRenderer(resourceObject);
 
 				// load and render index file content
-				rfp.previewItem(items_model.descriptivePanel.rdo()).then(response => {
+				previewItem(this.descriptivePanel.rdo()).then(response => {
 					if(response.data)
-						items_model.descriptivePanel.render(response.data.attributes.content);
+						this.descriptivePanel.render(response.data.attributes.content);
 				});
 			}
-			objects.push(items_model.createObject(resourceObject));
+			objects.push(this.createObject(resourceObject));
 		});
 
-		model.itemsModel.objects(rfp.sortItems(objects));
+		model.itemsModel.objects(<ItemObject[]>sortItems(objects));
 		model.loadingView(false);
 	}
 
-	findByParam(key, value) {
-        let model = this.rfp.fmModel;
-		return ko.utils.arrayFirst(model.itemsModel.objects(), object => object[ key ] === value);
+	findByParam(key: string, value: any) {
+        let model: FmModel = this.rfp.fmModel;
+		return ko.utils.arrayFirst(model.itemsModel.objects(), (object: ItemObject): boolean => (<any>object)[ key ] === value);
 	}
 
-	findByFilter(filter, allMatches) {
-        let items_model: ItemsModel = this;
-		let firstMatch = !(allMatches || false);
-		let resultItems = [];
-		let items = items_model.objects();
+	findByFilter(filter: Function, allMatches: boolean): ItemObject[] | ItemObject {
+		let firstMatch: boolean = !(allMatches || false);
+		let resultItems: ItemObject[] = [];
+		let items: ItemObject[] = this.objects();
 
 		if(!items || items.length === 0)
 			return null;
@@ -1746,35 +1562,32 @@ class ItemsModel {
 		return firstMatch ? null : resultItems;
 	}
 
-	sortObjects() {
-        let items_model: ItemsModel = this;
+	sortObjects(): void {
         let sortItems = this.rfp.sortItems;
-		let sortedList = sortItems(items_model.objects());
+		let sortedList: ItemObject[] = <ItemObject[]>sortItems(this.objects());
 
-		items_model.objects(sortedList);
+		this.objects(sortedList);
 	}
 
-	getSelected() {
-        let items_model: ItemsModel = this;
-		let selectedItems = items_model.findByFilter(item => item.rdo.type !== 'parent' && item.selected(), true);
+	getSelected(): ItemObject[] {
+		let selectedItems: ItemObject[] = <ItemObject[]>this.findByFilter((item: ItemObject) => item.rdo.type !== 'parent' && item.selected(), true);
 
-		items_model.selectedNumber(selectedItems.length);
+		this.selectedNumber(selectedItems.length);
 		return selectedItems;
 	}
 
-	unselectItems(ctrlKey?) {
-        let items_model: ItemsModel = this;
+	unselectItems(ctrlKey?: boolean): void {
         let appendSelection = (config.manager.selection.enabled && config.manager.selection.useCtrlKey && ctrlKey === true);
 
 		if(!appendSelection) {
 			// drop selection from selected items
-			$.each(items_model.getSelected(), (i, itemObject) => {
+			$.each(this.getSelected(), (_i, itemObject) => {
 				itemObject.selected(false);
 			});
 		}
 	}
 
-	initiateLazyLoad() {
+	initiateLazyLoad(): void {
         let items_model: ItemsModel = this;
         let rfp = this.rfp;
 
@@ -1799,26 +1612,25 @@ class ItemsModel {
 }
 
 class ItemObject {
-	// let item_object = this;
-    previewWidth;
-    id;
-    rdo;
-    cdo;
-    visible;
-    selected;
-    dragHovered;
-    lazyPreview;
-    title;
-    itemClass;
-    listIconClass;
-    gridIconClass;
+    previewWidth: number;
+    id: string;
+    rdo: ReadableObject;
+    cdo: ComputedDataObject;
+    visible: KnockoutObservable<boolean>;
+    selected: KnockoutObservable<boolean>;
+    dragHovered: KnockoutObservable<boolean>;
+    lazyPreview: boolean;
+    title: KnockoutComputed<string>;
+    itemClass: KnockoutComputed<string>;
+    listIconClass: KnockoutComputed<string>;
+    gridIconClass: KnockoutComputed<string>;
 
-	constructor(private rfp: richFilemanagerPlugin, private resourceObject) {
-		let model = rfp.fmModel;
+	constructor(private rfp: richFilemanagerPlugin, resourceObject: ReadableObject) {
+		let model: FmModel = rfp.fmModel;
 
         this.previewWidth = config.viewer.image.thumbMaxWidth;
         if(resourceObject.attributes.width && resourceObject.attributes.width < this.previewWidth)
-            this.previewWidth = resourceObject.attributes.width;
+            this.previewWidth = <number>resourceObject.attributes.width;
 
         this.id = resourceObject.id; // for search purpose
         this.rdo = resourceObject; // original resource data object
@@ -1836,16 +1648,16 @@ class ItemObject {
         this.visible = ko.observable(true);
         this.selected = ko.observable(false);
         this.dragHovered = ko.observable(false);
-        this.lazyPreview = (config.viewer.image.lazyLoad && this.cdo.imageUrl);
+        this.lazyPreview = Boolean(config.viewer.image.lazyLoad && this.cdo.imageUrl);
 
         this.selected.subscribe(value => {
             if(value && model.treeModel.selectedNode() !== null)
-                model.treeModel.selectedNode().selected(false);
+                (<TreeNodeObject>model.treeModel.selectedNode()).selected(false);
 
         });
 
-        this.title = ko.pureComputed(() => {
-            return (config.options.showTitleAttr) ? this.rdo.id : null;
+        this.title = ko.pureComputed((): string => {
+            return <string>(config.options.showTitleAttr ? this.rdo.id : null);
         });
 
         this.itemClass = ko.pureComputed(() => {
@@ -1873,7 +1685,7 @@ class ItemObject {
             } else {
                 cssClass = 'ico_file';
                 if(this.rdo.attributes.readable)
-                    extraClass.push('ext', this.cdo.extension);
+                    extraClass.push('ext', <string>this.cdo.extension);
                 else
                     extraClass.push('file', 'lock');
 
@@ -1896,7 +1708,7 @@ class ItemObject {
                 } else {
                     cssClass.push('ico_file');
                     if(this.rdo.attributes.readable)
-                        extraClass.push('ext', this.cdo.extension);
+                        extraClass.push('ext', <string>this.cdo.extension);
                     else
                         extraClass.push('file', 'lock');
 
@@ -1908,8 +1720,8 @@ class ItemObject {
 
     }
 
-	mouseDown(item, e) {
-		let model = this.rfp.fmModel;
+	mouseDown(item: ItemObject, e: JQueryEventObject) {
+		let model: FmModel = this.rfp.fmModel;
 
 		// case: previously selected items are dragged instead of a newly one
 		// unselect if currently clicked item is not the one of selected items
@@ -1920,9 +1732,9 @@ class ItemObject {
 		item.selected(true);
 	};
 
-	open(item, e) {
+	open(item: ItemObject, e: JQueryEventObject) {
         let rfp = this.rfp;
-        let model = this.rfp.fmModel;
+        let model: FmModel = this.rfp.fmModel;
 
 		if(model.selectionModel.unselect) {
 			// case: click + ctrlKey on selected item
@@ -1946,10 +1758,12 @@ class ItemObject {
 	};
 
 	remove() {
-        let model = this.rfp.fmModel;
+        let model: FmModel = this.rfp.fmModel;
 		model.itemsModel.objects.remove(this);
 	};
 }
+
+type NodeItem = TreeNodeObject | ItemObject;
 
 class TableViewModel {
     thName: SortableHeader;
@@ -1958,7 +1772,7 @@ class TableViewModel {
     thDimensions: SortableHeader;
     thModified: SortableHeader;
 
-	constructor(private rfp: richFilemanagerPlugin) {
+	constructor(rfp: richFilemanagerPlugin) {
         this.thName = new SortableHeader(rfp, 'name');
         this.thType = new SortableHeader(rfp, 'type');
         this.thSize = new SortableHeader(rfp, 'size');
@@ -1968,73 +1782,66 @@ class TableViewModel {
 }
 
 class SortableHeader {
-    column;
-    order;
-    sortClass;
+    column: KnockoutObservable<string>;
+    order: KnockoutObservable<string>;
+    sortClass: KnockoutComputed<string>;
 
-    constructor(private rfp: richFilemanagerPlugin, name) {
-        let thead = this;
-        let model = rfp.fmModel;
+    constructor(private rfp: richFilemanagerPlugin, name: string) {
+        let model: FmModel = rfp.fmModel;
 
         this.column = ko.observable(name);
         this.order = ko.observable(model.itemsModel.listSortOrder());
 
-        this.sortClass = ko.pureComputed(() => {
+        this.sortClass = ko.pureComputed((): string => {
             let cssClass;
 
-            if(model.itemsModel.listSortField() === thead.column()) {
+            if(model.itemsModel.listSortField() === this.column()) {
                 cssClass = `sorted sorted-${this.order()}`;
             }
-            return cssClass;
+            return <string>cssClass;
         });
 	}
 
-    sort() {
-        let thead = this;
-        let model = this.rfp.fmModel;
+    sort(): void {
+        let model: FmModel = this.rfp.fmModel;
 
-        let isAscending = thead.order() === 'asc';
-        let isSameColumn = model.itemsModel.listSortField() === thead.column();
+        let isAscending: boolean = this.order() === 'asc';
+        let isSameColumn: boolean = model.itemsModel.listSortField() === this.column();
 
-        thead.order(isSameColumn ? (isAscending ? 'desc' : 'asc') : model.itemsModel.listSortOrder());
-        model.itemsModel.listSortField(thead.column());
-        model.itemsModel.listSortOrder(thead.order());
+        this.order(isSameColumn ? (isAscending ? 'desc' : 'asc') : model.itemsModel.listSortOrder());
+        model.itemsModel.listSortField(this.column());
+        model.itemsModel.listSortOrder(this.order());
         model.itemsModel.sortObjects();
     }
 }
 
 class HeaderModel {
-	// let header_model = this;
+    closeButton: KnockoutObservable<boolean>;
+    langSwitcher: boolean;
 
-    closeButton;
-    langSwitcher;
-
-	constructor(private rfp) {
+	constructor(private rfp: richFilemanagerPlugin) {
         this.closeButton = ko.observable(false);
         this.langSwitcher = Array.isArray(config.language.available) && config.language.available.length > 0;
 	}
 
-	closeButtonOnClick() {
-		let log = this.rfp.log;
-
+	closeButtonOnClick(): void {
 		log('CLOSE button is clicked');
 	}
 
-	navHome(){
-        let model = this.rfp.fmModel;
-        let fileRoot = this.rfp.fileRoot;
+	navHome(): void {
+        let model: FmModel = this.rfp.fmModel;
+        let fileRoot: string = this.rfp.fileRoot;
 
 		model.previewFile(false);
 		model.itemsModel.loadList(fileRoot);
 	}
 
-	navLevelUp() {
-        let model = this.rfp.fmModel;
-        let rfp = this.rfp;
+	navLevelUp(): void {
+        let model: FmModel = this.rfp.fmModel;
 
-		let parentFolder = model.previewFile()
-			? rfp.getDirname(model.previewModel.rdo().id)
-			: rfp.getParentDirname(model.currentPath());
+		let parentFolder: string = model.previewFile()
+			? getDirname((<KnockoutObservable<PreviewModel>>model.previewModel).rdo().id)
+			: getParentDirname(model.currentPath());
 
 		if(model.previewFile())
 			model.previewFile(false);
@@ -2044,8 +1851,8 @@ class HeaderModel {
 
 	}
 
-	navRefresh(){
-        let model = this.rfp.fmModel;
+	navRefresh(): void {
+        let model: FmModel = this.rfp.fmModel;
 
 		if(model.previewFile()) {
 			model.previewFile(false);
@@ -2054,8 +1861,8 @@ class HeaderModel {
 			model.itemsModel.loadList(model.currentPath());
 	}
 
-	displayGrid(){
-        let model = this.rfp.fmModel;
+	displayGrid(): void {
+        let model: FmModel = this.rfp.fmModel;
 
 		model.viewMode('grid');
 		model.previewFile(false);
@@ -2064,22 +1871,22 @@ class HeaderModel {
 			model.itemsModel.lazyLoad.update();
 	}
 
-	displayList(){
-        let model = this.rfp.fmModel;
+	displayList(): void {
+        let model: FmModel = this.rfp.fmModel;
 
 		model.viewMode('list');
 		model.previewFile(false);
 	}
 
-	switchLang(e) {
-		let langNew = e.target.value;
-		let langCurrent = LangModel.getLang();
+	switchLang(e: Event) {
+		let langNew = (<any>e.target).value; // todo: check this
+		let langCurrent: string = LangModel.getLang();
         let _url_ = this.rfp._url_;
 
 		if(langNew && langNew.toLowerCase() !== langCurrent.toLowerCase()) {
 			let newUrl;
 			let url = window.location.toString();
-			let regExp = new RegExp('(langCode=)' + langCurrent);
+			let regExp = new RegExp(`(langCode=)${langCurrent}`);
 
 			if(regExp.test(url))
 				newUrl = url.replace(regExp, '$1' + langNew);
@@ -2093,14 +1900,9 @@ class HeaderModel {
 	createFolder(){
 	    let rfp = this.rfp;
         let fmModel = this.rfp.fmModel;
-        let error = this.rfp.error;
-        let success = this.rfp.success;
-        let lg = this.rfp.lg;
         let buildAjaxRequest = this.rfp.buildAjaxRequest;
-        let handleAjaxResponseErrors = this.rfp.handleAjaxResponseErrors;
-        let handleAjaxError = this.rfp.handleAjaxError;
 
-		let makeFolder = function (e, ui: AleritfyDialogUI) {
+		let makeFolder = function (_e: Event, ui: AleritfyDialogUI) {
 			let folderName = ui.getInputValue();
 
 			if(!folderName) {
@@ -2128,12 +1930,12 @@ class HeaderModel {
 		prompt({
 			message: lg('prompt_foldername'),
 			value: lg('default_foldername'),
-			okBtn: {
+			okBtn: <AlertifyBtn>{
 				label: lg('create_folder'),
 				autoClose: false,
 				click: makeFolder
 			},
-			cancelBtn: {
+			cancelBtn: <AlertifyBtn>{
 				label: lg('cancel')
 			}
 		});
@@ -2141,10 +1943,10 @@ class HeaderModel {
 }
 
 class SummaryModel {
-    public files: KnockoutObservable;
-    public folders: KnockoutObservable;
-    public size: KnockoutObservable;
-    public enabled: KnockoutObservable;
+    public files: KnockoutObservable<any>;
+    public folders: KnockoutObservable<any>;
+    public size: KnockoutObservable<any>;
+    public enabled: KnockoutObservable<boolean>;
 
 	constructor(private rfp: richFilemanagerPlugin) {
         this.files = ko.observable(null);
@@ -2154,50 +1956,42 @@ class SummaryModel {
 	}
 
 	doSummarize(): void {
-	    let summarizeItems = this.rfp.summarizeItems;
-
-        summarizeItems();
+	    this.rfp.summarizeItems();
 	}
 }
 
 class FilterModel {
-    public name: KnockoutObservable;
+    public name: KnockoutObservable<string|null>;
 
 	constructor(private rfp: richFilemanagerPlugin) {
 		this.name = ko.observable(null);
 	}
 
-	setName(filterName) {
-        let filter_model = this;
-
+	setName(filterName: string) {
 		if(filterName && config.filter && Array.isArray(config.filter[ filterName ])) {
-			filter_model.name(filterName);
+			this.name(filterName);
 		}
 	}
 
 	// return extensions which are match a filter name
-	getExtensions() {
-        let filter_model = this;
-
-		if(filter_model.name())
-			return config.filter[ filter_model.name() ];
+	getExtensions(): string[] {
+		if(this.name())
+			return config.filter[ <string>this.name() ];
 
 		return null;
 	}
 
 	// check whether file item should be filtered out of the output based on it's extension
-	filterItem(itemObject) {
-        let filter_model = this;
-
+	filterItem(itemObject: NodeItem): void {
 		if(itemObject.rdo.type === 'parent')
 			return;
 
-		let extensions = filter_model.getExtensions();
-		let visibility = !itemObject.cdo.hiddenBySearch;
+		let extensions: string[] = this.getExtensions();
+		let visibility: boolean = !itemObject.cdo.hiddenBySearch;
 
 		if(itemObject.rdo.type === 'file' && Array.isArray(extensions)) {
-			let ext = getExtension(itemObject.id);
-			let matchByType = extensions.indexOf(ext) !== -1;
+			let ext: string = getExtension(<string>itemObject.id);
+			let matchByType: boolean = extensions.indexOf(ext) !== -1;
 
 			visibility = visibility && matchByType;
 			itemObject.cdo.hiddenByType = !matchByType;
@@ -2205,18 +1999,18 @@ class FilterModel {
 		itemObject.visible(visibility);
 	}
 
-	filter(filterName) {
+	filter(filterName: string) {
         let filter_model = this;
-        let model = this.rfp.fmModel;
+        let model: FmModel = this.rfp.fmModel;
 
 		model.searchModel.reset();
-		filter_model.setName(filterName);
+		filter_model.setName(<string>filterName); // todo: could be null
 
-		$.each(model.itemsModel.objects(), (i, itemObject) => {
+		$.each(model.itemsModel.objects(), (_i, itemObject) => {
 			filter_model.filterItem(itemObject);
 		});
 
-		model.treeModel.mapNodes(node => {
+		model.treeModel.mapNodes((node: TreeNodeObject) => {
 			filter_model.filterItem(node);
 		});
 
@@ -2235,18 +2029,18 @@ class FilterModel {
 
 class SearchModel {
 	// let search_model = this;
-	value;
+	value: KnockoutObservable<string>;
 
 	constructor(private rfp: richFilemanagerPlugin) {
 		this.value = ko.observable('');
 	}
 
 	// noinspection JSUnusedLocalSymbols
-    findAll(data, event) {
+    findAll(_data: any, event: any) { // todo: event type?
 		let delay = 200;
 		let insensitive = true;
         let search_model = this;
-        let model = this.rfp.fmModel;
+        let model: FmModel = this.rfp.fmModel;
         let rfp = this.rfp;
 
 		search_model.value(event.target.value);
@@ -2254,7 +2048,7 @@ class SearchModel {
         rfp.delayCallback(() => {
 			let searchString = insensitive ? search_model.value().toLowerCase() : search_model.value();
 
-			$.each(model.itemsModel.objects(), (i, itemObject) => {
+			$.each(model.itemsModel.objects(), (_i, itemObject) => {
 				if(itemObject.rdo.type === 'parent' || itemObject.cdo.hiddenByType)
 					return;
 
@@ -2273,10 +2067,10 @@ class SearchModel {
 
 	reset(/*data?, event?*/) {
         let search_model = this;
-        let model = this.rfp.fmModel;
+        let model: FmModel = this.rfp.fmModel;
 
 		search_model.value('');
-		$.each(model.itemsModel.objects(), (i, itemObject) => {
+		$.each(model.itemsModel.objects(), (_i, itemObject) => {
 			if(itemObject.rdo.type === 'parent')
 				return;
 
@@ -2288,17 +2082,17 @@ class SearchModel {
 ///
 class ClipboardModel {
 	// let clipboard_model = this;
-    cbMode;
-    cbObjects;
-    active;
-    itemsNum;
-    enabled;
+    cbMode: string;
+    cbObjects: NodeItem[];
+    active: boolean;
+    itemsNum: KnockoutObservable<number>;
+    enabled: KnockoutObservable<boolean>;
 
 	constructor(private rfp: richFilemanagerPlugin) {
         this.cbMode = null;
         this.cbObjects = [];
         let active = this.active = rfp.capabilities.indexOf('copy') > -1 || rfp.capabilities.indexOf('move') > -1;
-        let model = rfp.fmModel;
+        let model: FmModel = rfp.fmModel;
 
         this.itemsNum = ko.observable(0);
         this.enabled = ko.observable(model.config().clipboard.enabled && active);
@@ -2329,13 +2123,12 @@ class ClipboardModel {
 	}
 
 	paste() {
-        let clipboard_model = this;
         let model = this.rfp.fmModel;
         let processMultipleActions = this.rfp.processMultipleActions;
         let moveItem = this.rfp.moveItem;
         let copyItem = this.rfp.copyItem;
 
-		if(!clipboard_model.hasCapability('paste') || clipboard_model.isEmpty())
+		if(!this.hasCapability('paste') || this.isEmpty())
 			return;
 
 		if(this.cbMode === null || this.cbObjects.length === 0) {
@@ -2345,35 +2138,32 @@ class ClipboardModel {
 
 		let targetPath = model.currentPath();
 
-		processMultipleActions(this.cbObjects, (i, itemObject) => {
+		processMultipleActions(this.cbObjects, (_i, itemObject: NodeItem): any => {
 			if(this.cbMode === 'cut')
 				return moveItem(itemObject, targetPath);
 
 			if(this.cbMode === 'copy')
 				return copyItem(itemObject, targetPath);
 
-		}, this.clearClipboard.bind(this));
+		}, this.clearClipboard.bind(this)); // todo:
 	}
 
-	clear() {
-        let clipboard_model = this;
-
-		if(!clipboard_model.hasCapability('clear') || clipboard_model.isEmpty())
+	clear(): void {
+		if(!this.hasCapability('clear') || this.isEmpty())
 			return;
 
 		this.clearClipboard();
 		success(lg('clipboard_cleared'));
 	}
 
-	isEmpty() {
+	isEmpty(): boolean {
 		return this.cbObjects.length === 0;
 	}
 
-	hasCapability(capability) {
-        let clipboard_model = this;
+	hasCapability(capability: string): boolean {
         let rfp = this.rfp;
 
-        if(!clipboard_model.enabled)
+        if(!this.enabled)
 			return false;
 
 		switch(capability) {
@@ -2386,24 +2176,22 @@ class ClipboardModel {
 		}
 	}
 
-	clearClipboard() {
-		let clipboard_model = this;
-
+	clearClipboard(): void {
 		this.cbObjects = [];
 		this.cbMode = null;
-		clipboard_model.itemsNum(0);
+		this.itemsNum(0);
 	}
 }
 
 class BreadcrumbsModel {
 	// let bc_model = this;
-    items;
+    items: KnockoutObservableArray<BcItem>;
 
-	constructor(private rfp) {
+	constructor(private rfp: richFilemanagerPlugin) {
         this.items = ko.observableArray([]);
 	}
 
-	add(path, label) {
+	add(path: string, label: string): void {
         let bc_model = this;
         // noinspection UnnecessaryLocalVariableJS
         let rfp = this.rfp;
@@ -2411,26 +2199,25 @@ class BreadcrumbsModel {
 		bc_model.items.push(<BcItem>new BcItem(rfp, path, label));
 	}
 
-	splitCurrent() {
-        let bc_model = this;
-        let model = this.rfp.fmModel;
+	splitCurrent(): void {
+        let model: FmModel = this.rfp.fmModel;
         let rfp = this.rfp;
 
-		let path = rfp.fileRoot;
-		let cPath = model.currentPath();
-		let chunks = cPath.replace(new RegExp('^' + rfp.fileRoot), '').split('/');
+		let path: string = rfp.fileRoot;
+		let cPath: string = model.currentPath();
+		let chunks: string[] = cPath.replace(new RegExp(`^${rfp.fileRoot}`), '').split('/');
 
 		// reset breadcrumbs
-		bc_model.items([]);
+		this.items([]);
 		// push root node
-		bc_model.add(rfp.fileRoot, '');
+		this.add(rfp.fileRoot, '');
 
 		while(chunks.length > 0) {
 			let chunk = chunks.shift();
 
 			if(chunk) {
 				path += chunk + '/';
-				bc_model.add(path, chunk);
+				this.add(path, chunk);
 			}
 		}
 	}
@@ -2438,111 +2225,102 @@ class BreadcrumbsModel {
 
 class BcItem {
     // let bc_item = this;
-    isRoot;
-    active;
+    isRoot: boolean;
+    active: boolean;
 
-    constructor(private rfp: richFilemanagerPlugin, public path, public label) {
+    constructor(private rfp: richFilemanagerPlugin, public path: string, public label: string) {
         this.isRoot = (path === rfp.fileRoot);
         this.active = (path === rfp.fmModel.currentPath());
 	}
 
-    itemClass() {
-        let bc_item = this;
-        let cssClass = [ 'nav-item' ];
+    itemClass(): string {
+        let cssClass: string[] = [ 'nav-item' ];
 
-        if(bc_item.isRoot)
+        if(this.isRoot)
             cssClass.push('root');
 
-        if(bc_item.active)
+        if(this.active)
             cssClass.push('active');
 
         return cssClass.join(' ');
     }
 
-    goto(item/*, e*/) {
-    	let model = this.rfp.fmModel;
+    goto(item: BcItem/*, e*/): void {
+    	let model: FmModel = this.rfp.fmModel;
 
         if(!item.active)
             model.itemsModel.loadList(item.path);
-
     }
 }
 
 class RenderModel {
 	// let render_model = this;
-	$containerElement;
+	$containerElement: JQuery;
 
-	rdo;
-	content;
-	renderer;
+	rdo: KnockoutObservable<ReadableObject>;
+	content: KnockoutObservable<any>;
+	renderer: KnockoutObservable<MarkdownRenderer | CodeMirrorRenderer>;
 
 	constructor(private rfp: richFilemanagerPlugin) {
-        this.rdo = ko.observable({});
+        this.rdo = ko.observable(<ReadableObject>{});
         this.content = ko.observable(null);
         this.renderer = ko.observable(null);
 	}
 
-	render(data) {
-        let render_model = this;
-
-        if(render_model.renderer())
-			render_model.renderer().processContent(data);
+	render(data: any) {
+        if(this.renderer())
+            (<MarkdownRenderer | CodeMirrorRenderer>this.renderer()).processContent(data);
 
 	}
 
-	setRenderer(resourceObject) {
-        let render_model = this;
+	setRenderer(resourceObject: ReadableObject) {
         let rfp = this.rfp;
 
-        render_model.rdo(resourceObject);
+        this.rdo(resourceObject);
 
 		if(isMarkdownFile(resourceObject.attributes.name))
 		// markdown renderer
-			render_model.renderer(<MarkdownRenderer>new MarkdownRenderer(rfp, render_model));
+			this.renderer(<MarkdownRenderer>new MarkdownRenderer(rfp, this));
 		else
 		// CodeMirror renderer
-			render_model.renderer(<CodeMirrorRenderer>new CodeMirrorRenderer(rfp, render_model));
+			this.renderer(<CodeMirrorRenderer>new CodeMirrorRenderer(rfp, this));
 
 	}
 
-	setContainer(templateElements) {
-        let render_model = this;
-        let rfp = this;
-
-		$.each(templateElements, function () {
+	setContainer(templateElements: Element[]) {
+	    let _this = this;
+		$.each(templateElements, function (): any {
 			if($(this).hasClass('fm-renderer-container')) {
-				rfp.$containerElement = $(this);
+                _this.$containerElement = <any>$(this);
 				return false;
 			}
 		});
 
-		render_model.renderer().processDomElements(rfp.$containerElement);
+        (<MarkdownRenderer | CodeMirrorRenderer>this.renderer()).processDomElements(this.$containerElement);
 	}
 }
 
 class CodeMirrorRenderer {
-    name;
-    interactive;
+    name: string;
+    interactive: boolean;
     instance: EditorModel;
 
-    constructor(private rfp: richFilemanagerPlugin, private render_model: RenderModel) {
+    constructor(rfp: richFilemanagerPlugin, private render_model: RenderModel) {
         this.name = 'codeMirror';
         this.interactive = false;
         this.instance = new EditorModel(rfp);
 	}
 
-    processContent(data) {
-    	let render_model = this.render_model;
-
+    processContent(data: any) {
         this.instance.render(data);
-        render_model.content(data);
+        this.render_model.content(data);
     }
 
-    processDomElements($container) {
+    processDomElements($container: JQuery) {
         let render_model = this.render_model;
 
         if(!this.instance.instance) {
-            let textarea = $container.find('.fm-cm-renderer-content')[ 0 ];
+            let textarea: HTMLTextAreaElement = <HTMLTextAreaElement>$container.find('.fm-cm-renderer-content')[ 0 ];
             let extension = getExtension(render_model.rdo().id);
 
             this.instance.createInstance(extension, textarea, {
@@ -2555,14 +2333,11 @@ class CodeMirrorRenderer {
 }
 
 class MarkdownRenderer {
-    name;
-    interactive;
-    instance;
+    name: string;
+    interactive: boolean;
+    instance: EditorModel;
 
 	constructor(private rfp: richFilemanagerPlugin, private render_model: RenderModel) {
-		let rfp = this.rfp;
-		let render_model = this.render_model;
-
         this.name = 'markdown';
         this.interactive = true;
 
@@ -2573,7 +2348,7 @@ class MarkdownRenderer {
             typographer: true,
 
             // Custom highlight function to apply CSS class `highlight`:
-            highlight: (str, lang) => {
+            highlight: (str: string, lang: string) => {
                 if(lang && hljs.getLanguage(lang)) {
                     try {
                         return `<pre class="highlight"><code>${hljs.highlight(lang, str, true).value}</code></pre>`;
@@ -2584,7 +2359,7 @@ class MarkdownRenderer {
             },
 
             // custom link function to enable <img ...> and file d/ls:
-            replaceLink: (link/*, env*/) => {
+            replaceLink: (link: string/*, env*/) => {
 
                 // do not change if link as http:// or ftp:// or mailto: etc.
                 if(link.search('://') != -1 || startsWith(link, 'mailto:'))
@@ -2608,27 +2383,28 @@ class MarkdownRenderer {
         }).use((<any>window).markdownitReplaceLink);
 	}
 
-    processContent(data) {
+    processContent(data: any) {
 		let instance = this.instance;
-		let render_model = this.render_model;
         let result = instance.render(data);
 
-        render_model.content(result);
+        this.render_model.content(result);
         this.setLinksBehavior();
     }
 
-    processDomElements(/*$container*/) {
+    processDomElements(_container: JQuery) {
 	    // todo: why is this empty?
     }
 
     setLinksBehavior() {
 		let render_model = this.render_model;
-		let rfp = this.rfp;
+		let getItemInfo = this.rfp.getItemInfo;
+		let getDetailView = this.rfp.getDetailView;
 		let fmModel = this.rfp.fmModel;
+
         // add onClick events to local .md file links (to perform AJAX previews)
         render_model.$containerElement.find('a').each(function () {
-            let href = <string>$(this).attr('href');
-            let editor = fmModel.previewModel.editor;
+            let href: string = <string>$(this).attr('href');
+            let editor: EditorModel = (<PreviewModel>fmModel.previewModel).editor;
 
             if(editor.enabled() && editor.isInteractive()) {
                 // prevent user from losing unsaved changes in preview mode
@@ -2642,9 +2418,9 @@ class MarkdownRenderer {
                 if(isMarkdownFile(href)) {
                     // open file in preview mode for clicked link
                     $(this).on('click', (/*e*/) => {
-                        rfp.getItemInfo(href).then(response => {
+                        getItemInfo(href).then(response => {
                             if(response.data)
-                                rfp.getDetailView(response.data);
+                                getDetailView(response.data);
 
                         });
 
@@ -2658,17 +2434,14 @@ class MarkdownRenderer {
 
 class EditorModel {
 	// let editor_model = this;
-	delayedContent = null;
-    instance;
-    enabled;
-    content;
-    mode;
-    isInteractive;
+	delayedContent: any = null;
+    instance: CodeMirror.EditorFromTextArea = null;
+    enabled: KnockoutObservable<boolean>;
+    content: KnockoutObservable<null | any>;
+    mode: KnockoutObservable<null | any>;
+    isInteractive: KnockoutObservable<boolean>;
 
 	constructor(private rfp: richFilemanagerPlugin) {
-		let editor_model = this;
-
-        this.instance = null;
         this.enabled = ko.observable(false);
         this.content = ko.observable(null);
         this.mode = ko.observable(null);
@@ -2676,7 +2449,7 @@ class EditorModel {
 
         this.mode.subscribe(mode => {
             if(mode) {
-                editor_model.instance.setOption('mode', mode);
+                (<CodeMirror.EditorFromTextArea>this.instance).setOption('mode', mode);
                 if(this.delayedContent) {
                     this.drawContent(this.delayedContent);
                     this.delayedContent = null;
@@ -2685,19 +2458,17 @@ class EditorModel {
         });
 	}
 
-	render(content) {
-        let editor_model = this;
-
-		if(editor_model.mode())
+	render(content: any) {
+		if(this.mode())
 			this.drawContent(content);
 		else
 			this.delayedContent = content;
 
 	}
 
-	createInstance(extension, element, options) {
-        let editor_model = this;
-		let cm;
+	createInstance(extension: string, element: HTMLTextAreaElement, options: any): void { // todo: options
+		let cm: CodeMirror.EditorFromTextArea;
+
 		let defaults = {
 			readOnly: 'nocursor',
 			styleActiveLine: false,
@@ -2707,10 +2478,10 @@ class EditorModel {
 			theme: config.editor.theme,
 			matchBrackets: config.editor.matchBrackets,
 			extraKeys: {
-				'F11': cm => {
+				'F11': (cm: CodeMirror.EditorFromTextArea) => {
 					cm.setOption('fullScreen', !cm.getOption('fullScreen'));
 				},
-				'Esc': cm => {
+				'Esc': (cm: CodeMirror.EditorFromTextArea) => {
 					if(cm.getOption('fullScreen'))
 						cm.setOption('fullScreen', false);
 				}
@@ -2719,50 +2490,47 @@ class EditorModel {
 
 		cm = CodeMirror.fromTextArea(element, $.extend({}, defaults, options));
 
-		cm.on('changes', (cm/*, change*/) => {
-			editor_model.content(cm.getValue());
+		cm.on('changes', (instance: CodeMirror.Editor, _change: CodeMirror.EditorChangeLinkedList[]): void => {
+			this.content(instance.getValue());
 		});
 
-		editor_model.instance = cm;
+		this.instance = cm;
 
 		this.includeAssets(extension);
 	}
 
-	drawContent(content) {
-        let editor_model = this;
-
-		editor_model.enabled(true);
-		editor_model.instance.setValue(content);
+	drawContent(content: any) {
+		this.enabled(true);
+        (<CodeMirror.EditorFromTextArea>this.instance).setValue(content);
 		// to make sure DOM is ready to render content
 		setTimeout(() => {
-			editor_model.instance.refresh();
+            (<CodeMirror.EditorFromTextArea>this.instance).refresh();
 		}, 0);
 	}
 
-	includeAssets(extension) {
-		let assets = [];
+	includeAssets(extension: string) {
+		let assets: any[] = [];
 		let currentMode = 'default';
-        let editor_model = this;
-        let rfp = this.rfp;
+        let loadAssets = this.rfp.loadAssets;
 
 		// highlight code according to extension file
 		if(config.editor.codeHighlight) {
-			let cm = '/scripts/CodeMirror/';
+			let cm: string = '/scripts/CodeMirror/';
 
 			if(extension === 'js') {
-				assets.push(cm + 'mode/javascript/javascript.js');
+				assets.push(`${cm}mode/javascript/javascript.js`);
 				currentMode = 'javascript';
 			}
 			if(extension === 'css') {
-				assets.push(cm + 'mode/css/css.js');
+				assets.push(`${cm}mode/css/css.js`);
 				currentMode = 'css';
 			}
 			if(extension === 'html') {
-				assets.push(cm + 'mode/xml/xml.js');
+				assets.push(`${cm}mode/xml/xml.js`);
 				currentMode = 'text/html';
 			}
 			if(extension === 'xml') {
-				assets.push(cm + 'mode/xml/xml.js');
+				assets.push(`${cm}mode/xml/xml.js`);
 				currentMode = 'application/xml';
 			}
 			if(extension === 'php') {
@@ -2777,11 +2545,11 @@ class EditorModel {
 				currentMode = 'application/x-httpd-php';
 			}
 			if(extension === 'java') {
-				assets.push(cm + 'mode/clike/clike.js');
+				assets.push(`${cm}mode/clike/clike.js`);
 				currentMode = 'text/x-java';
 			}
 			if(extension === 'sql') {
-				assets.push(cm + 'mode/sql/sql.js');
+				assets.push(`${cm}mode/sql/sql.js`);
 				currentMode = 'text/x-mysql';
 			}
 			if(extension === 'md') {
@@ -2817,27 +2585,26 @@ class EditorModel {
 
 		if(assets.length) {
 			assets.push(() => {
-				// after all required assets are loaded
-				editor_model.mode(currentMode);
-			});
-			rfp.loadAssets(assets);
+                // after all required assets are loaded
+                this.mode(currentMode);
+            });
+			loadAssets(assets);
 		} else
-			editor_model.mode(currentMode);
+			this.mode(currentMode);
 
 	}
 }
 
 class DragAndDropModel {
-	// let drag_model = this;
-	restrictedCssClass;
-	$dragHelperTemplate;
+	restrictedCssClass: string;
+	$dragHelperTemplate: JQuery;
 
-    items;
-    hoveredItem;
-    dragHelper;
-    isScrolling;
-    isScrolled;
-    hoveredCssClass;
+    items: NodeItem[];
+    hoveredItem: NodeItem;
+    dragHelper: JQuery;
+    isScrolling: boolean;
+    isScrolled: boolean;
+    hoveredCssClass: string;
 
 	constructor(private rfp: richFilemanagerPlugin) {
         this.restrictedCssClass = 'drop-restricted';
@@ -2850,8 +2617,7 @@ class DragAndDropModel {
         this.hoveredCssClass = 'drop-hover';
 	}
 
-	makeDraggable(item, element) {
-        let drag_model = this;
+	makeDraggable(item: NodeItem, element: Element) {
         let fetchSelectedItems = this.rfp.fmModel.fetchSelectedItems;
 
         if(item.rdo.type === 'file' || item.rdo.type === 'folder') {
@@ -2866,86 +2632,83 @@ class DragAndDropModel {
 				appendTo: this.rfp.$wrapper,
 				containment: this.rfp.$container,
 				refreshPositions: false,
-				helper: () => {
-					let $cloned;
-					let iconClass;
+				helper: (): JQuery => {
+					let $cloned: JQuery;
+					let iconClass: string;
 
-					if(fetchSelectedItems(item.constructor.name).length > 1)
+					if(fetchSelectedItems((<any>item.constructor).name).length > 1)
 						iconClass = 'ico_multiple';
 					else
 						iconClass = (item.rdo.type === 'folder')
 							? 'ico_folder'
 							: 'ico_file ico_ext_' + getExtension(item.rdo.id);
 
-					$cloned = drag_model.$dragHelperTemplate.children('.drag-helper').clone();
+					$cloned = this.$dragHelperTemplate.children('.drag-helper').clone();
 					$cloned.find('.clip').addClass(iconClass);
 
-					drag_model.dragHelper = $cloned;
+					this.dragHelper = $cloned;
 					return $cloned;
 				},
-				start: (/*event, ui*/) => {
-					drag_model.items = fetchSelectedItems(item.constructor.name);
+				start: () => {
+					this.items = fetchSelectedItems((<any>item.constructor).name);
 				},
-				drag: function (/*event, ui*/) {
-					$(this).draggable('option', 'refreshPositions', drag_model.isScrolling || drag_model.isScrolled);
-					drag_model.isScrolled = false;
+				drag: (e: JQueryEventObject) => {
+					$(e.target).draggable('option', 'refreshPositions', this.isScrolling || this.isScrolled);
+                    this.isScrolled = false;
 				},
-				stop: (/*event, ui*/) => {
-					drag_model.items = [];
-					drag_model.dragHelper = null;
+				stop: () => {
+					this.items = [];
+					this.dragHelper = null;
 				}
 			});
 		}
 	}
 
-	makeDroppable(targetItem, element) {
-        let drag_model = this;
+	makeDroppable(targetItem: NodeItem, element: Element) {
         let rfp = this.rfp;
 
 		if(targetItem.rdo.type === 'folder' || targetItem.rdo.type === 'parent') {
-			$(element).droppable({
+			$(element).droppable(<any>{
 				tolerance: 'pointer',
-				enableExtendedEvents: targetItem instanceof ItemObject,
-				accept: $draggable => {
+				enableExtendedEvents: targetItem instanceof ItemObject, // todo: this isn't in jqueryui.d.ts
+				accept: ($draggable: JQuery) => {
 					let dragItem = ko.dataFor($draggable[ 0 ]);
 					let type = dragItem ? dragItem.rdo.type : null;
 
 					return (type === 'file' || type === 'folder');
 				},
-				over: (event, ui) => {
+				over: (_event: JQueryEventObject, ui: JQueryUI.DroppableEventUIParam) => {
 					// prevent "over" event fire before "out" event
 					// http://stackoverflow.com/a/28457286/7095038
 					setTimeout(() => {
-						drag_model.markHovered(null);
-						drag_model.markRestricted(ui.helper, false);
+						this.markHovered(null);
+						this.markRestricted(ui.helper, false);
 
-						if(!drag_model.isDropAllowed(targetItem))
-							drag_model.markRestricted(ui.helper, true);
+						if(!this.isDropAllowed(targetItem))
+							this.markRestricted(ui.helper, true);
 
-						drag_model.markHovered(targetItem);
+						this.markHovered(targetItem);
 					}, 0);
 				},
-				out: (event, ui) => {
-					drag_model.markHovered(null);
-					drag_model.markRestricted(ui.helper, false);
+				out: (_event: JQueryEventObject, ui: JQueryUI.DroppableEventUIParam) => {
+					this.markHovered(null);
+					this.markRestricted(ui.helper, false);
 				},
-				drop: (/*event, ui*/) => {
-					drag_model.markHovered(null);
+				drop: (/*event, ui*/): any => {
+					this.markHovered(null);
 
-					if(!drag_model.isDropAllowed(targetItem))
+					if(!this.isDropAllowed(targetItem))
 						return false;
 
-					rfp.processMultipleActions(drag_model.items, (i, itemObject) => rfp.moveItem(itemObject.rdo, targetItem.id));
+					rfp.processMultipleActions(this.items, (_i, itemObject) => rfp.moveItem(itemObject.rdo, <string>targetItem.id));
 				}
 			});
 		}
 	}
 
 	// check whether draggable items can be accepted by target item
-	isDropAllowed(targetItem) {
-        let drag_model = this;
-
-		let matches = $.grep(drag_model.items, (itemObject/*, i*/) => {
+	isDropAllowed(targetItem: NodeItem) {
+		let matches = $.grep(this.items, (itemObject/*, i*/) => {
 			if(targetItem.rdo.type === 'folder' || targetItem.rdo.type === 'parent') {
 				// drop folder inside descending folders (filetree)
 				if(startsWith(targetItem.rdo.id, itemObject.rdo.id))
@@ -2959,25 +2722,24 @@ class DragAndDropModel {
 			// drop item to itself
 			return (itemObject.id === targetItem.id);
 		});
+
 		// prevent on moving (to) protect folder or to the one of selected items
 		return (targetItem.rdo.attributes.writable && matches.length === 0);
 	}
 
 	// mark item as hovered if it accepts draggable item
-	markHovered(item) {
-        let drag_model = this;
+	markHovered(item: NodeItem) {
+		if(this.hoveredItem !== null)
+			this.hoveredItem.dragHovered(false);
 
-		if(drag_model.hoveredItem !== null)
-			drag_model.hoveredItem.dragHovered(false);
-
-		drag_model.hoveredItem = item;
+		this.hoveredItem = item;
 		if(item)
 			item.dragHovered(true);
 
 	}
 
 	// mark helper as restricted if target item doesn't accept draggable item
-	markRestricted($helper, flag) {
+	markRestricted($helper: JQuery, flag: boolean) {
         let drag_model = this;
 
 		if(flag)
@@ -3002,15 +2764,13 @@ class FmModel {
     config: KnockoutObservable<Config>;
 	loadingView: KnockoutObservable<boolean>;
 	previewFile: KnockoutObservable<boolean>;
-	viewMode: KnockoutObservable;
+	viewMode: KnockoutObservable<string>;
 	currentPath: KnockoutObservable<string>;
-	browseOnly: KnockoutObservable;
-	previewModel: KnockoutObservable;
-	lg;
+	browseOnly: KnockoutObservable<boolean>;
+	previewModel: KnockoutObservable<PreviewModel> | PreviewModel;
 	treeModel: TreeModel;
 	itemsModel: ItemsModel;
 	tableViewModel: TableViewModel;
-	previewModel: PreviewModel;
 	headerModel: HeaderModel;
 	summaryModel: SummaryModel;
 	filterModel: FilterModel;
@@ -3020,9 +2780,10 @@ class FmModel {
 	ddModel: DragAndDropModel;
 	selectionModel: SelectionModel;
 
-	constructor(private rfp: richFilemanagerPlugin) {
-		let model = this;
+	constructor(rfp: richFilemanagerPlugin) {
+		let model: FmModel = this;
 		let fileRoot = rfp.fileRoot;
+		let previewModel: PreviewModel = (<PreviewModel>model.previewModel);
 
 		this.loadingView = ko.observable(true);
 		this.previewFile = ko.observable(false);
@@ -3031,39 +2792,39 @@ class FmModel {
 		this.browseOnly = ko.observable(this.config.options.browseOnly);
 		this.previewModel = ko.observable(null);
 
-		(<any>this).previewFile.subscribe(enabled => {
+        this.previewFile.subscribe((enabled: boolean) => {
 			if(!enabled) {
 				// close editor upon disabling preview
-				model.previewModel.closeEditor();
+                previewModel.closeEditor();
 
 				// update content of descriptive panel
-				if(model.itemsModel.descriptivePanel.rdo().id === model.previewModel.rdo().id)
-					model.itemsModel.descriptivePanel.render(model.previewModel.viewer.content());
+				if(model.itemsModel.descriptivePanel.rdo().id === previewModel.rdo().id)
+					model.itemsModel.descriptivePanel.render(previewModel.viewer.content());
 
 			}
 		});
 
-		this.treeModel = <TreeModel>new TreeModel(rfp);
-		this.itemsModel = <ItemsModel>new ItemsModel(rfp);
-		this.tableViewModel = <TableViewModel>new TableViewModel(rfp);
-		this.previewModel = <PreviewModel>new PreviewModel(rfp);
-		this.headerModel = <HeaderModel>new HeaderModel(rfp);
-		this.summaryModel = <SummaryModel>new SummaryModel(rfp);
-		this.filterModel = <FilterModel>new FilterModel(rfp);
-		this.searchModel = <SearchModel>new SearchModel(rfp);
-		this.clipboardModel = <ClipboardModel>new ClipboardModel(rfp);
-		this.breadcrumbsModel = <BreadcrumbsModel>new BreadcrumbsModel(rfp);
-		this.ddModel = <DragAndDropModel>new DragAndDropModel(rfp);
-		this.selectionModel = <SelectionModel>new SelectionModel();
+		this.treeModel = new TreeModel(rfp);
+		this.itemsModel = new ItemsModel(rfp);
+		this.tableViewModel = new TableViewModel(rfp);
+		this.previewModel = new PreviewModel(rfp);
+		this.headerModel = new HeaderModel(rfp);
+		this.summaryModel = new SummaryModel(rfp);
+		this.filterModel = new FilterModel(rfp);
+		this.searchModel = new SearchModel(rfp);
+		this.clipboardModel = new ClipboardModel(rfp);
+		this.breadcrumbsModel = new BreadcrumbsModel(rfp);
+		this.ddModel = new DragAndDropModel(rfp);
+		this.selectionModel = new SelectionModel();
 	}
 
-	addItem(resourceObject, targetPath) {
+	addItem(resourceObject: ReadableObject, targetPath: string) {
 		let fmModel = this;
 		// handle tree nodes
 		let targetNode = fmModel.treeModel.findByParam('id', targetPath);
 
 		if(targetNode) {
-			let newNode = fmModel.treeModel.createNode(resourceObject);
+			let newNode: TreeNodeObject = fmModel.treeModel.createNode(resourceObject);
 
 			fmModel.treeModel.addNodes(targetNode, newNode);
 		}
@@ -3074,17 +2835,17 @@ class FmModel {
 
 	}
 
-	removeItem(resourceObject) {
+	removeItem(resourceObject: ReadableObject | NodeItem) {
 		let fmModel = this;
 
 		// handle tree nodes
-		let treeNode = fmModel.treeModel.findByParam('id', resourceObject.id);
+		let treeNode: TreeNodeObject = fmModel.treeModel.findByParam('id', resourceObject.id);
 
 		if(treeNode)
 			treeNode.remove();
 
 		// handle view objects
-		let viewItem = fmModel.itemsModel.findByParam('id', resourceObject.id);
+		let viewItem: ItemObject = fmModel.itemsModel.findByParam('id', resourceObject.id);
 
 		if(viewItem)
 			viewItem.remove();
@@ -3092,15 +2853,15 @@ class FmModel {
 	}
 
 	// fetch selected view items OR tree nodes
-	fetchSelectedItems(instanceName?) {
+	fetchSelectedItems(instanceName?: NodeItem): NodeItem[] {
 		let fmModel = this;
-		let selectedNodes;
-		let selectedItems;
+		let selectedNodes: TreeNodeObject[];
+		let selectedItems: ItemObject[];
 
 		if(instanceName === (<any>ItemObject).name)
 			return fmModel.itemsModel.getSelected();
 
-		if(instanceName === (<any>TreeNodeModel).name)
+		if(instanceName === (<any>TreeNodeObject).name)
 			return fmModel.treeModel.getSelected();
 
 		if(!instanceName) {
@@ -3113,18 +2874,18 @@ class FmModel {
 	}
 
 	// fetch resource objects out of the selected items
-	fetchSelectedObjects(item) {
+	fetchSelectedObjects(item: NodeItem): ReadableObject[] {
 		let fmModel = this;
-		let objects = [];
+		let objects: ReadableObject[] = [];
 
-		$.each(fmModel.fetchSelectedItems(item.constructor.name), function (i, itemObject) {
+		$.each(fmModel.fetchSelectedItems((<any>item.constructor).name), (_i, itemObject: NodeItem) => {
 			objects.push(itemObject.rdo);
 		});
 		return objects;
 	}
 
 	// check whether view item can be opened based on the event and configuration options
-	isItemOpenable(event) {
+	isItemOpenable(event: JQueryEventObject) {
 		// selecting with Ctrl key
 		if(this.config.manager.selection.enabled && this.config.manager.selection.useCtrlKey && event.ctrlKey === true)
 			return false;
@@ -3151,13 +2912,13 @@ class richFilemanagerPlugin {
 	public $viewItems: JQuery;
 	public $uploadButton: JQuery;
 
-	public fileRoot: any = '/';				// relative files root, may be changed with some query params
+	public fileRoot: string = '/';				// relative files root, may be changed with some query params
 	public apiConnector: string = null;		// API connector URL to perform requests to server
 	public capabilities: any = [];			// allowed actions to perform in FM
-	public configSortField: any = null;		// items sort field name
-	public configSortOrder: any = null;		// items sort order 'asc'/'desc'
-	public fmModel: FmModel = null;				// filemanager knockoutJS model
-	public _url_ = purl();
+	public configSortField: string = <any>null;		// items sort field name
+	public configSortOrder: string = <any>null;		// items sort order 'asc'/'desc'
+	public fmModel: FmModel = <any>null;				// filemanager knockoutJS model
+	public _url_: purl.Url = purl();
 	public timeStart = new Date().getTime();
 
     delayCallback: Function;
@@ -3167,20 +2928,20 @@ class richFilemanagerPlugin {
 	/**
 	 * The "constructor" method that gets called when the object is created
 	 */
-	constructor(element: any, pluginOptions) {
+	constructor(element: any, pluginOptions: any) {
 		/** variables to keep request options data **/
-		this.fullexpandedFolder = null;	// path to be automatically expanded by filetree plugin
+		this.fullexpandedFolder = <any>null;	// path to be automatically expanded by filetree plugin
 
 		/**
 		 * Private properties accessible only from inside the plugin
 		 */
-		let $container: JQuery = this.$container = <JQuery>$(element);	// reference to the jQuery version of DOM element the plugin is attached to
+		let $container: JQuery = this.$container = $(element);	// reference to the jQuery version of DOM element the plugin is attached to
 		let $wrapper: JQuery = this.$wrapper = $container.children('.fm-wrapper');
 		let $header: JQuery = this.$header = $wrapper.find('.fm-header');
 		let $uploader: JQuery = this.$uploader = $header.find('.fm-uploader');
 		let $splitter: JQuery = this.$splitter = $wrapper.children('.fm-splitter');
 		this.$footer = $wrapper.children('.fm-footer');
-		let $fileinfo: JQuery = this.$fileinfo = $splitter.children('.fm-fileinfo');
+		$fileinfo = this.$fileinfo = $splitter.children('.fm-fileinfo');
 		this.$filetree = $splitter.children('.fm-filetree');
 		let $viewItemsWrapper: JQuery = this.$viewItemsWrapper = $fileinfo.find('.view-items-wrapper');
 		this.$previewWrapper = $fileinfo.find('.fm-preview-wrapper');
@@ -3207,7 +2968,7 @@ class richFilemanagerPlugin {
 	 	  ---------------------------------------------------------*/
 
 		// http://stackoverflow.com/questions/3390930/any-way-to-make-jquery-inarray-case-insensitive
-		(function ($) {
+		/*(function ($) {
 			$.extend($, {
 				// Case insensative $.inArray (http://api.jquery.com/jquery.inarray/)
 				// $.inArrayInsensitive(value, array [, fromIndex])
@@ -3239,13 +3000,13 @@ class richFilemanagerPlugin {
 					return -1;
 				}
 			});
-		})(jQuery);
+		})(jQuery);*/
 
 		// Delays execution of function that is passed as argument
 		this.delayCallback = (() => {
 			let timer = 0;
 
-			return (callback, ms) => {
+			return (callback: Function, ms: number) => {
 				clearTimeout(timer);
 				timer = setTimeout(callback, ms);
 			};
@@ -3311,17 +3072,17 @@ class richFilemanagerPlugin {
 	public performInitialRequest() {
 		return this.buildAjaxRequest('GET', {
 			mode: 'initiate'
-		}).done((response) => {
+		}).done((response:any) => {
 			if(response.data) {
 				let serverConfig = response.data.attributes.config;
 
 				// configuration options retrieved from the server
 				$.each(serverConfig, (section, options) => {
 					$.each(options, (param, value) => {
-						if(config[ section ] === undefined)
-							config[ section ] = [];
+						if((<any>config)[ section ] === undefined)
+							(<any>config)[ section ] = [];
 
-						config[ section ][ param ] = value;
+						(<any>config)[ section ][ param ] = value;
 					});
 				});
 
@@ -3333,9 +3094,9 @@ class richFilemanagerPlugin {
 			handleAjaxResponseErrors(response);
 		}).fail(() => {
 			error('Unable to perform initial request to server.');
-		}).then(response => {
+		}).then((response: JQuery.jqXHR): any => {
 			// noinspection TypeScriptUnresolvedVariable
-			if(response.errors) { // todo: errors does not exist in the jquery type definition
+			if((<any>response).errors) { // todo: errors does not exist in the jquery type definition
 				return $.Deferred().reject();
 			}
 		});
@@ -3343,12 +3104,12 @@ class richFilemanagerPlugin {
 
 	// localize messages based on configuration or URL value
 	public localize() {
-		let _url_ = this._url_;
+		let _url_: purl.Url = this._url_;
 
 		LangModel.init(this.settings.baseUrl);
 
 		return $.ajax()
-			.then(() => {
+			.then((): any => {
 				let urlLangCode = _url_.param('langCode');
 
 				if(urlLangCode) {
@@ -3377,7 +3138,7 @@ class richFilemanagerPlugin {
 	}
 
 	public includeTemplates() {
-		return $.when(this.loadTemplate('upload-container'), this.loadTemplate('upload-item')).done(function (uc, ui) {
+		return $.when(this.loadTemplate('upload-container'), this.loadTemplate('upload-item')).done((uc, ui) => {
 			let tmpl_upload_container = uc[ 0 ];
 			let tmpl_upload_item = ui[ 0 ];
 
@@ -3387,7 +3148,7 @@ class richFilemanagerPlugin {
 		});
 	}
 
-	public includeAssets(callback) {
+	public includeAssets(callback: Function) {
 		let primary = [];
 		let secondary = [];
 
@@ -3467,14 +3228,15 @@ class richFilemanagerPlugin {
 	}
 
 	public initialize() {
-		let _url_ = this._url_;
+		let _url_: purl.Url = this._url_;
         let setDimensions = this.setDimensions;
+        let self = this;
 
 		// reads capabilities from config files if exists else apply default settings
 		this.capabilities = config.options.capabilities || [ 'upload', 'select', 'download', 'rename', 'copy', 'move', 'delete', 'extract' ];
 
 		// defines sort params
-		let chunks = [];
+		let chunks: string[] = [];
 
 		if(config.options.fileSorting)
 			chunks = config.options.fileSorting.toLowerCase().split('_');
@@ -3510,7 +3272,7 @@ class richFilemanagerPlugin {
 				let node = valueAccessor();
 				$(element).toggle(node.isExpanded());
 			},
-			update: (element, valueAccessor) => {
+			update: (element: Element, valueAccessor): any => {
 				let node = valueAccessor();
 
 				if(node.isSliding() === false)
@@ -3555,22 +3317,22 @@ class richFilemanagerPlugin {
 			}
 		};
 
-		this.$wrapper.mousewheel(function (e) {
+		this.$wrapper.mousewheel((e: any): any => { // todo: what event?
 			if(!fmModel.ddModel.dragHelper)
 				return true;
 
 			let $panes;
-			let $obstacle: JQuery = null;
+			let $obstacle: JQuery = <JQuery>null;
 
 			if(config.customScrollbar.enabled)
 				$panes = $([ this.$viewItemsWrapper[ 0 ], this.$filetree[ 0 ] ]);
 			else
 				$panes = this.$splitter.children('.splitter-pane');
 
-			$panes.each(function (/*i*/) {
-				let $pane: JQuery = (<JQuery>$)(this);
-				let top = $pane.offset().top;
-				let left = $pane.offset().left;
+			$panes.each((_i, pane: Element): any => {
+				let $pane: JQuery = $(pane);
+				let top: number = $pane.offset().top;
+				let left: number = $pane.offset().left;
 
 				if((e.offsetY >= top && e.offsetY <= top + $pane.height()) &&
 					(e.offsetX >= left && e.offsetX <= left + $pane.width())) {
@@ -3585,10 +3347,10 @@ class richFilemanagerPlugin {
 
 			if(config.customScrollbar.enabled) {
 				let $scrollBar = $obstacle.find('.mCSB_scrollTools_vertical');
-				let directionSign = (e.deltaY === 1) ? '+' : '-';
+				let directionSign: string = (e.deltaY === 1) ? '+' : '-';
 
 				if($scrollBar.is(':visible')) {
-					$obstacle.mCustomScrollbar('scrollTo', [ directionSign + '=250', 0 ], {
+                    (<any>$obstacle).mCustomScrollbar('scrollTo', [ directionSign + '=250', 0 ], {
 						scrollInertia: 500,
 						scrollEasing: 'easeOut',
 						callbacks: true
@@ -3596,8 +3358,8 @@ class richFilemanagerPlugin {
 				}
 			} else {
 				if((<HTMLElement>$obstacle[ 0 ]).scrollHeight > (<HTMLElement>$obstacle[ 0 ]).clientHeight) {
-					let scrollPosition = $obstacle.scrollTop();
-					let scrollOffset = scrollPosition - (200 * e.deltaY);
+					let scrollPosition: number = $obstacle.scrollTop();
+					let scrollOffset: number = scrollPosition - (200 * e.deltaY);
 
 					fmModel.ddModel.isScrolling = true;
 					scrollOffset = (scrollOffset < 0) ? 0 : scrollOffset;
@@ -3609,7 +3371,7 @@ class richFilemanagerPlugin {
 			}
 		});
 
-		this.$viewItems.selectable({
+		this.$viewItems.selectable(<any>{
 			filter: 'li:not(.directory-parent), tbody > tr:not(.directory-parent)',
 			cancel: '.directory-parent, thead',
 			disabled: !config.manager.selection.enabled,
@@ -3624,14 +3386,14 @@ class richFilemanagerPlugin {
 				fmModel.itemsModel.isSelecting(false);
 			},
 
-			selected: (event, ui) => {
-				let koItem = ko.dataFor(ui.selected);
+			selected: (_event: JQueryEventObject, ui: { selected?: Element; }) => {
+				let koItem: any = ko.dataFor(ui.selected);
 
 				koItem.selected(true);
 			},
 
-			unselected: (event, ui) => {
-				let koItem = ko.dataFor(ui.unselected);
+			unselected: (_event: JQueryEventObject, ui: { unselected: Element; }) => {
+				let koItem: any = ko.dataFor(ui.unselected);
 
 				koItem.selected(false);
 			}
@@ -3650,7 +3412,7 @@ class richFilemanagerPlugin {
 					paste: {
 						name: lg('clipboard_paste'),
 						className: 'paste',
-						disabled: (key, options) => fmModel.clipboardModel.isEmpty()
+						disabled: () => fmModel.clipboardModel.isEmpty()
 					}
 				};
 
@@ -3661,7 +3423,7 @@ class richFilemanagerPlugin {
 					appendTo: '.fm-container',
 					items: contextMenuItems,
 					reposition: false,
-					callback: (itemKey/*, options*/) => {
+					callback: (itemKey: string/*, options*/) => {
 						switch(itemKey) {
 							case 'createFolder':
 								fmModel.headerModel.createFolder();
@@ -3706,7 +3468,7 @@ class richFilemanagerPlugin {
 
 		// Loading CustomScrollbar if enabled
 		if(config.customScrollbar.enabled) {
-			this.$filetree.mCustomScrollbar({
+            (<any>this.$filetree).mCustomScrollbar({
 				theme: config.customScrollbar.theme,
 				scrollButtons: {
 					enable: config.customScrollbar.button
@@ -3726,7 +3488,7 @@ class richFilemanagerPlugin {
 				axis: 'yx'
 			});
 
-			this.$previewWrapper.mCustomScrollbar({
+            (<any>this.$previewWrapper).mCustomScrollbar({
 				theme: config.customScrollbar.theme,
 				scrollButtons: {
 					enable: config.customScrollbar.button
@@ -3738,7 +3500,7 @@ class richFilemanagerPlugin {
 				}
 			});
 
-			this.$viewItemsWrapper.mCustomScrollbar({
+            (<any>this.$viewItemsWrapper).mCustomScrollbar({
 				theme: config.customScrollbar.theme,
 				scrollButtons: {
 					enable: config.customScrollbar.button
@@ -3749,7 +3511,7 @@ class richFilemanagerPlugin {
 					updateOnSelectorChange: '.grid, .list'
 				},
 				callbacks: {
-					onScrollStart: function () {
+					onScrollStart: function (this: mCustomScrollbar) {
 						if(!fmModel.itemsModel.continiousSelection()) {
 							this.yStartPosition = this.mcs.top;
 							this.yStartTime = (new Date()).getTime();
@@ -3760,7 +3522,7 @@ class richFilemanagerPlugin {
 						fmModel.ddModel.isScrolling = false;
 						fmModel.ddModel.isScrolled = true;
 					},
-					whileScrolling: function () {
+					whileScrolling: function (this: mCustomScrollbar) {
 						if(config.manager.selection.enabled) {
 							// would prefer to get scroll position from [onScrollStart],
 							// but the [onScroll] should fire first, which happens with a big lag
@@ -3773,8 +3535,10 @@ class richFilemanagerPlugin {
 							// set flag if selection lasso is active
 							if(fmModel.itemsModel.isSelecting())
 								fmModel.itemsModel.continiousSelection(true);
-							let yIncrement = Math.abs(this.mcs.top) - Math.abs(this.yStartPosition);
-							this.$viewItems.selectable('repositionCssHelper', yIncrement, 0);
+
+							let yIncrement: number = Math.abs(this.mcs.top) - Math.abs(this.yStartPosition);
+
+							self.$viewItems.selectable('repositionCssHelper', <any>yIncrement, 0);
 						}
 
 						if(fmModel.itemsModel.lazyLoad)
@@ -3807,7 +3571,94 @@ class richFilemanagerPlugin {
 		setDimensions();
 	}
 
-	public sortItems(items) {
+
+    /**
+     * Get the string/number to be sorted by checking the array value with the criterium.
+     * @item KO or treeNode object
+     */
+    private getSortSubject(item: NodeItem, sortParams: any) {
+        let fmModel = this.fmModel;
+        let sortBy;
+        let sortField: string = this.configSortField;
+
+        if(fmModel.viewMode() === 'list')
+            sortField = fmModel.itemsModel.listSortField();
+
+        switch(sortField) {
+            case 'type':
+                sortBy = item.cdo.extension || '';
+                break;
+            case 'size':
+                sortBy = item.rdo.attributes.size;
+                break;
+            case 'modified':
+                sortBy = item.rdo.attributes.timestamp;
+                break;
+            case 'dimensions':
+                sortBy = item.cdo.dimensions || '';
+                break;
+            default:
+                sortBy = item.rdo.attributes.name;
+        }
+
+        // strings should be ordered in lowercase (unless specified)
+        if(typeof sortBy === 'string') {
+            if(!sortParams.cases)
+                sortBy = sortBy.toLowerCase();
+
+            // spaces/newlines
+            sortBy = sortBy.replace(/\s+/g, ' ');
+        }
+        return sortBy;
+    }
+
+    /**
+     * Compare strings using natural sort order
+     * http://web.archive.org/web/20130826203933/http://my.opera.com/GreyWyvern/blog/show.dml/1671288
+     */
+    private naturalCompare(a: any, b: any) {
+        let aa = this.chunkify(a.toString());
+        let bb = this.chunkify(b.toString());
+
+        for(let x = 0; aa[ x ] && bb[ x ]; x++) {
+            if(aa[ x ] !== bb[ x ]) {
+                let c: number = Number(aa[ x ]);
+                let d: number = Number(bb[ x ]);
+
+                if(c == <any>aa[ x ] && d == <any>bb[ x ])
+                    return c - d;
+                else
+                    return aa[ x ] > bb[ x ] ? 1 : -1;
+
+            }
+        }
+        return aa.length - bb.length;
+    }
+
+    /**
+     * Split a string into an array by type: numeral or string
+     */
+    private chunkify(t: string): string[] {
+        let tz: string[] = [];
+        let x: number = 0;
+        let y: number = -1;
+        let n: boolean = false;// = 0;
+        let i: number;
+        let j: string;
+
+        while(i = (j = t.charAt(x++)).charCodeAt(0)) {
+            let m: boolean = (i == 46 || (i >= 48 && i <= 57));
+
+            if(m !== n) {
+                tz[ ++y ] = '';
+                n = m;
+            }
+            tz[ y ] += j;
+        }
+        return tz;
+    }
+
+    public sortItems(items: NodeItem[]) {
 		let fmModel = this.fmModel;
 		let parentItem;
 		let sortOrder = (fmModel.viewMode() === 'list') ? fmModel.itemsModel.listSortOrder() : this.configSortOrder;
@@ -3821,10 +3672,10 @@ class richFilemanagerPlugin {
 		if(items.length > 0 && items[ 0 ].rdo.type === 'parent')
 			parentItem = items.shift();
 
-		items.sort((a, b) => {
+		items.sort((a: any, b: any) => {
 			let sortReturnNumber;
-			let aa = getSortSubject(a);
-			let bb = getSortSubject(b);
+			let aa = this.getSortSubject(a, sortParams);
+			let bb = this.getSortSubject(b, sortParams);
 
 			if(aa === bb)
 				sortReturnNumber = 0;
@@ -3835,7 +3686,7 @@ class richFilemanagerPlugin {
 					if(!sortParams.natural || (!isNaN(aa) && !isNaN(bb)))
 						sortReturnNumber = aa < bb ? -1 : (aa > bb ? 1 : 0);
 					else
-						sortReturnNumber = naturalCompare(aa, bb);
+						sortReturnNumber = this.naturalCompare(aa, bb);
 
 				}
 			}
@@ -3843,91 +3694,6 @@ class richFilemanagerPlugin {
 			sortReturnNumber *= sortParams.order;
 			return sortReturnNumber;
 		});
-
-		/**
-		 * Get the string/number to be sorted by checking the array value with the criterium.
-		 * @item KO or treeNode object
-		 */
-		function getSortSubject(item) {
-			let sortBy;
-			let sortField = this.configSortField;
-
-			if(fmModel.viewMode() === 'list')
-				sortField = fmModel.itemsModel.listSortField();
-
-			switch(sortField) {
-				case 'type':
-					sortBy = item.cdo.extension || '';
-					break;
-				case 'size':
-					sortBy = item.rdo.attributes.size;
-					break;
-				case 'modified':
-					sortBy = item.rdo.attributes.timestamp;
-					break;
-				case 'dimensions':
-					sortBy = item.cdo.dimensions || '';
-					break;
-				default:
-					sortBy = item.rdo.attributes.name;
-			}
-
-			// strings should be ordered in lowercase (unless specified)
-			if(typeof sortBy === 'string') {
-				if(!sortParams.cases)
-					sortBy = sortBy.toLowerCase();
-
-				// spaces/newlines
-				sortBy = sortBy.replace(/\s+/g, ' ');
-			}
-			return sortBy;
-		}
-
-		/**
-		 * Compare strings using natural sort order
-		 * http://web.archive.org/web/20130826203933/http://my.opera.com/GreyWyvern/blog/show.dml/1671288
-		 */
-		function naturalCompare(a, b) {
-			let aa = chunkify(a.toString());
-			let bb = chunkify(b.toString());
-
-			for(let x = 0; aa[ x ] && bb[ x ]; x++) {
-				if(aa[ x ] !== bb[ x ]) {
-					let c = Number(aa[ x ]);
-					let d = Number(bb[ x ]);
-
-					if(c == aa[ x ] && d == bb[ x ])
-						return c - d;
-					else
-						return aa[ x ] > bb[ x ] ? 1 : -1;
-
-				}
-			}
-			return aa.length - bb.length;
-		}
-
-		/**
-		 * Split a string into an array by type: numeral or string
-		 */
-		function chunkify(t) {
-			let tz = [];
-			let x = 0;
-			let y = -1;
-			let n = 0;
-			let i;
-			let j;
-
-			while(i = (j = t.charAt(x++)).charCodeAt(0)) {
-				let m = (i == 46 || (i >= 48 && i <= 57));
-
-				if(m !== n) {
-					tz[ ++y ] = '';
-					n = m;
-				}
-				tz[ y ] += j;
-			}
-			return tz;
-		}
 
 		// handle folders position
 		let folderItems = [];
@@ -3959,7 +3725,7 @@ class richFilemanagerPlugin {
 
 	// Retrieves config settings from config files
 	public loadConfigFile(type: string) {
-		let url = null;
+		let url: string;
 		let settings = this.settings;
 
 		type = (typeof type === 'undefined') ? 'user' : type;
@@ -3985,7 +3751,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Loads a given js/css files dynamically into header
-	public loadAssets(assets) {
+	public loadAssets(assets: any[]) {
 		let settings = this.settings;
 
 		for(let i = 0, l = assets.length; i < l; i++) {
@@ -3997,7 +3763,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Loads a given js template file into header if not already included
-	public loadTemplate(id/*, data*/) {
+	public loadTemplate(id: string/*, data*/) {
         let settings = this.settings;
 
 		return $.ajax({
@@ -4007,9 +3773,9 @@ class richFilemanagerPlugin {
 		});
 	}
 
-	public extendRequestParams(method, parameters) {
-		let methodParams;
-		let configParams = config.api.requestParams;
+	public extendRequestParams(method: string, parameters: any) {
+		let methodParams: any;
+		let configParams: { [key:string]: any; } = config.api.requestParams;
 
 		method = method.toUpperCase();
 
@@ -4035,7 +3801,7 @@ class richFilemanagerPlugin {
 		return parameters;
 	}
 
-	public buildAjaxRequest(method, parameters): JQuery.PromiseBase {
+	public buildAjaxRequest(method: string, parameters: any): JQuery.jqXHR {
 		return $.ajax({
 			type: method,
 			cache: false,
@@ -4048,7 +3814,7 @@ class richFilemanagerPlugin {
 	// noinspection JSUnusedGlobalSymbols
     public getFilteredFileExtensions() {
 		let shownExtensions;
-		let _url_ = this._url_;
+		let _url_: purl.Url = this._url_;
 
 		if(_url_.param('filter')) {
 			if(config.filter[ _url_.param('filter') ] !== undefined)
@@ -4058,17 +3824,17 @@ class richFilemanagerPlugin {
 		return shownExtensions;
 	}
 
-	public buildConnectorUrl(params?) {
+	public buildConnectorUrl(params?: any) {
 		let defaults = {
 			time: new Date().getTime()
 		};
 		let queryParams = $.extend({}, params || {}, defaults);
 
-		return this.apiConnector + '?' + $.param(queryParams);
+		return this.apiConnector + '?' + $.param(queryParams); // todo: move apiConnector to a constant
 	}
 
 	// Build url to preview files
-	public createPreviewUrl(resourceObject: ReadableObject, encode) {
+	public createPreviewUrl(resourceObject: ReadableObject, encode: boolean) {
 	    let settings = this.settings;
 		let previewUrl;
 		let objectPath = resourceObject.attributes.path;
@@ -4091,7 +3857,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Build url to display image or its thumbnail
-	public createImageUrl(resourceObject: ReadableObject, thumbnail, disableCache) {
+	public createImageUrl(resourceObject: ReadableObject, thumbnail: boolean, disableCache: boolean): string {
 		let imageUrl;
 		let settings = this.settings;
 
@@ -4103,7 +3869,7 @@ class richFilemanagerPlugin {
 			if(config.viewer.absolutePath && !thumbnail && resourceObject.attributes.path)
 				imageUrl = this.buildAbsolutePath(encodePath(resourceObject.attributes.path), disableCache);
 			else {
-				let queryParams = {path: resourceObject.id, mode: undefined, thumbnail: undefined};
+				let queryParams: Params = {path: resourceObject.id, mode: undefined, thumbnail: undefined};
 
 				if(getExtension(resourceObject.id) === 'svg')
 					queryParams.mode = 'readfile';
@@ -4121,7 +3887,7 @@ class richFilemanagerPlugin {
 		return imageUrl;
 	}
 
-	public buildAbsolutePath(path, disableCache) {
+	public buildAbsolutePath(path: string, disableCache: boolean): string {
 		let url = (typeof config.viewer.previewUrl === 'string') ? config.viewer.previewUrl : location.origin;
 
 		url = trim(url, '/') + path;
@@ -4132,17 +3898,18 @@ class richFilemanagerPlugin {
 		return url;
 	}
 
-	public createCopyUrl(resourceObject: ReadableObject) {
-		function encodeCopyUrl(path) {
-			return (config.clipboard.encodeCopyUrl) ? this.encodePath(path) : path;
-		}
+    private encodeCopyUrl(path: string): string {
+        return (config.clipboard.encodeCopyUrl) ? encodePath(path) : path;
+    }
+
+	public createCopyUrl(resourceObject: ReadableObject): string {
 
 		if(config.viewer.absolutePath && resourceObject.attributes.path) {
-			let path = encodeCopyUrl(resourceObject.attributes.path);
+			let path = this.encodeCopyUrl(resourceObject.attributes.path);
 
 			return this.buildAbsolutePath(path, false);
 		} else {
-			let path = encodeCopyUrl(resourceObject.id);
+			let path = this.encodeCopyUrl(resourceObject.id);
 			let mode = (resourceObject.type === 'folder') ? 'getfolder' : 'readfile';
 
 			return `${this.apiConnector}?path=${path}&mode=${mode}`;
@@ -4151,7 +3918,7 @@ class richFilemanagerPlugin {
 
 	// Returns container for filetree or fileinfo section based on scrollbar plugin state
 	// noinspection JSUnusedGlobalSymbols
-    public getSectionContainer($section) {
+    public getSectionContainer($section: JQuery): JQuery {
 		// if scrollbar plugin is enabled
 		if(config.customScrollbar.enabled)
 			return $section.find('.mCSB_container');
@@ -4161,29 +3928,27 @@ class richFilemanagerPlugin {
 	}
 
 	// Handle multiple actions in loop with deferred object
-	public processMultipleActions(items, callbackFunction: (a: any, b: any) => JQuery.PromiseBase<any>, finishCallback?) {
-		let successCounter = 0;
-		let totalCounter = items.length;
-		let deferred: JQuery.Deferred<any> | JQuery.PromiseBase<any> = $.Deferred().resolve();
-		let lg = lg;
+	public processMultipleActions(items: NodeItem[], callbackFunction: (a: number, b: NodeItem) => any, finishCallback?: Function) {
+		let successCounter: number = 0;
+		let totalCounter: number = items.length;
+		let deferred: any = $.Deferred().resolve();
 
-		$.each(items, (i, item) => {
-			deferred = (<JQuery.Deferred>deferred)
+		$.each(items, (i: number, item: NodeItem) => {
+			deferred = deferred
 				.then(() => callbackFunction(i, item))
 				.then((result: any) => {
 					if(result && result.data)
 						successCounter++;
-
 				});
 		});
 
 		if(totalCounter > 1) {
-			(<JQuery.Deferred>deferred).then(() => {
-				write(lg('successful_processed').replace('%s', <string>successCounter).replace('%s', <string>totalCounter));
+			deferred.then(() => {
+				write(lg('successful_processed').replace('%s', <any>successCounter).replace('%s', <any>totalCounter));
 			});
 		}
 
-		(<JQuery.Deferred>deferred).then(() => {
+		deferred.then(() => {
 			if(typeof finishCallback === 'function')
 				finishCallback();
 
@@ -4200,7 +3965,7 @@ class richFilemanagerPlugin {
 		this.$filetree.show();
 
 		// Provides support for adjustible columns.
-		this.$splitter.splitter({
+        (<any>this.$splitter).splitter({
 			sizeLeft: config.filetree.width,
 			minLeft: config.filetree.minWidth,
 			minRight: 200
@@ -4217,7 +3982,7 @@ class richFilemanagerPlugin {
 
 	// Check if plugin instance created inside some context
 	public hasContext() {
-		let _url_ = this._url_;
+		let _url_: purl.Url = this._url_;
 
 		return window.opener // window.open()
 			|| (window.parent && window.self !== window.parent) // <iframe>
@@ -4237,17 +4002,17 @@ class richFilemanagerPlugin {
 	public selectItem(resourceObject: ReadableObject) {
 		let contextWindow: any = null;
 		let previewUrl = this.createPreviewUrl(resourceObject, true);
-		let _url_ = this._url_;
+		let _url_: purl.Url = this._url_;
 		let settings = this.settings;
 
 		previewUrl = settings.callbacks.beforeSelectItem(resourceObject, previewUrl);
 
 		// tinyMCE > 3.0 integration method
 		if((<any>window).tinyMCEPopup) {
-			let win = tinyMCEPopup.getWindowArg('window');
+			let win: any = tinyMCEPopup.getWindowArg('window');
 
 			win.document.getElementById(tinyMCEPopup.getWindowArg('input')).value = previewUrl;
-			if(typeof(win.ImageDialog) != 'undefined') {
+			if(typeof((<any>window).ImageDialog) != 'undefined') {
 				// Update image dimensions
 				if(win.ImageDialog.getImageData)
 					win.ImageDialog.getImageData();
@@ -4341,9 +4106,7 @@ class richFilemanagerPlugin {
 	// or choosing the "Rename" contextual menu option in list views.
 	public renameItem(resourceObject: ReadableObject) {
 		let fmModel = this.fmModel;
-		let lg = lg;
-
-        let doRename = function (e, ui: AleritfyDialogUI) {
+        let doRename = (_e: any, ui: AleritfyDialogUI) => {
 			let oldPath = resourceObject.id;
 			let givenName = ui.getInputValue();
 
@@ -4354,7 +4117,7 @@ class richFilemanagerPlugin {
 			}
 
 			if(!config.options.allowChangeExtensions) {
-				let suffix = this.getExtension(resourceObject.attributes.name);
+				let suffix = getExtension(resourceObject.attributes.name);
 
 				if(suffix.length > 0)
 					givenName = givenName + '.' + suffix;
@@ -4362,7 +4125,7 @@ class richFilemanagerPlugin {
 			}
 
 			// File only - Check if file extension is allowed
-			if(this.isFile(oldPath) && !this.isAuthorizedFile(givenName)) {
+			if(isFile(oldPath) && !isAuthorizedFile(givenName)) {
 				let str = '<p>' + lg('INVALID_FILE_TYPE') + '</p>';
 
 				if(config.security.extensions.policy == 'ALLOW_LIST')
@@ -4422,8 +4185,8 @@ class richFilemanagerPlugin {
 						fmModel.itemsModel.loadList(newItem.id);
 
 					// ON rename currently previewed file
-					if(fmModel.previewFile() && fmModel.previewModel.rdo().id === oldPath)
-						fmModel.previewModel.applyObject(newItem);
+					if(fmModel.previewFile() && (<PreviewModel>fmModel.previewModel).rdo().id === oldPath)
+                        (<PreviewModel>fmModel.previewModel).applyObject(newItem);
 
 					ui.closeDialog();
 					if(config.options.showConfirmation)
@@ -4431,10 +4194,10 @@ class richFilemanagerPlugin {
 
 				}
 				handleAjaxResponseErrors(response);
-			}).fail(this.handleAjaxError.bind(this));
+			}).fail(handleAjaxError);
 		};
 
-		prompt({
+		prompt(<any>{
 			message: lg('new_filename'),
 			value: config.options.allowChangeExtensions ? resourceObject.attributes.name : getFilename(resourceObject.attributes.name),
 			okBtn: {
@@ -4451,18 +4214,18 @@ class richFilemanagerPlugin {
 	// Move the current item to specified dir and returns the new name.
 	// Called by clicking the "Move" button in de tail views
 	// or choosing the "Move" contextual menu option in list views.
-	public moveItemPrompt(objects, successCallback) {
+	public moveItemPrompt(objects: NodeItem[], successCallback: Function) {
 		let fmModel = this.fmModel;
-		let objectsTotal = objects.length;
-		let message = (objectsTotal > 1) ? lg('prompt_move_multiple').replace('%s', objectsTotal) : lg('prompt_move');
+		let objectsTotal: number = objects.length;
+		let message: string = (objectsTotal > 1) ? lg('prompt_move_multiple').replace('%s', <any>objectsTotal) : lg('prompt_move');
 
-		prompt({
+		prompt(<any>{
 			message: message,
 			value: fmModel.currentPath(),
 			okBtn: {
 				label: lg('action_move'),
 				autoClose: false,
-				click: (e, ui: AleritfyDialogUI) => {
+				click: (_e: any, ui: AleritfyDialogUI) => {
                     let targetPath = ui.getInputValue();
 
                     if(!targetPath) {
@@ -4484,7 +4247,7 @@ class richFilemanagerPlugin {
 
 	// Copy the current item to specified dir and returns the new name.
 	// Called upon paste copied items via clipboard.
-	public copyItem(resourceObject: ReadableObject, targetPath) {
+	public copyItem(resourceObject: ReadableObject | NodeItem, targetPath: string) {
 		let fmModel = this.fmModel;
 
 		return this.buildAjaxRequest('GET', {
@@ -4509,7 +4272,7 @@ class richFilemanagerPlugin {
 	// Move the current item to specified dir and returns the new name.
 	// Called by clicking the "Move" button in detail views
 	// or choosing the "Move" contextual menu option in list views.
-	public moveItem(resourceObject: ReadableObject, targetPath) {
+	public moveItem(resourceObject: ReadableObject | NodeItem, targetPath: string) {
 		let fmModel = this.fmModel;
 
 		// noinspection ReservedWordAsName
@@ -4529,7 +4292,7 @@ class richFilemanagerPlugin {
 					fmModel.itemsModel.loadList(newItem.id);
 
 				// ON move currently previewed file
-				if(fmModel.previewFile() && fmModel.previewModel.rdo().id === resourceObject.id)
+				if(fmModel.previewFile() && (<PreviewModel>fmModel.previewModel).rdo().id === resourceObject.id)
 					fmModel.previewFile(false);
 
 				alertify.clearDialogs();
@@ -4542,11 +4305,11 @@ class richFilemanagerPlugin {
 	}
 
 	// Prompts for confirmation, then deletes the current item.
-	public deleteItemPrompt(objects, successCallback) {
-		let objectsTotal = objects.length;
-		let message = (objectsTotal > 1) ? lg('confirm_delete_multiple').replace('%s', objectsTotal) : lg('confirm_delete');
+	public deleteItemPrompt(objects: NodeItem[], successCallback: Function) {
+		let objectsTotal: number = objects.length;
+		let message = (objectsTotal > 1) ? lg('confirm_delete_multiple').replace('%s', <any>objectsTotal) : lg('confirm_delete');
 
-		confirm({
+		confirm(<any>{
 			message: message,
 			okBtn: {
 				label: lg('yes'),
@@ -4561,7 +4324,7 @@ class richFilemanagerPlugin {
 	}
 
 	// Delete item by path
-	public deleteItem(path) {
+	public deleteItem(path: string) {
 		let fmModel = this.fmModel;
 
 		return this.buildAjaxRequest('GET', {
@@ -4574,7 +4337,7 @@ class richFilemanagerPlugin {
 				fmModel.removeItem(targetItem);
 
 				// ON delete currently previewed file
-				if(fmModel.previewFile() && fmModel.previewModel.rdo().id === targetItem.id)
+				if(fmModel.previewFile() && (<PreviewModel>fmModel.previewModel).rdo().id === targetItem.id)
 					fmModel.previewFile(false);
 
 				if(config.options.showConfirmation)
@@ -4597,7 +4360,7 @@ class richFilemanagerPlugin {
 		return this.buildAjaxRequest('GET', queryParams).done(response => {
 			if(response.data) {
 				//window.location = buildConnectorUrl(queryParams);
-				(<JQuery>$).fileDownload(this.buildConnectorUrl(queryParams));
+                (<any>$).fileDownload(this.buildConnectorUrl(queryParams)); // todo: type this
 			}
 			handleAjaxResponseErrors(response);
 		}).fail(handleAjaxError);
@@ -4615,14 +4378,14 @@ class richFilemanagerPlugin {
 
 	// Save CodeMirror editor content to file
     // noinspection JSUnusedLocalSymbols
-    public saveItem(resourceObject: ReadableObject) {
+    public saveItem(_resourceObject: ReadableObject) {
 		let fmModel = this.fmModel;
 		let formParams = $('#fm-js-editor-form').serializeArray();
 
 		this.buildAjaxRequest('POST', formParams).done(response => {
 			if(response.data) {
 				let dataObject = response.data;
-				let preview_model = fmModel.previewModel;
+				let preview_model: PreviewModel = <PreviewModel>fmModel.previewModel;
 				let content = preview_model.editor.content();
 
 				// update preview object data
@@ -4644,7 +4407,7 @@ class richFilemanagerPlugin {
 		}).fail(handleAjaxError);
 	}
 
-	public getItemInfo(targetPath) {
+	public getItemInfo(targetPath: string) {
 		return this.buildAjaxRequest('GET', {
 			mode: 'getfile',
 			path: targetPath
@@ -4691,13 +4454,13 @@ class richFilemanagerPlugin {
 	public extractItemPrompt(resourceObject: ReadableObject) {
 		let fmModel = this.fmModel;
 
-		prompt({
+		prompt(<any>{
 			message: lg('prompt_extract'),
 			value: fmModel.currentPath(),
 			okBtn: {
 				label: lg('action_extract'),
 				autoClose: false,
-				click: (e, ui: AleritfyDialogUI) => {
+				click: (_e: any, ui: AleritfyDialogUI) => {
 					let targetPath = ui.getInputValue();
 
 					if(!targetPath) {
@@ -4717,7 +4480,7 @@ class richFilemanagerPlugin {
 
 	// Extract files and folders from archive.
 	// Called by choosing the "Extract" contextual menu option in list views.
-	public extractItem(resourceObject: ReadableObject, targetPath) {
+	public extractItem(resourceObject: ReadableObject, targetPath: string) {
 		let fmModel = this.fmModel;
 
 		this.buildAjaxRequest('POST', {
@@ -4727,7 +4490,7 @@ class richFilemanagerPlugin {
 		}).done(response => {
 			if(response.data) {
 				// TODO: implement "addItems", add in batches
-				$.each(response.data, (i, resourceObject) => {
+				$.each(response.data, (_i, resourceObject: ReadableObject) => {
 					fmModel.addItem(resourceObject, targetPath);
 				});
 
@@ -4745,7 +4508,7 @@ class richFilemanagerPlugin {
  ---------------------------------------------------------*/
 
 	// Retrieves file or folder info based on the path provided.
-	public getDetailView(resourceObject: ReadableObject) {
+	public getDetailView(resourceObject: ReadableObject): any {
 		let fmModel = this.fmModel;
 
 		if(!resourceObject.attributes.readable) {
@@ -4753,7 +4516,7 @@ class richFilemanagerPlugin {
 			return false;
 		}
 		if(resourceObject.type === 'file')
-			fmModel.previewModel.applyObject(resourceObject);
+            (<PreviewModel>fmModel.previewModel).applyObject(resourceObject);
 
 		if(resourceObject.type === 'folder' || resourceObject.type === 'parent') {
 			fmModel.previewFile(false);
@@ -4794,10 +4557,10 @@ class richFilemanagerPlugin {
 	}
 
 	// Binds contextual menu to items in list and grid views.
-	public performAction(action, options, targetObject: ReadableObject, selectedObjects?) {
+	public performAction(action: string, options: any, targetObject: ReadableObject, selectedObjects?: NodeItem[] | ReadableObject[]) {
 		let fmModel = this.fmModel;
 		// suppose that target object is part of selected objects while multiple selection
-		let objects = selectedObjects ? selectedObjects : [ targetObject ];
+		let objects: NodeItem[] | ReadableObject[] = selectedObjects ? selectedObjects : [ targetObject ];
 
 		switch(action) {
 			case 'select':
@@ -4805,8 +4568,8 @@ class richFilemanagerPlugin {
 				break;
 
 			case 'download':
-				$.each(objects, (i, itemObject) => {
-					this.downloadItem(itemObject);
+				$.each(objects, (_i: number, itemObject: ReadableObject | NodeItem) => {
+					this.downloadItem(<ReadableObject>itemObject);
 				});
 				break;
 
@@ -4814,15 +4577,15 @@ class richFilemanagerPlugin {
 				this.renameItem(targetObject);
 				break;
 
-			case 'move':
-				this.moveItemPrompt(objects, targetPath => {
-					this.processMultipleActions(objects, (i, itemObject) => this.moveItem(itemObject, targetPath));
+            case 'move':
+				this.moveItemPrompt(<NodeItem[]>objects, (targetPath: string) => {
+					this.processMultipleActions(<NodeItem[]>objects, (_i: number, itemObject: NodeItem) => this.moveItem(itemObject, targetPath));
 				});
 				break;
 
 			case 'delete':
-				this.deleteItemPrompt(objects, () => {
-					this.processMultipleActions(objects, (i, itemObject) => this.deleteItem(itemObject.id));
+				this.deleteItemPrompt(<NodeItem[]>objects, () => {
+					this.processMultipleActions(<NodeItem[]>objects, (_i: number, itemObject: NodeItem) => this.deleteItem(<string>itemObject.id));
 				});
 				break;
 
@@ -4838,9 +4601,9 @@ class richFilemanagerPlugin {
 				fmModel.clipboardModel.cut(/*objects*/); // todo: this doesn't take an argument
 				break;
 
-			case 'copyUrl':
-				let clipboard = new Clipboard(options.$selected[ 0 ], {
-					text: trigger => this.createCopyUrl(targetObject)
+            case 'copyUrl':
+				let clipboard = new Clipboard(options.$selected[ 0 ], <any>{
+					text: (_trigger: any): string => this.createCopyUrl(targetObject)
 				});
 
 				clipboard.on('success', (/*e*/) => {
@@ -4852,9 +4615,8 @@ class richFilemanagerPlugin {
 	}
 
 	// Handling file uploads
-	public setupUploader() {
+	public setupUploader(): any {
 		let fmModel = this.fmModel;
-		let lg = lg;
 		let settings = this.settings;
 
 		if(config.options.browseOnly)
@@ -4865,7 +4627,7 @@ class richFilemanagerPlugin {
 			// remove simple file upload element
 			$('#file-input-container').remove();
 
-			this.$uploadButton.unbind().click(() => {
+			this.$uploadButton.unbind().click((): any => {
 				if(this.capabilities.indexOf('upload') === -1) {
 					error(lg('NOT_ALLOWED'));
 					return false;
@@ -4875,14 +4637,14 @@ class richFilemanagerPlugin {
 				let currentPath = fmModel.currentPath();
 				let templateContainer = tmpl('tmpl-fileupload-container', {
 					folder: lg('current_folder') + currentPath,
-					info: lg('upload_files_number_limit').replace('%s', <string>config.upload.maxNumberOfFiles) + ' ' + lg('upload_file_size_limit').replace('%s', formatBytes(config.upload.fileSizeLimit, true)),
+					info: lg('upload_files_number_limit').replace('%s', <any>config.upload.maxNumberOfFiles) + ' ' + lg('upload_file_size_limit').replace('%s', formatBytes(config.upload.fileSizeLimit, true)),
 					lang: LangModel.getTranslations()
 				});
 
 				if(config.security.extensions.policy == 'ALLOW_LIST')
 					allowedFileTypes = new RegExp('(\\.|\\/)(' + config.security.extensions.restrictions.join('|') + ')$', 'i');
 
-				dialog({
+				dialog(<any>{
 					message: templateContainer,
 					width: 'auto',
 					buttons: [ {
@@ -4913,7 +4675,7 @@ class richFilemanagerPlugin {
 				let $totalProgressBar = $('#total-progress', $uploadContainer).children();
 
 				if(config.customScrollbar.enabled) {
-					$dropzoneWrapper.mCustomScrollbar({
+                    (<any>$dropzoneWrapper).mCustomScrollbar({
 						theme: config.customScrollbar.theme,
 						scrollButtons: {
 							enable: config.customScrollbar.button
@@ -4974,14 +4736,14 @@ class richFilemanagerPlugin {
 				 * Resume uploading if at least one chunk was uploaded.
 				 * Otherwise start upload from the very beginning of file.
 				 */
-				$dropzone.on('click', '.button-resume', function (e) {
-					let $target = $(this);
+				$dropzone.on('click', '.button-resume', (e: any): any => {
+					let $target = $(e.target);
 					let $buttons = $target.parent().parent();
 					let data = $buttons.data();
 					let file: any = data.files[ 0 ];
 
-					function resumeUpload(data) {
-						(<JQuery>$).blueimp.fileupload.prototype.options.add.call($('#fileupload')[ 0 ], e, data);
+					function resumeUpload(data: any) {
+                        (<any>$).blueimp.fileupload.prototype.options.add.call($('#fileupload')[ 0 ], e, data);
 						data.submit();
 					}
 
@@ -5006,8 +4768,8 @@ class richFilemanagerPlugin {
 				 * Remove file from upload query.
 				 * Also remove uploaded file chunks if were uploaded.
 				 */
-				$dropzone.on('click', '.button-remove', function (/*e*/) {
-					let $target = $(this);
+				$dropzone.on('click', '.button-remove', (e) => {
+					let $target = $(e.target);
 					let $buttons = $target.parent().parent();
 					let data = $buttons.data();
 					let file = data.files[ 0 ];
@@ -5046,7 +4808,7 @@ class richFilemanagerPlugin {
 				}
 
 				$('#fileupload', $uploadContainer)
-					.fileupload({
+					.fileupload(<any>{
 						autoUpload: false,
 						sequentialUploads: true,
 						dataType: 'json',
@@ -5065,7 +4827,7 @@ class richFilemanagerPlugin {
 						acceptFileTypes: allowedFileTypes,
 						maxFileSize: config.upload.fileSizeLimit,
 						messages: {
-							maxNumberOfFiles: lg('upload_files_number_limit').replace('%s', <string>config.upload.maxNumberOfFiles),
+							maxNumberOfFiles: lg('upload_files_number_limit').replace('%s', <any>config.upload.maxNumberOfFiles),
 							acceptFileTypes: lg('upload_file_type_invalid'),
 							maxFileSize: `${lg('upload_file_too_big')} ${lg('upload_file_size_limit').replace('%s', formatBytes(config.upload.fileSizeLimit, true))}`
 						},
@@ -5075,12 +4837,12 @@ class richFilemanagerPlugin {
 						previewCrop: true
 					})
 
-					.on('fileuploadadd', (e, data) => {
+					.on('fileuploadadd', (_e: any, data: any): void => {
 						let $items = $dropzone.children('.upload-item');
-						$.each(data.files, (index, file) => {
+						$.each(data.files, (_index: number, file: any): any => {
 							// skip selected files if total files number exceed "maxNumberOfFiles"
 							if($items.length >= config.upload.maxNumberOfFiles) {
-								error(lg('upload_files_number_limit').replace('%s', <string>config.upload.maxNumberOfFiles), {
+								error(<any>lg('upload_files_number_limit').replace('%s', <any>config.upload.maxNumberOfFiles), <any>{
 									logClass: 'fileuploadadd',
 									unique: true
 								});
@@ -5095,13 +4857,13 @@ class richFilemanagerPlugin {
 							}));
 							file.context = $template;
 							$template.find('.buttons').data(data);
-							$template.appendTo(<HTMLElement>$dropzone);
+							$template.appendTo($dropzone);
 						});
 						updateDropzoneView();
 					})
 
-					.on('fileuploadsend', (e, data) => {
-						$.each(data.files, (index, file) => {
+					.on('fileuploadsend', (_e: any, data: any) => {
+						$.each(data.files, (_index: number, file) => {
 							let $node = file.context;
 							$node.removeClass('added aborted error').addClass('process');
 
@@ -5113,17 +4875,17 @@ class richFilemanagerPlugin {
 						});
 					})
 
-					.on('fileuploadfail', (e, data) => {
-						$.each(data.files, (index, file) => {
+					.on('fileuploadfail', (_e: any, data: any) => {
+						$.each(data.files, (_index: number, file) => {
 							file.error = lg('upload_failed');
 							let $node = file.context;
 							$node.removeClass('added process').addClass('error');
 						});
 					})
 
-					.on('fileuploaddone', (e, data) => {
+					.on('fileuploaddone', (_e: any, data: any) => {
 						let response = data.result;
-						$.each(data.files, (index, file) => {
+						$.each(data.files, (_index: number, file) => {
 							let $node = file.context;
 							// handle server-side errors
 							if(response && response.errors) {
@@ -5137,7 +4899,7 @@ class richFilemanagerPlugin {
 						});
 					})
 
-					.on('fileuploadalways', (e, data) => {
+					.on('fileuploadalways', (_e: any, data: any) => {
 						let response = data.result;
 						$.each(data.files, (index/*, file*/) => {
 							if(response && response.data && response.data[ index ]) {
@@ -5167,7 +4929,7 @@ class richFilemanagerPlugin {
 						updateDropzoneView();
 					})
 
-					.on('fileuploadchunkdone', (e, data) => {
+					.on('fileuploadchunkdone', (_e: any, data: any) => {
 						let response = data.result;
 						$.each(data.files, (index, file) => {
 							if(response.data && response.data[ index ]) {
@@ -5184,8 +4946,8 @@ class richFilemanagerPlugin {
 						});
 					})
 
-					.on('fileuploadprocessalways', (e, data) => {
-						$.each(data.files, (index, file) => {
+					.on('fileuploadprocessalways', (_e: any, data: any) => {
+						$.each(data.files, (_index: number, file) => {
 							let $node = file.context;
 							// file wasn't added to queue (due to config.upload.maxNumberOfFiles limit e.g.)
 							if(typeof $node === 'undefined')
@@ -5205,19 +4967,19 @@ class richFilemanagerPlugin {
 						});
 					})
 
-					.on('fileuploadprogress', (e, data) => {
-						$.each(data.files, (index, file) => {
+					.on('fileuploadprogress', (_e: any, data: any) => {
+						$.each(data.files, (_index: number, file) => {
 							// fill progress bar for single item
 							let $node = file.context;
-							let progress = parseInt(data.loaded / data.total * 100, 10);
+							let progress = parseInt(<any>(data.loaded / data.total * 100), 10);
 
 							$node.find('.progress-bar').css('width', progress + '%');
 						});
 					})
 
-					.on('fileuploadprogressall', (e, data) => {
+					.on('fileuploadprogressall', (_e: any, data: any) => {
 						// fill total progress bar
-						let progress = parseInt(data.loaded / data.total * 100, 10);
+						let progress = parseInt(<any>(data.loaded / data.total * 100), 10);
 
 						$totalProgressBar.css('width', progress + '%');
 					});
@@ -5226,13 +4988,13 @@ class richFilemanagerPlugin {
 			// Simple Upload
 		} else {
 
-			this.$uploadButton.click(function () {
+			this.$uploadButton.click((e): any => {
 				if(this.capabilities.indexOf('upload') === -1) {
 					error(lg('NOT_ALLOWED'));
 					return false;
 				}
 
-				let data = $(this).data();
+				let data = $(e.target).data();
 
 				if($.isEmptyObject(data))
 					error(lg('upload_choose_file'));
@@ -5242,7 +5004,7 @@ class richFilemanagerPlugin {
 			});
 
 			this.$uploader
-				.fileupload({
+				.fileupload(<any>{
 					autoUpload: false,
 					dataType: 'json',
 					url: this.buildConnectorUrl(),
@@ -5250,11 +5012,11 @@ class richFilemanagerPlugin {
 					maxChunkSize: config.upload.chunkSize
 				})
 
-				.on('fileuploadadd', (e: JQueryEventObject, data: JQueryFileInputOptions) => {
+				.on('fileuploadadd', (_e: any, data: any) => {
 					this.$uploadButton.data(data);
 				})
 
-				.on('fileuploadsubmit', (e: JQueryEventObject, data: JQueryFileInputOptions) => {
+				.on('fileuploadsubmit', (_e: any, data: any) => {
 					data.formData = this.extendRequestParams('POST', {
 						mode: 'upload',
 						path: fmModel.currentPath()
@@ -5263,7 +5025,7 @@ class richFilemanagerPlugin {
 					this.$uploadButton.children('span').text(lg('loading_data'));
 				})
 
-				.on('fileuploadalways', (e: JQueryEventObject, data: JQueryFileUploadXhr) => {
+				.on('fileuploadalways', (_e: any, data: any) => {
 					$('#filepath').val('');
 					this.$uploadButton.removeData().removeClass('loading').prop('disabled', false);
 					this.$uploadButton.children('span').text(lg('action_upload'));
@@ -5285,7 +5047,7 @@ class richFilemanagerPlugin {
 					}
 				})
 
-				.on('fileuploadchunkdone', (e, data) => {
+				.on('fileuploadchunkdone', (_e: any, data: any) => {
 					let response = data.result;
 
 					if(response.data && response.data[ 0 ]) {
@@ -5305,7 +5067,7 @@ class richFilemanagerPlugin {
 
 	// Test if item has the 'cap' capability
 	// 'cap' is one of 'select', 'rename', 'delete', 'download', 'copy', 'move'
-	public has_capability(resourceObject: ReadableObject, cap) {
+	public has_capability(resourceObject: ReadableObject, cap: string): boolean {
 		if(this.capabilities.indexOf(cap) === -1) return false;
 		if(cap === 'select' && resourceObject.type === 'folder') return false;
 		if(cap === 'extract') {
