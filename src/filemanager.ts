@@ -1,6 +1,8 @@
 import * as CodeMirror from "codemirror";
 import * as purl from "purl";
 
+import {buildLangFileUrl, getLang, getTranslations, init, setLang, setTranslations, translate} from "./LangModel";
+
 /// <reference types="alertify"/>
 /// <reference types="jquery"/>
 /// <reference types="jqueryui"/>
@@ -414,7 +416,7 @@ function dialog(obj: Message) {
 
 // Wrapper for translate method
 function lg(key: string): string {
-    return LangModel.translate(key);
+    return translate(key);
 }
 // Converts bytes to KB, MB, or GB as needed for display
 function formatBytes(bytes: number | string, round?: boolean): string {
@@ -447,7 +449,7 @@ function log(..._args: any[]): void {
 function formatServerError(errorObject: any): string {
     let message: string;
     // look for message in case an error CODE is provided
-    if(LangModel.getLang() && lg(errorObject.message)) {
+    if(getLang() && lg(errorObject.message)) {
         message = lg(errorObject.message);
         $.each(errorObject.arguments, (_i, argument) => {
             message = message.replace('%s', argument);
@@ -592,46 +594,6 @@ let defaults: Settings = {
 		afterSelectItem: (/*resourceObject, url, contextWindow*/) => { }
 	}
 };
-
-type LangKV = {[key: string]: string};
-
-/**
- * Language model
- * @constructor
- */
-namespace LangModel {
-	export let currentLang: string = null;
-	export let translationsHash: LangKV = { };
-	export let translationsPath: string;
-
-	export function init(baseUrl: string) {
-		translationsPath = `${baseUrl}/languages/`;
-	}
-
-	export function buildLangFileUrl(code: string): string {
-		return `${translationsPath + code}.json`;
-	}
-
-	export function setLang(code: string) {
-		currentLang = code;
-	}
-
-	export function getLang(): string {
-		return <string>currentLang;
-	}
-
-	export function setTranslations(json: LangKV) {
-		translationsHash = json;
-	}
-
-	export function getTranslations() {
-		return translationsHash;
-	}
-
-	export function translate(key: string): string {
-		return translationsHash[ key ];
-	}
-}
 
 class PreviewModel {
 	// let preview_model: PreviewModel = this;
@@ -1880,7 +1842,7 @@ class HeaderModel {
 
 	switchLang(e: Event) {
 		let langNew = (<any>e.target).value; // todo: check this
-		let langCurrent: string = LangModel.getLang();
+		let langCurrent: string = getLang();
         let _url_ = this.rfp._url_;
 
 		if(langNew && langNew.toLowerCase() !== langCurrent.toLowerCase()) {
@@ -3106,7 +3068,7 @@ class richFilemanagerPlugin {
 	public localize() {
 		let _url_: purl.Url = this._url_;
 
-		LangModel.init(this.settings.baseUrl);
+		init(this.settings.baseUrl);
 
 		return $.ajax()
 			.then((): any => {
@@ -3114,25 +3076,25 @@ class richFilemanagerPlugin {
 
 				if(urlLangCode) {
 					// try to load lang file based on langCode in query params
-					return file_exists(LangModel.buildLangFileUrl(urlLangCode))
+					return file_exists(buildLangFileUrl(urlLangCode))
 						.done(() => {
-							LangModel.setLang(urlLangCode);
+							setLang(urlLangCode);
 						})
 						.fail(() => {
 							setTimeout(function () {
-								error(`Given language file (${LangModel.buildLangFileUrl(urlLangCode)}) does not exist!`);
+								error(`Given language file (${buildLangFileUrl(urlLangCode)}) does not exist!`);
 							}, 500);
 						});
 				} else
-					LangModel.setLang(config.language.default);
+					setLang(config.language.default);
 			})
 			.then(() => {
 				return $.ajax({
 					type: 'GET',
-					url: LangModel.buildLangFileUrl(LangModel.getLang()),
+					url: buildLangFileUrl(getLang()),
 					dataType: 'json'
 				}).done(function (jsonTrans) {
-					LangModel.setTranslations(jsonTrans);
+					setTranslations(jsonTrans);
 				});
 			});
 	}
@@ -4638,7 +4600,7 @@ class richFilemanagerPlugin {
 				let templateContainer = tmpl('tmpl-fileupload-container', {
 					folder: lg('current_folder') + currentPath,
 					info: lg('upload_files_number_limit').replace('%s', <any>config.upload.maxNumberOfFiles) + ' ' + lg('upload_file_size_limit').replace('%s', formatBytes(config.upload.fileSizeLimit, true)),
-					lang: LangModel.getTranslations()
+					lang: getTranslations()
 				});
 
 				if(config.security.extensions.policy == 'ALLOW_LIST')
@@ -4852,7 +4814,7 @@ class richFilemanagerPlugin {
 							file.formattedSize = formatBytes(file.size);
 							let $template = $(tmpl('tmpl-upload-item', {
 								file: file,
-								lang: LangModel.getTranslations(),
+								lang: getTranslations(),
 								imagesPath: `${settings.baseUrl}/scripts/jQuery-File-Upload/img`
 							}));
 							file.context = $template;
