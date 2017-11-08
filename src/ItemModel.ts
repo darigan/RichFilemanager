@@ -38,7 +38,7 @@ export class ItemsModel {
         this.lazyLoad = null;
 
         this.isSelecting.subscribe((state: boolean) => {
-            if(!state) {
+            if (!state) {
                 // means selection lasso has been dropped
                 items_model.continiousSelection(false);
             }
@@ -48,10 +48,10 @@ export class ItemsModel {
             let totalSize: number = 0;
 
             items.forEach((item: ItemObject) => {
-                if(item.rdo.type !== 'parent')
+                if (item.rdo.type !== 'parent')
                     totalNumber++;
 
-                if(item.rdo.type === 'file')
+                if (item.rdo.type === 'file')
                     totalSize += Number(item.rdo.attributes.size);
 
             });
@@ -60,7 +60,7 @@ export class ItemsModel {
             items_model.objectsSize(formatBytes(totalSize));
 
             // update
-            if(items_model.lazyLoad) {
+            if (items_model.lazyLoad) {
                 setTimeout(() => {
                     items_model.lazyLoad.update();
                 }, 50);
@@ -72,9 +72,9 @@ export class ItemsModel {
                 zIndex: 100,
                 // wrap options with "build" allows to get item element
                 build: ($triggerElement: JQuery/*, e*/) => {
-                    let koItem = ko.dataFor($triggerElement[ 0 ]);
+                    let koItem = ko.dataFor($triggerElement[0]);
 
-                    if(!koItem.selected()) {
+                    if (!koItem.selected()) {
                         model.itemsModel.unselectItems(false);
                         koItem.selected(true);
                     }
@@ -109,8 +109,8 @@ export class ItemsModel {
         // http://www.knockmeout.net/2012/04/knockoutjs-performance-gotcha.html
         let items: ItemObject[] = model.itemsModel.objects();
 
-        if(!Array.isArray(dataObjects))
-            dataObjects = [ dataObjects ];
+        if (!Array.isArray(dataObjects))
+            dataObjects = [dataObjects];
 
         $.each(dataObjects, (_i, resourceObject: ReadableObject) => {
             items.push(this.createObject(resourceObject));
@@ -132,16 +132,16 @@ export class ItemsModel {
             path: path,
             type: undefined
         };
-        if(_url_.param('type'))
+        if (_url_.param('type'))
             queryParams.type = _url_.param('type');
 
         rfp.buildAjaxRequest('GET', queryParams).done(response => {
-            if(response.data) {
+            if (response.data) {
                 model.currentPath(path);
                 model.breadcrumbsModel.splitCurrent();
                 model.itemsModel.setList(response.data);
 
-                if(model.itemsModel.lazyLoad)
+                if (model.itemsModel.lazyLoad)
                     model.itemsModel.lazyLoad.update();
 
             }
@@ -157,7 +157,7 @@ export class ItemsModel {
         let objects: ItemObject[] = [];
 
         // add parent folder object
-        if(!isFile(model.currentPath()) && model.currentPath() !== fileRoot) {
+        if (!isFile(model.currentPath()) && model.currentPath() !== fileRoot) {
             let parentPath: string = getParentDirname(model.currentPath());
             let parentItem = <ItemObject>{
                 id: parentPath,
@@ -171,13 +171,13 @@ export class ItemsModel {
                 },
                 dragHovered: ko.observable(false),
                 open: (_item: any, e: JQueryEventObject) => {
-                    if(model.isItemOpenable(e))
+                    if (model.isItemOpenable(e))
                         this.loadList(parentItem.id);
                 },
                 itemClass: ko.pureComputed(() => {
                     let cssClass = [];
 
-                    if(parentItem.dragHovered())
+                    if (parentItem.dragHovered())
                         cssClass.push(model.ddModel.hoveredCssClass);
 
                     return cssClass.join(' ');
@@ -191,14 +191,14 @@ export class ItemsModel {
         this.descriptivePanel.content(null);
 
         $.each(dataObjects, (_i, resourceObject: ReadableObject) => {
-            if(config.manager.renderer.position && typeof config.manager.renderer.indexFile === 'string' &&
+            if (config.manager.renderer.position && typeof config.manager.renderer.indexFile === 'string' &&
                 resourceObject.attributes.name.toLowerCase() === config.manager.renderer.indexFile.toLowerCase()
             ) {
                 this.descriptivePanel.setRenderer(resourceObject);
 
                 // load and render index file content
                 previewItem(this.descriptivePanel.rdo()).then(response => {
-                    if(response.data)
+                    if (response.data)
                         this.descriptivePanel.render(response.data.attributes.content);
                 });
             }
@@ -211,7 +211,7 @@ export class ItemsModel {
 
     findByParam(key: string, value: any) {
         let model: FmModel = this.rfp.fmModel;
-        return ko.utils.arrayFirst(model.itemsModel.objects(), (object: ItemObject): boolean => (<any>object)[ key ] === value);
+        return ko.utils.arrayFirst(model.itemsModel.objects(), (object: ItemObject): boolean => (<any>object)[key] === value);
     }
 
     findByFilter(filter: Function, allMatches: boolean): ItemObject[] | ItemObject {
@@ -219,15 +219,15 @@ export class ItemsModel {
         let resultItems: ItemObject[] = [];
         let items: ItemObject[] = this.objects();
 
-        if(!items || items.length === 0)
+        if (!items || items.length === 0)
             return null;
 
-        for(let i = 0, l = items.length; i < l; i++) {
-            if(filter(items[ i ])) {
-                if(firstMatch)
-                    return items[ i ];
+        for (let i = 0, l = items.length; i < l; i++) {
+            if (filter(items[i])) {
+                if (firstMatch)
+                    return items[i];
 
-                resultItems.push(items[ i ]);
+                resultItems.push(items[i]);
             }
         }
         return firstMatch ? null : resultItems;
@@ -250,7 +250,7 @@ export class ItemsModel {
     unselectItems(ctrlKey?: boolean): void {
         let appendSelection = (config.manager.selection.enabled && config.manager.selection.useCtrlKey && ctrlKey === true);
 
-        if(!appendSelection) {
+        if (!appendSelection) {
             // drop selection from selected items
             $.each(this.getSelected(), (_i, itemObject) => {
                 itemObject.selected(false);
@@ -263,11 +263,11 @@ export class ItemsModel {
         let rfp = this.rfp;
 
         // not configured or already initiated
-        if(config.viewer.image.lazyLoad !== true || items_model.lazyLoad)
+        if (config.viewer.image.lazyLoad !== true || items_model.lazyLoad)
             return;
 
         items_model.lazyLoad = new LazyLoad({
-            container: <any>rfp.$fileinfo[ 0 ], // work only for default scrollbar
+            container: <any>rfp.$fileinfo[0], // work only for default scrollbar
             callback_load: element => {
                 log('LOADED', element.getAttribute('data-original'));
             },
@@ -300,7 +300,7 @@ export class ItemObject {
         let model: FmModel = rfp.fmModel;
 
         this.previewWidth = config.viewer.image.thumbMaxWidth;
-        if(resourceObject.attributes.width && resourceObject.attributes.width < this.previewWidth)
+        if (resourceObject.attributes.width && resourceObject.attributes.width < this.previewWidth)
             this.previewWidth = <number>resourceObject.attributes.width;
 
         this.id = resourceObject.id; // for search purpose
@@ -322,7 +322,7 @@ export class ItemObject {
         this.lazyPreview = Boolean(config.viewer.image.lazyLoad && this.cdo.imageUrl);
 
         this.selected.subscribe(value => {
-            if(value && model.treeModel.selectedNode() !== null)
+            if (value && model.treeModel.selectedNode() !== null)
                 (<TreeNodeObject>model.treeModel.selectedNode()).selected(false);
 
         });
@@ -334,10 +334,10 @@ export class ItemObject {
         this.itemClass = ko.pureComputed(() => {
             let cssClass = [];
 
-            if(this.selected() && config.manager.selection.enabled)
+            if (this.selected() && config.manager.selection.enabled)
                 cssClass.push('ui-selected');
 
-            if(this.dragHovered())
+            if (this.dragHovered())
                 cssClass.push(model.ddModel.hoveredCssClass);
 
             return `${this.cdo.cssItemClass} ${cssClass.join(' ')}`;
@@ -345,17 +345,17 @@ export class ItemObject {
 
         this.listIconClass = ko.pureComputed(() => {
             let cssClass;
-            let extraClass = [ 'ico' ];
+            let extraClass = ['ico'];
 
-            if(this.cdo.isFolder === true) {
+            if (this.cdo.isFolder === true) {
                 cssClass = 'ico_folder';
                 extraClass.push('folder');
-                if(!this.rdo.attributes.readable)
+                if (!this.rdo.attributes.readable)
                     extraClass.push('lock');
 
             } else {
                 cssClass = 'ico_file';
-                if(this.rdo.attributes.readable)
+                if (this.rdo.attributes.readable)
                     extraClass.push('ext', <string>this.cdo.extension);
                 else
                     extraClass.push('file', 'lock');
@@ -366,19 +366,19 @@ export class ItemObject {
 
         this.gridIconClass = ko.pureComputed(() => {
             let cssClass = [];
-            let extraClass = [ 'ico' ];
+            let extraClass = ['ico'];
 
-            if(!this.cdo.imageUrl) {
+            if (!this.cdo.imageUrl) {
                 cssClass.push('grid-icon');
-                if(this.cdo.isFolder === true) {
+                if (this.cdo.isFolder === true) {
                     cssClass.push('ico_folder');
                     extraClass.push('folder');
-                    if(!this.rdo.attributes.readable)
+                    if (!this.rdo.attributes.readable)
                         extraClass.push('lock');
 
                 } else {
                     cssClass.push('ico_file');
-                    if(this.rdo.attributes.readable)
+                    if (this.rdo.attributes.readable)
                         extraClass.push('ext', <string>this.cdo.extension);
                     else
                         extraClass.push('file', 'lock');
@@ -396,7 +396,7 @@ export class ItemObject {
 
         // case: previously selected items are dragged instead of a newly one
         // unselect if currently clicked item is not the one of selected items
-        if(!item.selected())
+        if (!item.selected())
             model.itemsModel.unselectItems(e.ctrlKey);
 
         model.selectionModel.unselect = item.selected();
@@ -407,20 +407,20 @@ export class ItemObject {
         let rfp = this.rfp;
         let model: FmModel = this.rfp.fmModel;
 
-        if(model.selectionModel.unselect) {
+        if (model.selectionModel.unselect) {
             // case: click + ctrlKey on selected item
-            if(e.ctrlKey)
+            if (e.ctrlKey)
                 item.selected(false);
 
             // drop selection
-            if(!e.ctrlKey && config.manager.dblClickOpen) {
+            if (!e.ctrlKey && config.manager.dblClickOpen) {
                 model.itemsModel.unselectItems(e.ctrlKey);
                 item.selected(true);
             }
         }
 
-        if(model.isItemOpenable(e)) {
-            if(config.options.quickSelect && item.rdo.type === 'file' && rfp.has_capability(item.rdo, 'select'))
+        if (model.isItemOpenable(e)) {
+            if (config.options.quickSelect && item.rdo.type === 'file' && rfp.has_capability(item.rdo, 'select'))
                 rfp.selectItem(item.rdo);
             else
                 rfp.getDetailView(item.rdo);

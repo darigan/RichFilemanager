@@ -1,4 +1,3 @@
-
 import {ReadableObject} from "./Types";
 import {richFilemanagerPlugin} from "./filemanager";
 import {getDirname, getExtension, isMarkdownFile, ltrim, startsWith} from "./Utils";
@@ -20,7 +19,7 @@ export class RenderModel {
     }
 
     render(data: any) {
-        if(this.renderer())
+        if (this.renderer())
             (<MarkdownRenderer | CodeMirrorRenderer>this.renderer()).processContent(data);
 
     }
@@ -30,7 +29,7 @@ export class RenderModel {
 
         this.rdo(resourceObject);
 
-        if(isMarkdownFile(resourceObject.attributes.name))
+        if (isMarkdownFile(resourceObject.attributes.name))
         // markdown renderer
             this.renderer(<MarkdownRenderer>new MarkdownRenderer(rfp, this));
         else
@@ -42,7 +41,7 @@ export class RenderModel {
     setContainer(templateElements: Element[]) {
         let _this = this;
         $.each(templateElements, function (): any {
-            if($(this).hasClass('fm-renderer-container')) {
+            if ($(this).hasClass('fm-renderer-container')) {
                 _this.$containerElement = <any>$(this);
                 return false;
             }
@@ -71,8 +70,8 @@ export class CodeMirrorRenderer {
     processDomElements($container: JQuery) {
         let render_model = this.render_model;
 
-        if(!this.instance.instance) {
-            let textarea: HTMLTextAreaElement = <HTMLTextAreaElement>$container.find('.fm-cm-renderer-content')[ 0 ];
+        if (!this.instance.instance) {
+            let textarea: HTMLTextAreaElement = <HTMLTextAreaElement>$container.find('.fm-cm-renderer-content')[0];
             let extension = getExtension(render_model.rdo().id);
 
             this.instance.createInstance(extension, textarea, {
@@ -101,10 +100,10 @@ export class MarkdownRenderer {
 
             // Custom highlight function to apply CSS class `highlight`:
             highlight: (str: string, lang: string) => {
-                if(lang && hljs.getLanguage(lang)) {
+                if (lang && hljs.getLanguage(lang)) {
                     try {
                         return `<pre class="highlight"><code>${hljs.highlight(lang, str, true).value}</code></pre>`;
-                    } catch(__) {
+                    } catch (__) {
                     }
                 }
                 return `<pre class="highlight"><code>${instance.utils.escapeHtml(str)}</code></pre>`;
@@ -114,14 +113,14 @@ export class MarkdownRenderer {
             replaceLink: (link: string/*, env*/) => {
 
                 // do not change if link as http:// or ftp:// or mailto: etc.
-                if(link.search('://') != -1 || startsWith(link, 'mailto:'))
+                if (link.search('://') != -1 || startsWith(link, 'mailto:'))
                     return link;
 
                 // define path depending on absolute / relative link type
                 let basePath = (startsWith(link, '/')) ? rfp.fileRoot : getDirname(render_model.rdo().id);
                 let path = basePath + ltrim(link, '/');
 
-                if(isMarkdownFile(path))
+                if (isMarkdownFile(path))
                 // to open file in preview mode upon click
                     return path;
                 else {
@@ -158,20 +157,20 @@ export class MarkdownRenderer {
             let href: string = <string>$(this).attr('href');
             let editor: EditorModel = (<PreviewModel>fmModel.previewModel).editor;
 
-            if(editor.enabled() && editor.isInteractive()) {
+            if (editor.enabled() && editor.isInteractive()) {
                 // prevent user from losing unsaved changes in preview mode
                 // in case of clicking on a link that jumps off the page
                 $(this).off('click');
                 $(this).on('click', () => false); // prevent onClick event
             } else {
-                if(href.search('://') != -1 || startsWith(href, 'mailto:'))
+                if (href.search('://') != -1 || startsWith(href, 'mailto:'))
                     return; // do nothing
 
-                if(isMarkdownFile(href)) {
+                if (isMarkdownFile(href)) {
                     // open file in preview mode for clicked link
                     $(this).on('click', (/*e*/) => {
                         getItemInfo(href).then(response => {
-                            if(response.data)
+                            if (response.data)
                                 getDetailView(response.data);
 
                         });

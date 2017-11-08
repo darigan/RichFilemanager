@@ -48,12 +48,12 @@ export class FmModel {
         this.previewModel = ko.observable(null);
 
         this.previewFile.subscribe((enabled: boolean) => {
-            if(!enabled) {
+            if (!enabled) {
                 // close editor upon disabling preview
                 previewModel.closeEditor();
 
                 // update content of descriptive panel
-                if(model.itemsModel.descriptivePanel.rdo().id === previewModel.rdo().id)
+                if (model.itemsModel.descriptivePanel.rdo().id === previewModel.rdo().id)
                     model.itemsModel.descriptivePanel.render(previewModel.viewer.content());
 
             }
@@ -78,14 +78,14 @@ export class FmModel {
         // handle tree nodes
         let targetNode = fmModel.treeModel.findByParam('id', targetPath);
 
-        if(targetNode) {
+        if (targetNode) {
             let newNode: TreeNodeObject = fmModel.treeModel.createNode(resourceObject);
 
             fmModel.treeModel.addNodes(targetNode, newNode);
         }
 
         // handle view objects
-        if(fmModel.currentPath() === targetPath)
+        if (fmModel.currentPath() === targetPath)
             fmModel.itemsModel.addNew(resourceObject);
 
     }
@@ -96,13 +96,13 @@ export class FmModel {
         // handle tree nodes
         let treeNode: TreeNodeObject = fmModel.treeModel.findByParam('id', resourceObject.id);
 
-        if(treeNode)
+        if (treeNode)
             treeNode.remove();
 
         // handle view objects
         let viewItem: ItemObject = fmModel.itemsModel.findByParam('id', resourceObject.id);
 
-        if(viewItem)
+        if (viewItem)
             viewItem.remove();
 
     }
@@ -113,13 +113,13 @@ export class FmModel {
         let selectedNodes: TreeNodeObject[];
         let selectedItems: ItemObject[];
 
-        if(instanceName === (<any>ItemObject).name)
+        if (instanceName === (<any>ItemObject).name)
             return fmModel.itemsModel.getSelected();
 
-        if(instanceName === (<any>TreeNodeObject).name)
+        if (instanceName === (<any>TreeNodeObject).name)
             return fmModel.treeModel.getSelected();
 
-        if(!instanceName) {
+        if (!instanceName) {
             selectedNodes = fmModel.treeModel.getSelected();
             selectedItems = fmModel.itemsModel.getSelected();
 
@@ -142,7 +142,7 @@ export class FmModel {
     // check whether view item can be opened based on the event and configuration options
     isItemOpenable(event: JQueryEventObject) {
         // selecting with Ctrl key
-        if(this.config.manager.selection.enabled && this.config.manager.selection.useCtrlKey && event.ctrlKey === true)
+        if (this.config.manager.selection.enabled && this.config.manager.selection.useCtrlKey && event.ctrlKey === true)
             return false;
 
         // single clicked while expected dblclick

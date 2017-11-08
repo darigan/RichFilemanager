@@ -25,7 +25,7 @@ export class ClipboardModel {
         let clipboard_model = this;
         let model = this.rfp.fmModel;
 
-        if(!clipboard_model.hasCapability('copy'))
+        if (!clipboard_model.hasCapability('copy'))
             return;
 
         this.cbMode = 'copy';
@@ -37,7 +37,7 @@ export class ClipboardModel {
         let clipboard_model = this;
         let model = this.rfp.fmModel;
 
-        if(!clipboard_model.hasCapability('cut'))
+        if (!clipboard_model.hasCapability('cut'))
             return;
 
         this.cbMode = 'cut';
@@ -51,10 +51,10 @@ export class ClipboardModel {
         let moveItem = this.rfp.moveItem;
         let copyItem = this.rfp.copyItem;
 
-        if(!this.hasCapability('paste') || this.isEmpty())
+        if (!this.hasCapability('paste') || this.isEmpty())
             return;
 
-        if(this.cbMode === null || this.cbObjects.length === 0) {
+        if (this.cbMode === null || this.cbObjects.length === 0) {
             warning(lg('clipboard_empty'));
             return;
         }
@@ -62,17 +62,17 @@ export class ClipboardModel {
         let targetPath = model.currentPath();
 
         processMultipleActions(this.cbObjects, (_i, itemObject: NodeItem): any => {
-            if(this.cbMode === 'cut')
+            if (this.cbMode === 'cut')
                 return moveItem(itemObject, targetPath);
 
-            if(this.cbMode === 'copy')
+            if (this.cbMode === 'copy')
                 return copyItem(itemObject, targetPath);
 
         }, this.clearClipboard.bind(this)); // todo:
     }
 
     clear(): void {
-        if(!this.hasCapability('clear') || this.isEmpty())
+        if (!this.hasCapability('clear') || this.isEmpty())
             return;
 
         this.clearClipboard();
@@ -86,10 +86,10 @@ export class ClipboardModel {
     hasCapability(capability: string): boolean {
         let rfp = this.rfp;
 
-        if(!this.enabled)
+        if (!this.enabled)
             return false;
 
-        switch(capability) {
+        switch (capability) {
             case 'copy':
                 return rfp.capabilities.indexOf('copy') > -1;
             case 'cut':

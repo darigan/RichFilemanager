@@ -78,7 +78,7 @@ export interface Config {
             useCtrlKey: boolean;
         };
     };
-    options : ConfigOptions;
+    options: ConfigOptions;
     security: {
         extensions: {
             ignoreCase: boolean;

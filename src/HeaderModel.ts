@@ -35,10 +35,10 @@ export class HeaderModel {
             ? getDirname((<KnockoutObservable<PreviewModel>>model.previewModel).rdo().id)
             : getParentDirname(model.currentPath());
 
-        if(model.previewFile())
+        if (model.previewFile())
             model.previewFile(false);
 
-        if(parentFolder !== model.currentPath())
+        if (parentFolder !== model.currentPath())
             model.itemsModel.loadList(parentFolder);
 
     }
@@ -46,7 +46,7 @@ export class HeaderModel {
     navRefresh(): void {
         let model: FmModel = this.rfp.fmModel;
 
-        if(model.previewFile()) {
+        if (model.previewFile()) {
             model.previewFile(false);
             model.previewFile(true);
         } else
@@ -59,7 +59,7 @@ export class HeaderModel {
         model.viewMode('grid');
         model.previewFile(false);
 
-        if(model.itemsModel.lazyLoad)
+        if (model.itemsModel.lazyLoad)
             model.itemsModel.lazyLoad.update();
     }
 
@@ -75,12 +75,12 @@ export class HeaderModel {
         let langCurrent: string = getLang();
         let _url_ = this.rfp._url_;
 
-        if(langNew && langNew.toLowerCase() !== langCurrent.toLowerCase()) {
+        if (langNew && langNew.toLowerCase() !== langCurrent.toLowerCase()) {
             let newUrl;
             let url = window.location.toString();
             let regExp = new RegExp(`(langCode=)${langCurrent}`);
 
-            if(regExp.test(url))
+            if (regExp.test(url))
                 newUrl = url.replace(regExp, '$1' + langNew);
             else
                 newUrl = url + ($.isEmptyObject(_url_.param()) ? '?' : '#') + 'langCode=' + langNew;
@@ -89,7 +89,7 @@ export class HeaderModel {
         }
     }
 
-    createFolder(){
+    createFolder() {
         let rfp = this.rfp;
         let fmModel = this.rfp.fmModel;
         let buildAjaxRequest = this.rfp.buildAjaxRequest;
@@ -97,7 +97,7 @@ export class HeaderModel {
         let makeFolder = function (_e: Event, ui: AleritfyDialogUI) {
             let folderName = ui.getInputValue();
 
-            if(!folderName) {
+            if (!folderName) {
                 error(lg('no_foldername'));
                 return;
             }
@@ -107,11 +107,11 @@ export class HeaderModel {
                 path: fmModel.currentPath(),
                 name: folderName
             }).done(response => {
-                if(response.data) {
+                if (response.data) {
                     fmModel.addItem(response.data, fmModel.currentPath());
 
                     ui.closeDialog();
-                    if(config.options.showConfirmation)
+                    if (config.options.showConfirmation)
                         success(lg('successful_added_folder'));
 
                 }
@@ -148,7 +148,7 @@ export class SortableHeader {
         this.sortClass = ko.pureComputed((): string => {
             let cssClass;
 
-            if(model.itemsModel.listSortField() === this.column()) {
+            if (model.itemsModel.listSortField() === this.column()) {
                 cssClass = `sorted sorted-${this.order()}`;
             }
             return <string>cssClass;

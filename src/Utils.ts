@@ -208,19 +208,20 @@ export function dialog(obj: Message) {
 export function lg(key: string): string {
     return translate(key);
 }
+
 // Converts bytes to KB, MB, or GB as needed for display
 export function formatBytes(bytes: number | string, round?: boolean): string {
-    if(!bytes) return '';
+    if (!bytes) return '';
     round = round || false;
     let n = parseFloat(<string>bytes);
     let d = parseFloat(<any>(round ? 1000 : 1024));
     let c = 0;
-    let u = [ lg('unit_bytes'), lg('unit_kb'), lg('unit_mb'), lg('unit_gb') ];
+    let u = [lg('unit_bytes'), lg('unit_kb'), lg('unit_mb'), lg('unit_gb')];
 
-    while(true) {
-        if(n < d) {
+    while (true) {
+        if (n < d) {
             n = Math.round(n * 100) / 100;
-            return n + ' ' + u[ c ];
+            return n + ' ' + u[c];
         } else {
             n /= d;
             c += 1;
@@ -229,7 +230,7 @@ export function formatBytes(bytes: number | string, round?: boolean): string {
 }
 
 export function log(..._args: any[]): void {
-    if((<ConfigOptions>config.options).logger && arguments) {
+    if ((<ConfigOptions>config.options).logger && arguments) {
         [].unshift.call(arguments, new Date().getTime());
         console.log.apply(console, arguments);
     }
@@ -239,7 +240,7 @@ export function log(..._args: any[]): void {
 export function formatServerError(errorObject: any): string {
     let message: string;
     // look for message in case an error CODE is provided
-    if(getLang() && lg(errorObject.message)) {
+    if (getLang() && lg(errorObject.message)) {
         message = lg(errorObject.message);
         $.each(errorObject.arguments, (_i, argument) => {
             message = message.replace('%s', argument);
@@ -260,12 +261,12 @@ export function handleAjaxError(response: JQuery.jqXHR): void {
 
 // Handle ajax json response error.
 export function handleAjaxResponseErrors(response: any) { // todo: no errors in JQuery.jqXHR
-    if(response.errors) {
+    if (response.errors) {
         log(response.errors);
         $.each(response.errors, (_i, errorObject) => {
             error(formatServerError(errorObject));
 
-            if(errorObject.arguments.redirect)
+            if (errorObject.arguments.redirect)
                 window.location.href = errorObject.arguments.redirect;
 
         });
@@ -276,19 +277,19 @@ export function handleAjaxResponseErrors(response: any) { // todo: no errors in 
 export function isAuthorizedFile(filename: string): boolean {
     let ext: string = getExtension(filename);
 
-    if(config.security.extensions.ignoreCase) {
-        if(config.security.extensions.policy == 'ALLOW_LIST')
-            if(inArrayInsensitive(ext, config.security.extensions.restrictions) !== -1) return true;
+    if (config.security.extensions.ignoreCase) {
+        if (config.security.extensions.policy == 'ALLOW_LIST')
+            if (inArrayInsensitive(ext, config.security.extensions.restrictions) !== -1) return true;
 
-        if(config.security.extensions.policy == 'DISALLOW_LIST')
-            if(inArrayInsensitive(ext, config.security.extensions.restrictions) === -1) return true;
+        if (config.security.extensions.policy == 'DISALLOW_LIST')
+            if (inArrayInsensitive(ext, config.security.extensions.restrictions) === -1) return true;
 
     } else {
-        if(config.security.extensions.policy == 'ALLOW_LIST')
-            if($.inArray(ext, config.security.extensions.restrictions) !== -1) return true;
+        if (config.security.extensions.policy == 'ALLOW_LIST')
+            if ($.inArray(ext, config.security.extensions.restrictions) !== -1) return true;
 
-        if(config.security.extensions.policy == 'DISALLOW_LIST')
-            if($.inArray(ext, config.security.extensions.restrictions) === -1) return true;
+        if (config.security.extensions.policy == 'DISALLOW_LIST')
+            if ($.inArray(ext, config.security.extensions.restrictions) === -1) return true;
 
     }
 
@@ -351,17 +352,17 @@ export function isMarkdownFile(filename: string): boolean {
 }
 
 export function inArrayInsensitive(elem: any, arr: any[], i?: number): number {
-    if(typeof elem !== 'string')
+    if (typeof elem !== 'string')
         return $.inArray.apply(null, arguments);
 
     // confirm array is populated
-    if(arr) {
+    if (arr) {
         let len = arr.length;
 
         i = i ? (i < 0 ? Math.max(0, len + i) : i) : 0;
         elem = elem.toLowerCase();
-        for(; i < len; i++) {
-            if(i in arr && arr[ i ].toLowerCase() == elem)
+        for (; i < len; i++) {
+            if (i in arr && arr[i].toLowerCase() == elem)
                 return i;
 
         }

@@ -25,14 +25,14 @@ export class TreeModel {
     }
 
     expandFolderDefault(parentNode: TreeNodeObject) {
-        if(this.fullexpandedFolder !== null) {
-            if(!parentNode)
+        if (this.fullexpandedFolder !== null) {
+            if (!parentNode)
                 parentNode = <TreeNodeObject>this.treeData;
 
             // looking for node that starts with specified path
             let node = this.findByFilter((node: TreeNodeObject) => (this.fullexpandedFolder.indexOf(node.id) === 0), parentNode);
 
-            if(node) {
+            if (node) {
                 config.filetree.expandSpeed = 10;
                 this.loadNodes(node, false);
             } else {
@@ -43,66 +43,66 @@ export class TreeModel {
     }
 
     mapNodes(filter: Function, contextNode?: TreeNodeObject): any {
-        if(!contextNode)
+        if (!contextNode)
             contextNode = <TreeNodeObject>this.treeData;
 
         // don't apply callback function to the treeData root node
-        if(contextNode.id !== this.treeData.id)
+        if (contextNode.id !== this.treeData.id)
             filter.call(this, contextNode);
 
         let nodes = contextNode.children();
 
-        if(!nodes || nodes.length === 0)
+        if (!nodes || nodes.length === 0)
             return null;
 
-        for(let i = 0, l = nodes.length; i < l; i++) {
-            filter.call(this, nodes[ i ]);
-            this.findByFilter(filter, nodes[ i ]);
+        for (let i = 0, l = nodes.length; i < l; i++) {
+            filter.call(this, nodes[i]);
+            this.findByFilter(filter, nodes[i]);
         }
     }
 
     findByParam(key: string, value: any, contextNode?: TreeNodeObject): TreeNodeObject {
-        if(!contextNode) {
+        if (!contextNode) {
             contextNode = <TreeNodeObject>this.treeData;
-            if((<any>contextNode)[ key ] === value)
+            if ((<any>contextNode)[key] === value)
                 return contextNode;
         }
         let nodes: TreeNodeObject[] = contextNode.children();
 
-        if(!nodes || nodes.length === 0)
+        if (!nodes || nodes.length === 0)
             return null;
 
-        for(let i = 0, l = nodes.length; i < l; i++) {
-            if((<any>nodes[ i ])[ key ] === value)
-                return nodes[ i ];
+        for (let i = 0, l = nodes.length; i < l; i++) {
+            if ((<any>nodes[i])[key] === value)
+                return nodes[i];
 
-            let result = this.findByParam(key, value, nodes[ i ]);
+            let result = this.findByParam(key, value, nodes[i]);
 
-            if(result)
+            if (result)
                 return result;
         }
         return null;
     }
 
     findByFilter(filter: Function, contextNode: TreeNodeObject): TreeNodeObject {
-        if(!contextNode) {
+        if (!contextNode) {
             contextNode = <TreeNodeObject>this.treeData;
-            if(filter(contextNode))
+            if (filter(contextNode))
                 return contextNode;
 
         }
         let nodes: TreeNodeObject[] = contextNode.children();
 
-        if(!nodes || nodes.length === 0)
+        if (!nodes || nodes.length === 0)
             return null;
 
-        for(let i = 0, l = nodes.length; i < l; i++) {
-            if(filter(nodes[ i ]))
-                return nodes[ i ];
+        for (let i = 0, l = nodes.length; i < l; i++) {
+            if (filter(nodes[i]))
+                return nodes[i];
 
-            let result: TreeNodeObject = this.findByFilter(filter, nodes[ i ]);
+            let result: TreeNodeObject = this.findByFilter(filter, nodes[i]);
 
-            if(result)
+            if (result)
                 return result;
         }
         return null;
@@ -111,7 +111,7 @@ export class TreeModel {
     getSelected(): TreeNodeObject[] {
         let selectedItems: TreeNodeObject[] = [];
 
-        if(this.selectedNode())
+        if (this.selectedNode())
             selectedItems.push(<TreeNodeObject>this.selectedNode());
 
         return selectedItems;
@@ -122,7 +122,7 @@ export class TreeModel {
         let buildAjaxRequest = this.rfp.buildAjaxRequest;
         let expandFolderDefault = this.expandFolderDefault;
 
-        if(targetNode)
+        if (targetNode)
             targetNode.isLoaded(false);
 
         let queryParams = {
@@ -131,19 +131,19 @@ export class TreeModel {
         };
 
         buildAjaxRequest('GET', queryParams).done(response => {
-            if(response.data) {
+            if (response.data) {
                 let nodes: TreeNodeObject[] = [];
                 $.each(response.data, (_i, resourceObject) => {
                     let nodeObject: TreeNodeObject = this.createNode(resourceObject);
 
                     nodes.push(nodeObject);
                 });
-                if(refresh)
+                if (refresh)
                     targetNode.children([]);
 
                 this.addNodes(targetNode, nodes);
                 // not root
-                if(targetNode) {
+                if (targetNode) {
                     targetNode.isLoaded(true);
                     expandNode(targetNode);
                 }
@@ -164,14 +164,14 @@ export class TreeModel {
     addNodes(targetNode: TreeNodeObject, newNodes: TreeNodeObject[] | TreeNodeObject): void {
         let sortItems = this.rfp.sortItems;
 
-        if(!Array.isArray(newNodes))
-            newNodes = [ newNodes ];
+        if (!Array.isArray(newNodes))
+            newNodes = [newNodes];
 
-        if(!targetNode)
+        if (!targetNode)
             targetNode = <TreeNodeObject>this.treeData;
 
         // list only folders in tree
-        if(config.filetree.foldersOnly)
+        if (config.filetree.foldersOnly)
             newNodes = $.grep(newNodes, (node: TreeNodeObject) => (node.cdo.isFolder)); // todo: ??
 
         $.each(newNodes, (_i, node: TreeNodeObject) => {
@@ -183,7 +183,7 @@ export class TreeModel {
     }
 
     toggleNode(node: TreeNodeObject): void {
-        if(!collapseNode(node))
+        if (!collapseNode(node))
             expandNode(node);
     }
 
@@ -203,7 +203,7 @@ export class TreeModel {
         let model: FmModel = this.rfp.fmModel;
 
         // attach context menu
-        $(elements[ 1 ]).contextMenu({
+        $(elements[1]).contextMenu({
             selector: '.file, .directory',
             zIndex: 100,
             // wrap options with "build" allows to get item element
@@ -301,8 +301,8 @@ export class TreeNodeObject {
         });
 
         this.selected.subscribe(value => {
-            if(value) {
-                if(model.treeModel.selectedNode() !== null)
+            if (value) {
+                if (model.treeModel.selectedNode() !== null)
                     (<TreeNodeObject>model.treeModel.selectedNode()).selected(false);
 
                 model.treeModel.selectedNode(this);
@@ -318,10 +318,10 @@ export class TreeNodeObject {
         this.itemClass = ko.pureComputed(() => {
             let cssClass = [];
 
-            if(this.selected() && config.manager.selection.enabled)
+            if (this.selected() && config.manager.selection.enabled)
                 cssClass.push('ui-selected');
 
-            if(this.dragHovered())
+            if (this.dragHovered())
                 cssClass.push(model.ddModel.hoveredCssClass);
 
             return cssClass.join(' ');
@@ -329,22 +329,22 @@ export class TreeNodeObject {
 
         this.iconClass = ko.pureComputed(() => {
             let cssClass;
-            let extraClass = [ 'ico' ];
+            let extraClass = ['ico'];
 
-            if(this.cdo.isFolder === true) {
+            if (this.cdo.isFolder === true) {
                 cssClass = 'ico_folder';
-                if(this.isLoading() === true)
+                if (this.isLoading() === true)
                     extraClass.push('loading');
                 else {
                     extraClass.push('folder');
-                    if(!this.rdo.attributes.readable)
+                    if (!this.rdo.attributes.readable)
                         extraClass.push('lock');
-                    else if(this.isExpanded() || !this.isExpanded() && this.isSliding())
+                    else if (this.isExpanded() || !this.isExpanded() && this.isSliding())
                         extraClass.push('open');
                 }
             } else {
                 cssClass = 'ico_file';
-                if(this.rdo.attributes.readable)
+                if (this.rdo.attributes.readable)
                     extraClass.push('ext', <string>this.cdo.extension);
                 else
                     extraClass.push('file', 'lock');
@@ -356,12 +356,12 @@ export class TreeNodeObject {
         this.switcherClass = ko.pureComputed(() => {
             let cssClass = [];
 
-            if(config.filetree.showLine) {
-                if(this.level() === 0 && this.isFirstNode() && this.isLastNode())
+            if (config.filetree.showLine) {
+                if (this.level() === 0 && this.isFirstNode() && this.isLastNode())
                     cssClass.push('root');
-                else if(this.level() === 0 && this.isFirstNode())
+                else if (this.level() === 0 && this.isFirstNode())
                     cssClass.push('roots');
-                else if(this.isLastNode())
+                else if (this.isLastNode())
                     cssClass.push('bottom');
                 else
                     cssClass.push('center');
@@ -369,7 +369,7 @@ export class TreeNodeObject {
             } else
                 cssClass.push('noline');
 
-            if(this.cdo.isFolder) {
+            if (this.cdo.isFolder) {
                 let isOpen = (this.isExpanded() || !this.isExpanded() && this.isSliding());
 
                 cssClass.push(isOpen ? 'open' : 'close');
@@ -386,14 +386,14 @@ export class TreeNodeObject {
     switchNode(node: TreeNodeObject): any { // todo: check this
         let model: FmModel = this.rfp.fmModel;
 
-        if(!node.cdo.isFolder)
+        if (!node.cdo.isFolder)
             return false;
 
-        if(!node.rdo.attributes.readable) {
+        if (!node.rdo.attributes.readable) {
             error(lg('NOT_ALLOWED_SYSTEM'));
             return false;
         }
-        if(!node.isLoaded())
+        if (!node.isLoaded())
             this.openNode(node);
         else
             model.treeModel.toggleNode(node);
@@ -406,13 +406,13 @@ export class TreeNodeObject {
     }
 
     nodeClick(node: TreeNodeObject/*, e*/): void {
-        if(!config.manager.dblClickOpen)
+        if (!config.manager.dblClickOpen)
             this.openNode(node);
 
     }
 
     nodeDblClick(node: TreeNodeObject/*, e*/): void {
-        if(config.manager.dblClickOpen)
+        if (config.manager.dblClickOpen)
             this.openNode(node);
 
     }
@@ -422,11 +422,11 @@ export class TreeNodeObject {
         let fmModel = this.rfp.fmModel;
         let getDetailView = this.rfp.getDetailView;
 
-        if(node.rdo.type === 'file')
+        if (node.rdo.type === 'file')
             getDetailView(node.rdo);
 
-        if(node.rdo.type === 'folder') {
-            if(!node.isLoaded() || (node.isExpanded() && config.filetree.reloadOnClick)) {
+        if (node.rdo.type === 'folder') {
+            if (!node.isLoaded() || (node.isExpanded() && config.filetree.reloadOnClick)) {
                 model.treeModel.loadNodes(node, true);
                 getDetailView(node.rdo);
             } else {

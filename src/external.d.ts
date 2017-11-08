@@ -211,13 +211,19 @@ declare function toast(...args: any[]): void;
 declare function tmpl(str: string, data?: any): Function;
 
 interface tmpl {
-    cache: {[key: string]: string};
+    cache: { [key: string]: string };
+
     load(id: string): string;
+
     regexp: RegExp;
+
     func(s: string, p1?: string, p2?: string, p3?: string, p4?: string, p5?: string): string;
+
     encReg: RegExp;
-    encMap: {[key: string]: string};
+    encMap: { [key: string]: string };
+
     encode(s: string): string;
+
     arg: string;
     helper: string;
 }

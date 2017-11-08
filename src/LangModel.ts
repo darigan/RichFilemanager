@@ -1,11 +1,11 @@
-export type LangKV = {[key: string]: string};
+export type LangKV = { [key: string]: string };
 
 /**
  * Language model
  * @constructor
  */
 export let currentLang: string = null;
-export let translationsHash: LangKV = { };
+export let translationsHash: LangKV = {};
 export let translationsPath: string;
 
 export function init(baseUrl: string) {
@@ -33,5 +33,5 @@ export function getTranslations() {
 }
 
 export function translate(key: string): string {
-    return translationsHash[ key ];
+    return translationsHash[key];
 }

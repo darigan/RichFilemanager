@@ -30,10 +30,10 @@ export class BreadcrumbsModel {
         // push root node
         this.add(rfp.fileRoot, '');
 
-        while(chunks.length > 0) {
+        while (chunks.length > 0) {
             let chunk = chunks.shift();
 
-            if(chunk) {
+            if (chunk) {
                 path += chunk + '/';
                 this.add(path, chunk);
             }
@@ -52,12 +52,12 @@ export class BcItem {
     }
 
     itemClass(): string {
-        let cssClass: string[] = [ 'nav-item' ];
+        let cssClass: string[] = ['nav-item'];
 
-        if(this.isRoot)
+        if (this.isRoot)
             cssClass.push('root');
 
-        if(this.active)
+        if (this.active)
             cssClass.push('active');
 
         return cssClass.join(' ');
@@ -66,7 +66,7 @@ export class BcItem {
     goto(item: BcItem/*, e*/): void {
         let model: FmModel = this.rfp.fmModel;
 
-        if(!item.active)
+        if (!item.active)
             model.itemsModel.loadList(item.path);
     }
 }

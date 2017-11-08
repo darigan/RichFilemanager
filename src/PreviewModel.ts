@@ -51,27 +51,27 @@ export class PreviewModel {
 
         this.editor.content.subscribe(content => {
             // instantly render changes of editor content
-            if(this.editor.isInteractive())
+            if (this.editor.isInteractive())
                 this.renderer.render(content);
         });
 
         this.previewIconClass = ko.pureComputed((): string => {
             let cssClass: string[] = [];
-            let extraClass: string[] = [ 'ico' ];
+            let extraClass: string[] = ['ico'];
 
-            if(this.viewer.type() === 'default' || !this.viewer.url()) {
+            if (this.viewer.type() === 'default' || !this.viewer.url()) {
                 cssClass.push('grid-icon');
 
-                if(this.cdo().isFolder === true) {
+                if (this.cdo().isFolder === true) {
                     cssClass.push('ico_folder');
                     extraClass.push('folder');
 
-                    if(!this.rdo().attributes.readable)
+                    if (!this.rdo().attributes.readable)
                         extraClass.push('lock');
                 } else {
                     cssClass.push('ico_file');
 
-                    if(this.rdo().attributes.readable)
+                    if (this.rdo().attributes.readable)
                         extraClass.push('ext', this.cdo().extension);
                     else
                         extraClass.push('file', 'lock');
@@ -93,7 +93,7 @@ export class PreviewModel {
         let previewItem = this.rfp.previewItem;
         let previewFile = this.rfp.fmModel.previewFile;
 
-        if(this.clipboard)
+        if (this.clipboard)
             this.clipboard.destroy();
 
         previewFile(false);
@@ -110,17 +110,17 @@ export class PreviewModel {
 
         this.rdo(resourceObject);
 
-        if(isImageFile(filename)) {
+        if (isImageFile(filename)) {
             viewerObject.type = 'image';
             viewerObject.url = createImageUrl(resourceObject, false, true);
         }
 
-        if(isAudioFile(filename) && config.viewer.audio.enabled === true) {
+        if (isAudioFile(filename) && config.viewer.audio.enabled === true) {
             viewerObject.type = 'audio';
             viewerObject.url = createPreviewUrl(resourceObject, true);
         }
 
-        if(isVideoFile(filename) && config.viewer.video.enabled === true) {
+        if (isVideoFile(filename) && config.viewer.video.enabled === true) {
             viewerObject.type = 'video';
             viewerObject.url = createPreviewUrl(resourceObject, true);
             viewerObject.options = {
@@ -129,7 +129,7 @@ export class PreviewModel {
             };
         }
 
-        if(isOpenDocFile(filename) && config.viewer.opendoc.enabled === true) {
+        if (isOpenDocFile(filename) && config.viewer.opendoc.enabled === true) {
             viewerObject.type = 'opendoc';
             viewerObject.url = `${settings.baseUrl}/scripts/ViewerJS/index.html#${createPreviewUrl(resourceObject, true)}`;
             viewerObject.options = {
@@ -138,7 +138,7 @@ export class PreviewModel {
             };
         }
 
-        if(isGoogleDocsFile(filename) && config.viewer.google.enabled === true) {
+        if (isGoogleDocsFile(filename) && config.viewer.google.enabled === true) {
             viewerObject.type = 'google';
             viewerObject.url = `https://docs.google.com/viewer?url=${encodeURIComponent(createPreviewUrl(resourceObject, false))}&embedded=true`;
             viewerObject.options = {
@@ -147,7 +147,7 @@ export class PreviewModel {
             };
         }
 
-        if(isIFrameFile(filename) && config.viewer.iframe.enabled === true) {
+        if (isIFrameFile(filename) && config.viewer.iframe.enabled === true) {
             viewerObject.type = 'iframe';
             viewerObject.url = createPreviewUrl(resourceObject, true);
             viewerObject.options = {
@@ -156,7 +156,7 @@ export class PreviewModel {
             };
         }
 
-        if((isCodeMirrorFile(filename) && config.viewer.codeMirrorRenderer.enabled === true) ||
+        if ((isCodeMirrorFile(filename) && config.viewer.codeMirrorRenderer.enabled === true) ||
             (isMarkdownFile(filename) && config.viewer.markdownRenderer.enabled === true)
         ) {
             viewerObject.type = 'renderer';
@@ -174,9 +174,9 @@ export class PreviewModel {
         this.viewer.isEditable(isEditableFile(filename) && config.editor.enabled === true);
         this.editor.isInteractive(editorObject.interactive);
 
-        if(viewerObject.type === 'renderer' || this.viewer.isEditable()) {
+        if (viewerObject.type === 'renderer' || this.viewer.isEditable()) {
             previewItem(resourceObject).then((response) => {
-                if(response.data) {
+                if (response.data) {
                     let content = response.data.attributes.content;
 
                     this.viewer.content(content);
@@ -194,7 +194,7 @@ export class PreviewModel {
 
         preview_model.renderer.render(preview_model.viewer.content());
 
-        let copyBtnEl = $previewWrapper.find('.btn-copy-url')[ 0 ];
+        let copyBtnEl = $previewWrapper.find('.btn-copy-url')[0];
 
         this.clipboard = new Clipboard(copyBtnEl, undefined);
 
@@ -206,7 +206,7 @@ export class PreviewModel {
     initiateEditor(/*elements*/) {
         let $previewWrapper = this.rfp.$previewWrapper;
 
-        let textarea: HTMLTextAreaElement = <HTMLTextAreaElement>$previewWrapper.find('.fm-cm-editor-content')[ 0 ];
+        let textarea: HTMLTextAreaElement = <HTMLTextAreaElement>$previewWrapper.find('.fm-cm-editor-content')[0];
 
         this.editor.createInstance(<string>(<ComputedDataObject>this.cdo()).extension, textarea, {
             readOnly: false,
@@ -219,7 +219,7 @@ export class PreviewModel {
         let has_capability = this.rfp.has_capability;
         let performAction = this.rfp.performAction;
 
-        if(has_capability(this.rdo(), action)) {
+        if (has_capability(this.rdo(), action)) {
             performAction(action, {}, this.rdo());
         }
     }
@@ -247,7 +247,7 @@ export class PreviewModel {
         let has_capability = this.rfp.has_capability;
         let hasContext = this.rfp.hasContext;
 
-        switch(action) {
+        switch (action) {
             case 'select':
                 return (has_capability(this.rdo(), action) && hasContext());
             case 'move':

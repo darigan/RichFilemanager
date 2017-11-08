@@ -11,6 +11,7 @@ export let defaults: Settings = {
         beforeCreateImageUrl: (_resourceObject: ReadableObject, url: string): string => url,
         beforeCreatePreviewUrl: (_resourceObject: ReadableObject, url: string): string => url,
         beforeSelectItem: (_resourceObject: ReadableObject, url: string): string => url,
-        afterSelectItem: (/*resourceObject, url, contextWindow*/) => { }
+        afterSelectItem: (/*resourceObject, url, contextWindow*/) => {
+        }
     }
 };

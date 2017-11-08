@@ -18,9 +18,9 @@ export class EditorModel {
         this.isInteractive = ko.observable(false);
 
         this.mode.subscribe(mode => {
-            if(mode) {
+            if (mode) {
                 (<CodeMirror.EditorFromTextArea>this.instance).setOption('mode', mode);
-                if(this.delayedContent) {
+                if (this.delayedContent) {
                     this.drawContent(this.delayedContent);
                     this.delayedContent = null;
                 }
@@ -29,7 +29,7 @@ export class EditorModel {
     }
 
     render(content: any) {
-        if(this.mode())
+        if (this.mode())
             this.drawContent(content);
         else
             this.delayedContent = content;
@@ -52,7 +52,7 @@ export class EditorModel {
                     cm.setOption('fullScreen', !cm.getOption('fullScreen'));
                 },
                 'Esc': (cm: CodeMirror.EditorFromTextArea) => {
-                    if(cm.getOption('fullScreen'))
+                    if (cm.getOption('fullScreen'))
                         cm.setOption('fullScreen', false);
                 }
             }
@@ -84,26 +84,26 @@ export class EditorModel {
         let loadAssets = this.rfp.loadAssets;
 
         // highlight code according to extension file
-        if(config.editor.codeHighlight) {
+        if (config.editor.codeHighlight) {
             let cm: string = '/scripts/CodeMirror/';
 
-            if(extension === 'js') {
+            if (extension === 'js') {
                 assets.push(`${cm}mode/javascript/javascript.js`);
                 currentMode = 'javascript';
             }
-            if(extension === 'css') {
+            if (extension === 'css') {
                 assets.push(`${cm}mode/css/css.js`);
                 currentMode = 'css';
             }
-            if(extension === 'html') {
+            if (extension === 'html') {
                 assets.push(`${cm}mode/xml/xml.js`);
                 currentMode = 'text/html';
             }
-            if(extension === 'xml') {
+            if (extension === 'xml') {
                 assets.push(`${cm}mode/xml/xml.js`);
                 currentMode = 'application/xml';
             }
-            if(extension === 'php') {
+            if (extension === 'php') {
                 assets.push(...[
                     cm + 'mode/htmlmixed/htmlmixed.js',
                     cm + 'mode/xml/xml.js',
@@ -114,15 +114,15 @@ export class EditorModel {
                 ]);
                 currentMode = 'application/x-httpd-php';
             }
-            if(extension === 'java') {
+            if (extension === 'java') {
                 assets.push(`${cm}mode/clike/clike.js`);
                 currentMode = 'text/x-java';
             }
-            if(extension === 'sql') {
+            if (extension === 'sql') {
                 assets.push(`${cm}mode/sql/sql.js`);
                 currentMode = 'text/x-mysql';
             }
-            if(extension === 'md') {
+            if (extension === 'md') {
                 assets.push(...[
                     cm + 'addon/mode/overlay.js',
                     cm + 'mode/xml/xml.js',
@@ -137,7 +137,7 @@ export class EditorModel {
                 ]);
                 currentMode = 'gfm';
             }
-            if(extension === 'sh') {
+            if (extension === 'sh') {
                 assets.push(...[
                     cm + 'addon/mode/overlay.js',
                     cm + 'mode/markdown/markdown.js',
@@ -153,7 +153,7 @@ export class EditorModel {
             }
         }
 
-        if(assets.length) {
+        if (assets.length) {
             assets.push(() => {
                 // after all required assets are loaded
                 this.mode(currentMode);

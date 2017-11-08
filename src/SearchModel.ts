@@ -23,12 +23,12 @@ export class SearchModel {
             let searchString = insensitive ? search_model.value().toLowerCase() : search_model.value();
 
             $.each(model.itemsModel.objects(), (_i, itemObject) => {
-                if(itemObject.rdo.type === 'parent' || itemObject.cdo.hiddenByType)
+                if (itemObject.rdo.type === 'parent' || itemObject.cdo.hiddenByType)
                     return;
 
                 let itemName = itemObject.rdo.attributes.name;
 
-                if(insensitive)
+                if (insensitive)
                     itemName = itemName.toLowerCase();
 
                 let visibility = (itemName.indexOf(searchString) === 0);
@@ -45,7 +45,7 @@ export class SearchModel {
 
         search_model.value('');
         $.each(model.itemsModel.objects(), (_i, itemObject) => {
-            if(itemObject.rdo.type === 'parent')
+            if (itemObject.rdo.type === 'parent')
                 return;
 
             itemObject.cdo.hiddenBySearch = false;

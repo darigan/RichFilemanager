@@ -28,7 +28,7 @@ export class DragAndDropModel {
     makeDraggable(item: NodeItem, element: Element) {
         let fetchSelectedItems = this.rfp.fmModel.fetchSelectedItems;
 
-        if(item.rdo.type === 'file' || item.rdo.type === 'folder') {
+        if (item.rdo.type === 'file' || item.rdo.type === 'folder') {
             $(element).draggable({
                 distance: 3,
                 cursor: 'pointer',
@@ -44,7 +44,7 @@ export class DragAndDropModel {
                     let $cloned: JQuery;
                     let iconClass: string;
 
-                    if(fetchSelectedItems((<any>item.constructor).name).length > 1)
+                    if (fetchSelectedItems((<any>item.constructor).name).length > 1)
                         iconClass = 'ico_multiple';
                     else
                         iconClass = (item.rdo.type === 'folder')
@@ -75,12 +75,12 @@ export class DragAndDropModel {
     makeDroppable(targetItem: NodeItem, element: Element) {
         let rfp = this.rfp;
 
-        if(targetItem.rdo.type === 'folder' || targetItem.rdo.type === 'parent') {
+        if (targetItem.rdo.type === 'folder' || targetItem.rdo.type === 'parent') {
             $(element).droppable(<any>{
                 tolerance: 'pointer',
                 enableExtendedEvents: targetItem instanceof ItemObject, // todo: this isn't in jqueryui.d.ts
                 accept: ($draggable: JQuery) => {
-                    let dragItem = ko.dataFor($draggable[ 0 ]);
+                    let dragItem = ko.dataFor($draggable[0]);
                     let type = dragItem ? dragItem.rdo.type : null;
 
                     return (type === 'file' || type === 'folder');
@@ -92,7 +92,7 @@ export class DragAndDropModel {
                         this.markHovered(null);
                         this.markRestricted(ui.helper, false);
 
-                        if(!this.isDropAllowed(targetItem))
+                        if (!this.isDropAllowed(targetItem))
                             this.markRestricted(ui.helper, true);
 
                         this.markHovered(targetItem);
@@ -105,7 +105,7 @@ export class DragAndDropModel {
                 drop: (/*event, ui*/): any => {
                     this.markHovered(null);
 
-                    if(!this.isDropAllowed(targetItem))
+                    if (!this.isDropAllowed(targetItem))
                         return false;
 
                     rfp.processMultipleActions(this.items, (_i, itemObject) => rfp.moveItem(itemObject.rdo, <string>targetItem.id));
@@ -117,13 +117,13 @@ export class DragAndDropModel {
     // check whether draggable items can be accepted by target item
     isDropAllowed(targetItem: NodeItem) {
         let matches = $.grep(this.items, (itemObject/*, i*/) => {
-            if(targetItem.rdo.type === 'folder' || targetItem.rdo.type === 'parent') {
+            if (targetItem.rdo.type === 'folder' || targetItem.rdo.type === 'parent') {
                 // drop folder inside descending folders (filetree)
-                if(startsWith(targetItem.rdo.id, itemObject.rdo.id))
+                if (startsWith(targetItem.rdo.id, itemObject.rdo.id))
                     return true;
 
                 // drop items inside the same folder (filetree)
-                if(targetItem.rdo.id === getClosestNode(itemObject.rdo.id))
+                if (targetItem.rdo.id === getClosestNode(itemObject.rdo.id))
                     return true;
 
             }
@@ -137,11 +137,11 @@ export class DragAndDropModel {
 
     // mark item as hovered if it accepts draggable item
     markHovered(item: NodeItem) {
-        if(this.hoveredItem !== null)
+        if (this.hoveredItem !== null)
             this.hoveredItem.dragHovered(false);
 
         this.hoveredItem = item;
-        if(item)
+        if (item)
             item.dragHovered(true);
 
     }
@@ -150,7 +150,7 @@ export class DragAndDropModel {
     markRestricted($helper: JQuery, flag: boolean) {
         let drag_model = this;
 
-        if(flag)
+        if (flag)
             $helper.addClass(drag_model.restrictedCssClass);
         else
             $helper.removeClass(drag_model.restrictedCssClass);
