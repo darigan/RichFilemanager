@@ -1,55 +1,53 @@
-import {richFilemanagerPlugin} from "./filemanager";
-import {FmModel} from "./FmModel";
+import { richFilemanagerPlugin } from './filemanager';
+import { FmModel } from './FmModel';
 
 export class SearchModel {
-    // let search_model = this;
-    value: KnockoutObservable<string>;
+  // let search_model = this;
+  value: KnockoutObservable<string>;
 
-    constructor(private rfp: richFilemanagerPlugin) {
-        this.value = ko.observable('');
-    }
+  constructor(private rfp: richFilemanagerPlugin) {
+    this.value = ko.observable('');
+  }
 
-    // noinspection JSUnusedLocalSymbols
-    findAll(_data: any, event: any) { // todo: event type?
-        let delay = 200;
-        let insensitive = true;
-        let search_model = this;
-        let model: FmModel = this.rfp.fmModel;
-        let rfp = this.rfp;
+  // noinspection JSUnusedLocalSymbols
+  findAll(_data: any, event: any) { // todo: event type?
+    let delay = 200;
+    let insensitive = true;
+    let model: FmModel = this.rfp.fmModel;
+    let rfp = this.rfp;
 
-        search_model.value(event.target.value);
+    this.value(event.target.value);
 
-        rfp.delayCallback(() => {
-            let searchString = insensitive ? search_model.value().toLowerCase() : search_model.value();
+    rfp.delayCallback(() => {
+      let searchString = insensitive ? this.value().toLowerCase() : this.value();
 
-            $.each(model.itemsModel.objects(), (_i, itemObject) => {
-                if (itemObject.rdo.type === 'parent' || itemObject.cdo.hiddenByType)
-                    return;
+      $.each(model.itemsModel.objects(), (_i, itemObject) => {
+        if(itemObject.rdo.type === 'parent' || itemObject.cdo.hiddenByType)
+          return;
 
-                let itemName = itemObject.rdo.attributes.name;
+        let itemName = itemObject.rdo.attributes.name;
 
-                if (insensitive)
-                    itemName = itemName.toLowerCase();
+        if(insensitive)
+          itemName = itemName.toLowerCase();
 
-                let visibility = (itemName.indexOf(searchString) === 0);
+        let visibility = (itemName.indexOf(searchString) === 0);
 
-                itemObject.cdo.hiddenBySearch = !visibility;
-                itemObject.visible(visibility);
-            });
-        }, delay);
-    }
+        itemObject.cdo.hiddenBySearch = !visibility;
+        itemObject.visible(visibility);
+      });
+    }, delay);
+  }
 
-    reset(/*data?, event?*/) {
-        let search_model = this;
-        let model: FmModel = this.rfp.fmModel;
+  reset(/*data?, event?*/) {
+    let model: FmModel = this.rfp.fmModel;
 
-        search_model.value('');
-        $.each(model.itemsModel.objects(), (_i, itemObject) => {
-            if (itemObject.rdo.type === 'parent')
-                return;
+    this.value('');
+    $.each(model.itemsModel.objects(), (_i, itemObject) => {
+      if(itemObject.rdo.type === 'parent')
+        return;
 
-            itemObject.cdo.hiddenBySearch = false;
-            itemObject.visible(!itemObject.cdo.hiddenByType);
-        });
-    }
+      itemObject.cdo.hiddenBySearch = false;
+      itemObject.visible(!itemObject.cdo.hiddenByType);
+    });
+  }
 }
