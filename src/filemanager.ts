@@ -1,17 +1,15 @@
-import * as purl from 'purl';
-
-import { buildLangFileUrl, getLang, getTranslations, init, setLang, setTranslations } from './LangModel';
+import { getTranslations } from './LangModel';
+import { NodeItem, QueryParams, ReadableObject } from './Types';
 import {
-  Config, NodeItem, Params, ReadableObject, Settings
-} from './Types';
-import { defaults } from './Config';
+  _url_, apiConnector, config, configure, localize, performInitialRequest,
+  settings
+} from './Config';
 import {
-  clearSelection,
-  dialog, encodePath, error,
-  file_exists,
-  formatBytes, formatServerError, getExtension, getFilename, handleAjaxError,
-  handleAjaxResponseErrors, isAuthorizedFile, isFile, isImageFile,
-  lg, normalizePath, rtrim, success, trim, write
+  buildAbsolutePath,
+  buildAjaxRequest, buildConnectorUrl, clearSelection, dialog, encodePath, error, extendRequestParams, formatBytes,
+  formatServerError, getExtension, getFilename, getItemInfo, handleAjaxError, handleAjaxResponseErrors,
+  isAuthorizedFile, isFile,
+  isImageFile, lg, naturalCompare, normalizePath, rtrim, success, write
 } from './Utils';
 import { FmModel } from './FmModel';
 import { PreviewModel } from './PreviewModel';
@@ -21,12 +19,9 @@ import { PreviewModel } from './PreviewModel';
 /// <reference types="jqueryui"/>
 /// <reference types="types.d.ts"/>
 
-export let config: Config;
-export let $fileinfo: JQuery; // Temporary Workaround
+// export let $fileinfo: JQuery; // Temporary Workaround
 
 export class richFilemanagerPlugin {
-  public settings: Settings;
-
   public $container: JQuery;
   public $wrapper: JQuery;
   public $header: JQuery;
@@ -41,15 +36,11 @@ export class richFilemanagerPlugin {
   public $uploadButton: JQuery;
 
   public fileRoot: string = '/';				// relative files root, may be changed with some query params
-  public apiConnector: string = null;		// API connector URL to perform requests to server
   public capabilities: any = [];			// allowed actions to perform in FM
   public configSortField: string = <any>null;		// items sort field name
   public configSortOrder: string = <any>null;		// items sort order 'asc'/'desc'
   public fmModel: FmModel = <any>null;				// filemanager knockoutJS model
-  public _url_: purl.Url = purl();
   public timeStart = new Date().getTime();
-
-  delayCallback: Function;
 
   fullexpandedFolder: string;
 
@@ -68,201 +59,31 @@ export class richFilemanagerPlugin {
     let $header: JQuery = this.$header = $wrapper.find('.fm-header');
     let $uploader: JQuery = this.$uploader = $header.find('.fm-uploader');
     let $splitter: JQuery = this.$splitter = $wrapper.children('.fm-splitter');
+
     this.$footer = $wrapper.children('.fm-footer');
-    $fileinfo = this.$fileinfo = $splitter.children('.fm-fileinfo');
+    this.$fileinfo = $splitter.children('.fm-fileinfo');
     this.$filetree = $splitter.children('.fm-filetree');
-    let $viewItemsWrapper: JQuery = this.$viewItemsWrapper = $fileinfo.find('.view-items-wrapper');
-    this.$previewWrapper = $fileinfo.find('.fm-preview-wrapper');
-    this.$viewItems = $viewItemsWrapper.find('.view-items');
+    this.$viewItemsWrapper = this.$fileinfo.find('.view-items-wrapper');
+    this.$previewWrapper = this.$fileinfo.find('.fm-preview-wrapper');
+    this.$viewItems = this.$viewItemsWrapper.find('.view-items');
     this.$uploadButton = $uploader.children('.fm-upload');
-
-    /** service variables **/
-    this._url_ = purl();
-    this.timeStart = new Date().getTime();
-
-    /**
-     * This holds the merged default and user-provided options.
-     * Plugin's properties will be available through this object like:
-     * - fm.propertyName from inside the plugin
-     * - element.data('richFilemanager').propertyName from outside the plugin, where "element" is the element the plugin is attached to;
-     * @type {{}}
-     */
-
-    // The plugin's final settings, contains the merged default and user-provided options (if any)
-    this.settings = $.extend(true, defaults, pluginOptions);
-
-    /*---------------------------------------------------------
-       Helper functions
-       ---------------------------------------------------------*/
-
-    // http://stackoverflow.com/questions/3390930/any-way-to-make-jquery-inarray-case-insensitive
-    /*(function ($) {
-      $.extend($, {
-        // Case insensative $.inArray (http://api.jquery.com/jquery.inarray/)
-        // $.inArrayInsensitive(value, array [, fromIndex])
-        //  value (type: String)
-        //    The value to search for
-        //  array (type: Array)
-        //    An array through which to search.
-        //  fromIndex (type: Number)
-        //    The index of the array at which to begin the search.
-        //    The default is 0, which will search the whole array.
-        inArrayInsensitive: function (elem, arr, i) {
-          // not looking for a string anyways, use default method
-          if(typeof elem !== 'string')
-            return $.inArray.apply(this, arguments);
-
-          // confirm array is populated
-          if(arr) {
-            let len = arr.length;
-
-            i = i ? (i < 0 ? Math.max(0, len + i) : i) : 0;
-            elem = elem.toLowerCase();
-            for(; i < len; i++) {
-              if(i in arr && arr[ i ].toLowerCase() == elem)
-                return i;
-
-            }
-          }
-          // stick with inArray/indexOf and return -1 on no match
-          return -1;
-        }
-      });
-    })(jQuery);*/
-
-    // Delays execution of function that is passed as argument
-    this.delayCallback = (() => {
-      let timer = 0;
-
-      return (callback: Function, ms: number) => {
-        clearTimeout(timer);
-        timer = setTimeout(callback, ms);
-      };
-    })();
 
     // call the "constructor" method
     let deferred = $.Deferred();
-    let configure = this.configure;
-    let localize = this.localize;
-    let performInitialRequest = this.performInitialRequest;
-    let includeTemplates = this.includeTemplates;
-    let includeAssets = this.includeAssets;
-    let initialize = this.initialize;
-
     deferred
-      .then(() => configure())
+      .then(() => configure(pluginOptions))
       .then(() => localize())
-      .then((/*conf_d, conf_u*/) => performInitialRequest())
-      .then(() => includeTemplates())
+      .then(() => performInitialRequest())
+      .then(() => this.includeTemplates())
       .then(() => {
-        includeAssets(() => {
-          initialize();
+        this.includeAssets(() => {
+          this.initialize();
         });
       });
 
     deferred.resolve();
 
-    $((<any>window)).resize(this.setDimensions.bind(this));
-  }
-
-  public configure() {
-    let loadConfigFile = this.loadConfigFile;
-
-    return $.when(loadConfigFile('default'), loadConfigFile('user'))
-      .done((confd, confu) => {
-        let config_default = confd[ 0 ];
-        let config_user = confu[ 0 ];
-
-        // remove version from user config file
-        if(config_user !== undefined && config_user !== null)
-          delete config_user.version;
-
-        // merge default config and user config file
-        config = $.extend({}, config_default, config_user);
-
-        // setup apiConnector
-        if(config.api.connectorUrl)
-          this.apiConnector = <string>config.api.connectorUrl;
-        else {
-          let connectorUrl = location.origin + location.pathname;
-          let langConnector = `connectors/${config.api.lang}/filemanager.${config.api.lang}`;
-
-          // for url like http://site.com/index.html
-          if(getExtension(connectorUrl).length > 0)
-            connectorUrl = connectorUrl.substring(0, connectorUrl.lastIndexOf('/') + 1);
-
-          this.apiConnector = connectorUrl + langConnector;
-        }
-      });
-  }
-
-  // performs initial request to server to retrieve initial params
-  public performInitialRequest() {
-    return this.buildAjaxRequest('GET', {
-      mode: 'initiate'
-    }).done((response: any) => {
-      if(response.data) {
-        let serverConfig = response.data.attributes.config;
-
-        // configuration options retrieved from the server
-        $.each(serverConfig, (section, options) => {
-          $.each(options, (param, value) => {
-            if((<any>config)[ section ] === undefined)
-              (<any>config)[ section ] = [];
-
-            (<any>config)[ section ][ param ] = value;
-          });
-        });
-
-        // If the server is in read only mode, set the GUI to browseOnly:
-        if(config.security.readOnly)
-          config.options.browseOnly = true;
-
-      }
-      handleAjaxResponseErrors(response);
-    }).fail(() => {
-      error('Unable to perform initial request to server.');
-    }).then((response: JQuery.jqXHR): any => {
-      // noinspection TypeScriptUnresolvedVariable
-      if((<any>response).errors) { // todo: errors does not exist in the jquery type definition
-        return $.Deferred().reject();
-      }
-    });
-  }
-
-  // localize messages based on configuration or URL value
-  public localize() {
-    let _url_: purl.Url = this._url_;
-
-    init(this.settings.baseUrl);
-
-    return $.ajax()
-      .then((): any => {
-        let urlLangCode = _url_.param('langCode');
-
-        if(urlLangCode) {
-          // try to load lang file based on langCode in query params
-          return file_exists(buildLangFileUrl(urlLangCode))
-            .done(() => {
-              setLang(urlLangCode);
-            })
-            .fail(() => {
-              setTimeout(function() {
-                error(`Given language file (${buildLangFileUrl(urlLangCode)}) does not exist!`);
-              }, 500);
-            });
-        } else
-          setLang(config.language.default);
-      })
-      .then(() => {
-        return $.ajax({
-          type: 'GET',
-          url: buildLangFileUrl(getLang()),
-          dataType: 'json'
-        }).done(function(jsonTrans) {
-          setTranslations(jsonTrans);
-        });
-      });
+    $((<any>window)).resize(() => this.setDimensions());
   }
 
   public includeTemplates() {
@@ -356,8 +177,6 @@ export class richFilemanagerPlugin {
   }
 
   public initialize() {
-    let _url_: purl.Url = this._url_;
-    let setDimensions = this.setDimensions;
     let self = this;
 
     // reads capabilities from config files if exists else apply default settings
@@ -693,10 +512,10 @@ export class richFilemanagerPlugin {
 
     let $loading = this.$container.find('.fm-loading-wrap');
     // remove loading screen div
-    $loading.fadeOut(800, function() {
-      setDimensions();
+    $loading.fadeOut(800, () => {
+      this.setDimensions();
     });
-    setDimensions();
+    this.setDimensions();
   }
 
   /**
@@ -739,51 +558,6 @@ export class richFilemanagerPlugin {
     return sortBy;
   }
 
-  /**
-   * Compare strings using natural sort order
-   * http://web.archive.org/web/20130826203933/http://my.opera.com/GreyWyvern/blog/show.dml/1671288
-   */
-  private naturalCompare(a: any, b: any) {
-    let aa = this.chunkify(a.toString());
-    let bb = this.chunkify(b.toString());
-
-    for(let x = 0; aa[ x ] && bb[ x ]; x++) {
-      if(aa[ x ] !== bb[ x ]) {
-        let c: number = Number(aa[ x ]);
-        let d: number = Number(bb[ x ]);
-
-        if(c == <any>aa[ x ] && d == <any>bb[ x ])
-          return c - d;
-        else
-          return aa[ x ] > bb[ x ] ? 1 : -1;
-
-      }
-    }
-    return aa.length - bb.length;
-  }
-
-  /**
-   * Split a string into an array by type: numeral or string
-   */
-  private chunkify(t: string): string[] {
-    let tz: string[] = [];
-    let x: number = 0;
-    let y: number = -1;
-    let n: boolean = false;// = 0;
-    let i: number;
-    let j: string;
-
-    while(i = (j = t.charAt(x++)).charCodeAt(0)) {
-      let m: boolean = (i == 46 || (i >= 48 && i <= 57));
-
-      if(m !== n) {
-        tz[ ++y ] = '';
-        n = m;
-      }
-      tz[ y ] += j;
-    }
-    return tz;
-  }
 
   public sortItems(items: NodeItem[]) {
     let fmModel = this.fmModel;
@@ -813,7 +587,7 @@ export class richFilemanagerPlugin {
           if(!sortParams.natural || (!isNaN(aa) && !isNaN(bb)))
             sortReturnNumber = aa < bb ? -1 : (aa > bb ? 1 : 0);
           else
-            sortReturnNumber = this.naturalCompare(aa, bb);
+            sortReturnNumber = naturalCompare(aa, bb);
 
         }
       }
@@ -849,36 +623,8 @@ export class richFilemanagerPlugin {
     return items;
   }
 
-  // Retrieves config settings from config files
-  public loadConfigFile(type: string) {
-    let url: string;
-    let settings = this.settings;
-
-    type = (typeof type === 'undefined') ? 'user' : type;
-
-    if(type === 'user') {
-      if(this._url_.param('config'))
-        url = `${settings.baseUrl}/config/${this._url_.param('config')}`;
-      else
-        url = `${settings.baseUrl}/config/filemanager.config.json`;
-
-    } else
-      url = `${settings.baseUrl}/config/filemanager.config.default.json`;
-
-    return $.ajax({
-      type: 'GET',
-      url: url,
-      dataType: 'json',
-      cache: false,
-      error: (/*response*/) => {
-        error(`Given config file (${url}) does not exist!`);
-      }
-    });
-  }
-
   // Loads a given js/css files dynamically into header
   public loadAssets(assets: any[]) {
-    let settings = this.settings;
 
     for(let i = 0, l = assets.length; i < l; i++) {
       if(typeof assets[ i ] === 'string')
@@ -890,7 +636,6 @@ export class richFilemanagerPlugin {
 
   // Loads a given js template file into header if not already included
   public loadTemplate(id: string/*, data*/) {
-    let settings = this.settings;
 
     return $.ajax({
       type: 'GET',
@@ -899,48 +644,10 @@ export class richFilemanagerPlugin {
     });
   }
 
-  public extendRequestParams(method: string, parameters: any) {
-    let methodParams: any;
-    let configParams: { [key: string]: any; } = config.api.requestParams;
-
-    method = method.toUpperCase();
-
-    if($.isPlainObject(configParams)) {
-      methodParams = configParams[ method ];
-
-      if($.isPlainObject(methodParams) && !$.isEmptyObject(methodParams)) {
-        let extendParams = $.extend({}, configParams[ 'MIXED' ] || {}, methodParams);
-
-        // append params to serialized form
-        if(method === 'POST' && Array.isArray(parameters)) {
-          $.each(extendParams, (key, value) => {
-            parameters.push({
-              name: key,
-              value: value
-            });
-          });
-        } else
-          parameters = $.extend({}, parameters, extendParams);
-
-      }
-    }
-    return parameters;
-  }
-
-  public buildAjaxRequest(method: string, parameters: any): JQuery.jqXHR {
-    return $.ajax({
-      type: method,
-      cache: false,
-      url: this.buildConnectorUrl(),
-      dataType: 'json',
-      data: this.extendRequestParams(method, parameters)
-    });
-  }
 
   // noinspection JSUnusedGlobalSymbols
   public getFilteredFileExtensions() {
     let shownExtensions;
-    let _url_: purl.Url = this._url_;
 
     if(_url_.param('filter')) {
       if(config.filter[ _url_.param('filter') ] !== undefined)
@@ -950,18 +657,8 @@ export class richFilemanagerPlugin {
     return shownExtensions;
   }
 
-  public buildConnectorUrl(params?: any) {
-    let defaults = {
-      time: new Date().getTime()
-    };
-    let queryParams = $.extend({}, params || {}, defaults);
-
-    return this.apiConnector + '?' + $.param(queryParams); // todo: move apiConnector to a constant
-  }
-
-  // Build url to preview files
+    // Build url to preview files
   public createPreviewUrl(resourceObject: ReadableObject, encode: boolean) {
-    let settings = this.settings;
     let previewUrl;
     let objectPath = resourceObject.attributes.path;
 
@@ -969,13 +666,13 @@ export class richFilemanagerPlugin {
       if(encode)
         objectPath = encodePath(objectPath);
 
-      previewUrl = this.buildAbsolutePath(objectPath, false);
+      previewUrl = buildAbsolutePath(objectPath, false);
     } else {
-      let queryParams = this.extendRequestParams('GET', {
+      let queryParams = extendRequestParams('GET', {
         mode: 'readfile',
         path: resourceObject.id
       });
-      previewUrl = this.buildConnectorUrl(queryParams);
+      previewUrl = buildConnectorUrl(queryParams);
     }
 
     previewUrl = settings.callbacks.beforeCreatePreviewUrl(resourceObject, previewUrl);
@@ -985,7 +682,6 @@ export class richFilemanagerPlugin {
   // Build url to display image or its thumbnail
   public createImageUrl(resourceObject: ReadableObject, thumbnail: boolean, disableCache: boolean): string {
     let imageUrl;
-    let settings = this.settings;
 
     if(isImageFile(resourceObject.id) &&
       resourceObject.attributes.readable && (
@@ -993,9 +689,9 @@ export class richFilemanagerPlugin {
         (!thumbnail && config.viewer.image.enabled === true)
       )) {
       if(config.viewer.absolutePath && !thumbnail && resourceObject.attributes.path)
-        imageUrl = this.buildAbsolutePath(encodePath(resourceObject.attributes.path), disableCache);
+        imageUrl = buildAbsolutePath(encodePath(resourceObject.attributes.path), disableCache);
       else {
-        let queryParams: Params = { path: resourceObject.id, mode: undefined, thumbnail: undefined };
+        let queryParams: QueryParams | QueryParams[] = { path: resourceObject.id, mode: undefined, thumbnail: undefined };
 
         if(getExtension(resourceObject.id) === 'svg')
           queryParams.mode = 'readfile';
@@ -1005,24 +701,14 @@ export class richFilemanagerPlugin {
             queryParams.thumbnail = 'true';
 
         }
-        queryParams = this.extendRequestParams('GET', queryParams);
-        imageUrl = this.buildConnectorUrl(queryParams);
+        queryParams = extendRequestParams('GET', queryParams);
+        imageUrl = buildConnectorUrl(queryParams);
       }
       imageUrl = settings.callbacks.beforeCreateImageUrl(resourceObject, imageUrl);
     }
     return imageUrl;
   }
 
-  public buildAbsolutePath(path: string, disableCache: boolean): string {
-    let url = (typeof config.viewer.previewUrl === 'string') ? config.viewer.previewUrl : location.origin;
-
-    url = trim(url, '/') + path;
-    // add timestamp-based query parameter to disable browser caching
-    if(disableCache)
-      url += '?time=' + (new Date().getTime());
-
-    return url;
-  }
 
   private encodeCopyUrl(path: string): string {
     return (config.clipboard.encodeCopyUrl) ? encodePath(path) : path;
@@ -1033,12 +719,12 @@ export class richFilemanagerPlugin {
     if(config.viewer.absolutePath && resourceObject.attributes.path) {
       let path = this.encodeCopyUrl(resourceObject.attributes.path);
 
-      return this.buildAbsolutePath(path, false);
+      return buildAbsolutePath(path, false);
     } else {
       let path = this.encodeCopyUrl(resourceObject.id);
       let mode = (resourceObject.type === 'folder') ? 'getfolder' : 'readfile';
 
-      return `${this.apiConnector}?path=${path}&mode=${mode}`;
+      return `${apiConnector}?path=${path}&mode=${mode}`;
     }
   }
 
@@ -1108,8 +794,6 @@ export class richFilemanagerPlugin {
 
   // Check if plugin instance created inside some context
   public hasContext() {
-    let _url_: purl.Url = this._url_;
-
     return window.opener // window.open()
       || (window.parent && window.self !== window.parent) // <iframe>
       || (<any>window).tinyMCEPopup // tinyMCE >= 3.0
@@ -1128,8 +812,6 @@ export class richFilemanagerPlugin {
   public selectItem(resourceObject: ReadableObject) {
     let contextWindow: any = null;
     let previewUrl = this.createPreviewUrl(resourceObject, true);
-    let _url_: purl.Url = this._url_;
-    let settings = this.settings;
 
     previewUrl = settings.callbacks.beforeSelectItem(resourceObject, previewUrl);
 
@@ -1266,7 +948,7 @@ export class richFilemanagerPlugin {
       }
 
       // noinspection ReservedWordAsName
-      this.buildAjaxRequest('GET', {
+      buildAjaxRequest('GET', {
         mode: 'rename',
         old: oldPath,
         new: givenName
@@ -1376,7 +1058,7 @@ export class richFilemanagerPlugin {
   public copyItem(resourceObject: ReadableObject | NodeItem, targetPath: string) {
     let fmModel = this.fmModel;
 
-    return this.buildAjaxRequest('GET', {
+    return buildAjaxRequest('GET', {
       mode: 'copy',
       source: resourceObject.id,
       target: targetPath
@@ -1402,7 +1084,7 @@ export class richFilemanagerPlugin {
     let fmModel = this.fmModel;
 
     // noinspection ReservedWordAsName
-    return this.buildAjaxRequest('GET', {
+    return buildAjaxRequest('GET', {
       mode: 'move',
       old: resourceObject.id,
       new: targetPath
@@ -1453,7 +1135,7 @@ export class richFilemanagerPlugin {
   public deleteItem(path: string) {
     let fmModel = this.fmModel;
 
-    return this.buildAjaxRequest('GET', {
+    return buildAjaxRequest('GET', {
       mode: 'delete',
       path: path
     }).done(response => {
@@ -1483,10 +1165,10 @@ export class richFilemanagerPlugin {
       path: resourceObject.id
     };
 
-    return this.buildAjaxRequest('GET', queryParams).done(response => {
+    return buildAjaxRequest('GET', queryParams).done(response => {
       if(response.data) {
         //window.location = buildConnectorUrl(queryParams);
-        (<any>$).fileDownload(this.buildConnectorUrl(queryParams)); // todo: type this
+        (<any>$).fileDownload(buildConnectorUrl(queryParams)); // todo: type this
       }
       handleAjaxResponseErrors(response);
     }).fail(handleAjaxError);
@@ -1494,7 +1176,7 @@ export class richFilemanagerPlugin {
 
   // Creates CodeMirror instance to let user change the content of the file
   public previewItem(resourceObject: ReadableObject) {
-    return this.buildAjaxRequest('GET', {
+    return buildAjaxRequest('GET', {
       mode: 'editfile',
       path: resourceObject.id
     }).done(response => {
@@ -1508,7 +1190,7 @@ export class richFilemanagerPlugin {
     let fmModel = this.fmModel;
     let formParams = $('#fm-js-editor-form').serializeArray();
 
-    this.buildAjaxRequest('POST', formParams).done(response => {
+    buildAjaxRequest('POST', formParams).done(response => {
       if(response.data) {
         let dataObject = response.data;
         let preview_model: PreviewModel = <PreviewModel>fmModel.previewModel;
@@ -1533,20 +1215,11 @@ export class richFilemanagerPlugin {
     }).fail(handleAjaxError);
   }
 
-  public getItemInfo(targetPath: string) {
-    return this.buildAjaxRequest('GET', {
-      mode: 'getfile',
-      path: targetPath
-    }).done(response => {
-      handleAjaxResponseErrors(response);
-    }).fail(handleAjaxError);
-  }
-
   // Display storage summary info
   public summarizeItems() {
     let fmModel = this.fmModel;
 
-    return this.buildAjaxRequest('GET', {
+    return buildAjaxRequest('GET', {
       mode: 'summarize'
     }).done(response => {
       if(response.data) {
@@ -1609,7 +1282,7 @@ export class richFilemanagerPlugin {
   public extractItem(resourceObject: ReadableObject, targetPath: string) {
     let fmModel = this.fmModel;
 
-    this.buildAjaxRequest('POST', {
+    buildAjaxRequest('POST', {
       mode: 'extract',
       source: resourceObject.id,
       target: targetPath
@@ -1743,7 +1416,6 @@ export class richFilemanagerPlugin {
   // Handling file uploads
   public setupUploader(): any {
     let fmModel = this.fmModel;
-    let settings = this.settings;
 
     if(config.options.browseOnly)
       return false;
@@ -1876,7 +1548,7 @@ export class richFilemanagerPlugin {
           if(file.chunkUploaded) {
             let targetPath = currentPath + file.serverName;
 
-            this.getItemInfo(targetPath).then(function(response) {
+            getItemInfo(targetPath).then(function(response) {
               if(response.data) {
                 data.uploadedBytes = Number(response.data.attributes.size);
                 if(!data.uploadedBytes)
@@ -1940,10 +1612,10 @@ export class richFilemanagerPlugin {
             dataType: 'json',
             dropZone: $dropzone,
             maxChunkSize: config.upload.chunkSize,
-            url: this.buildConnectorUrl(),
+            url: buildConnectorUrl(),
             paramName: 'files',
             singleFileUploads: true,
-            formData: this.extendRequestParams('POST', {
+            formData: extendRequestParams('POST', {
               mode: 'upload',
               path: currentPath
             }),
@@ -2133,7 +1805,7 @@ export class richFilemanagerPlugin {
         .fileupload(<any>{
           autoUpload: false,
           dataType: 'json',
-          url: this.buildConnectorUrl(),
+          url: buildConnectorUrl(),
           paramName: 'files',
           maxChunkSize: config.upload.chunkSize
         })
@@ -2143,7 +1815,7 @@ export class richFilemanagerPlugin {
         })
 
         .on('fileuploadsubmit', (_e: any, data: any) => {
-          data.formData = this.extendRequestParams('POST', {
+          data.formData = extendRequestParams('POST', {
             mode: 'upload',
             path: fmModel.currentPath()
           });
