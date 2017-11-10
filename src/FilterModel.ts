@@ -1,8 +1,9 @@
-import { config, richFilemanagerPlugin } from './filemanager';
+import { richFilemanagerPlugin } from './filemanager';
 import { NodeItem } from './Types';
 import { getExtension } from './Utils';
 import { FmModel } from './FmModel';
 import { TreeNodeObject } from './TreeModel';
+import { config } from './Config';
 
 export class FilterModel {
   public name: KnockoutObservable<string | null>;

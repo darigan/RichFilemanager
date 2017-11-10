@@ -1,6 +1,7 @@
 import * as CodeMirror from 'codemirror';
 
-import { config, richFilemanagerPlugin } from './filemanager';
+import { richFilemanagerPlugin } from './filemanager';
+import { config } from './Config';
 
 export class EditorModel {
   // let editor_model = this;

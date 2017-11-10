@@ -1,7 +1,7 @@
 import { ComputedDataObject, ReadableObject, Editor, Viewer, Renderer } from './Types';
 import { RenderModel } from './RenderModel';
 import { EditorModel } from './EditorModel';
-import { config, richFilemanagerPlugin } from './filemanager';
+import { richFilemanagerPlugin } from './filemanager';
 import {
   formatBytes, getExtension, isAudioFile, isCodeMirrorFile, isEditableFile, isGoogleDocsFile, isIFrameFile,
   isImageFile,
@@ -9,6 +9,7 @@ import {
   isOpenDocFile,
   isVideoFile, lg, success
 } from './Utils';
+import { config, settings } from './Config';
 
 export class PreviewModel {
   // let preview_model: PreviewModel = this;
@@ -85,7 +86,6 @@ export class PreviewModel {
   }
 
   applyObject(resourceObject: ReadableObject) {
-    let settings = this.rfp.settings;
     let createCopyUrl = this.rfp.createCopyUrl;
     let createImageUrl = this.rfp.createImageUrl;
     let createPreviewUrl = this.rfp.createPreviewUrl;
