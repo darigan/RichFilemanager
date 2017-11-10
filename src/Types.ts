@@ -172,7 +172,7 @@ export interface ComputedDataObject {
 
 export interface Settings {
   baseUrl: string;
-  config: Config;
+  // config: Config;
   callbacks: any;
 }
 
@@ -194,12 +194,16 @@ export interface Viewer {
   codeMirror: any;
 }
 
-export type Params = {
+/*export type Params = {
   mode?: string;
   path: string;
   type?: string;
   thumbnail?: any;
-};
+};*/
+
+export type QueryParams = {
+  [key: string]: string;
+}
 
 export type NodeItem = TreeNodeObject | ItemObject;
 
