@@ -16,7 +16,7 @@ import { richFilemanagerPlugin } from './filemanager';
 export class FmModel {
   // let model: any = this;
 
-  config: KnockoutObservable<Config>;
+  config: KnockoutObservable<Config>; // todo: this is not being set
   loadingView: KnockoutObservable<boolean>;
   previewFile: KnockoutObservable<boolean>;
   viewMode: KnockoutObservable<string>;
