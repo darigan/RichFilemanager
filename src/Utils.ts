@@ -1,7 +1,7 @@
-import { ConfigOptions } from './Types';
+import { ConfigOptions, QueryParams } from './Types';
 import { getLang, translate } from './LangModel';
-import { $fileinfo, config } from './filemanager';
 import { TreeNodeObject } from './TreeModel';
+import { apiConnector, config } from './Config';
 
 export function file_exists(url: string): JQuery.jqXHR {
   return $.ajax({
@@ -123,7 +123,7 @@ export function write(message: string, obj?: AlertifyOptions): IAlertify {
     logMaxItems: 5,
     logPosition: 'bottom right',
     logContainerClass: 'fm-log',
-    parent: $('.fm-popup').is(':visible') ? document.body : $fileinfo[ 0 ],
+    parent: $('.fm-popup').is(':visible') ? document.body : /*$fileinfo[ 0 ]*/ undefined, // todo: fix this
     onClick: undefined,
     unique: false,
     type: 'log'
@@ -369,4 +369,123 @@ export function inArrayInsensitive(elem: any, arr: any[], i?: number): number {
   }
   // stick with inArray/indexOf and return -1 on no match
   return -1;
+}
+
+export function extendRequestParams(method: string, parameters: any): QueryParams | QueryParams[] {
+  let methodParams: any;
+  let configParams: { [key: string]: any; } = config.api.requestParams;
+
+  method = method.toUpperCase();
+
+  if($.isPlainObject(configParams)) {
+    methodParams = configParams[ method ];
+
+    if($.isPlainObject(methodParams) && !$.isEmptyObject(methodParams)) {
+      let extendParams = $.extend({}, configParams[ 'MIXED' ] || {}, methodParams);
+
+      // append params to serialized form
+      if(method === 'POST' && Array.isArray(parameters)) {
+        $.each(extendParams, (key, value) => {
+          parameters.push({
+            name: key,
+            value: value
+          });
+        });
+      } else
+        parameters = $.extend({}, parameters, extendParams);
+
+    }
+  }
+  return parameters;
+}
+
+export function buildAjaxRequest(method: string, parameters: any): JQuery.jqXHR {
+  return $.ajax({
+    type: method,
+    cache: false,
+    url: buildConnectorUrl(),
+    dataType: 'json',
+    data: extendRequestParams(method, parameters)
+  });
+}
+
+export function buildConnectorUrl(params?: any) {
+  let defaults = {
+    time: new Date().getTime()
+  };
+  let queryParams = $.extend({}, params || {}, defaults);
+
+  return apiConnector + '?' + $.param(queryParams);
+}
+
+export let delayCallback = (() => {
+  let timer = 0;
+
+  return (callback: Function, ms: number) => {
+    clearTimeout(timer);
+    timer = setTimeout(callback, ms);
+  };
+})();
+
+export function chunkify(t: string): string[] {
+  let tz: string[] = [];
+  let x: number = 0;
+  let y: number = -1;
+  let n: boolean = false;// = 0;
+  let i: number;
+  let j: string;
+
+  while(i = (j = t.charAt(x++)).charCodeAt(0)) {
+    let m: boolean = (i == 46 || (i >= 48 && i <= 57));
+
+    if(m !== n) {
+      tz[ ++y ] = '';
+      n = m;
+    }
+    tz[ y ] += j;
+  }
+  return tz;
+}
+
+/**
+ * Compare strings using natural sort order
+ * http://web.archive.org/web/20130826203933/http://my.opera.com/GreyWyvern/blog/show.dml/1671288
+ */
+export function naturalCompare(a: any, b: any) {
+  let aa = chunkify(a.toString());
+  let bb = chunkify(b.toString());
+
+  for(let x = 0; aa[ x ] && bb[ x ]; x++) {
+    if(aa[ x ] !== bb[ x ]) {
+      let c: number = Number(aa[ x ]);
+      let d: number = Number(bb[ x ]);
+
+      if(c == <any>aa[ x ] && d == <any>bb[ x ])
+        return c - d;
+      else
+        return aa[ x ] > bb[ x ] ? 1 : -1;
+
+    }
+  }
+  return aa.length - bb.length;
+}
+
+export function buildAbsolutePath(path: string, disableCache: boolean): string {
+  let url = (typeof config.viewer.previewUrl === 'string') ? config.viewer.previewUrl : location.origin;
+
+  url = trim(url, '/') + path;
+  // add timestamp-based query parameter to disable browser caching
+  if(disableCache)
+    url += '?time=' + (new Date().getTime());
+
+  return url;
+}
+
+export function getItemInfo(targetPath: string) {
+  return buildAjaxRequest('GET', {
+    mode: 'getfile',
+    path: targetPath
+  }).done(response => {
+    handleAjaxResponseErrors(response);
+  }).fail(handleAjaxError);
 }
