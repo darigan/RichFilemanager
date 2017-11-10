@@ -1,6 +1,9 @@
 import { ReadableObject } from './Types';
 import { richFilemanagerPlugin } from './filemanager';
-import { getDirname, getExtension, isMarkdownFile, ltrim, startsWith } from './Utils';
+import {
+  buildConnectorUrl, extendRequestParams, getDirname, getExtension, getItemInfo, isMarkdownFile, ltrim,
+  startsWith
+} from './Utils';
 import { EditorModel } from './EditorModel';
 import { PreviewModel } from './PreviewModel';
 
@@ -124,11 +127,11 @@ export class MarkdownRenderer {
         // to open file in preview mode upon click
           return path;
         else {
-          let queryParams = rfp.extendRequestParams('GET', {
+          let queryParams = extendRequestParams('GET', {
             mode: 'readfile',
             path: path
           });
-          return rfp.buildConnectorUrl(queryParams);
+          return buildConnectorUrl(queryParams);
         }
       }
     }).use((<any>window).markdownitReplaceLink);
@@ -148,7 +151,6 @@ export class MarkdownRenderer {
 
   setLinksBehavior() {
     let render_model = this.render_model;
-    let getItemInfo = this.rfp.getItemInfo;
     let getDetailView = this.rfp.getDetailView;
     let fmModel = this.rfp.fmModel;
 

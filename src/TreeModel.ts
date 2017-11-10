@@ -1,7 +1,11 @@
 import { ComputedDataObject, ReadableObject } from './Types';
-import { config, richFilemanagerPlugin } from './filemanager';
-import { collapseNode, error, expandNode, getExtension, handleAjaxError, handleAjaxResponseErrors, lg } from './Utils';
+import { richFilemanagerPlugin } from './filemanager';
+import {
+  buildAjaxRequest, collapseNode, error, expandNode, getExtension, handleAjaxError, handleAjaxResponseErrors,
+  lg
+} from './Utils';
 import { FmModel } from './FmModel';
+import { config } from './Config';
 
 export class TreeModel {
   selectedNode: KnockoutObservable<TreeNodeObject>;
@@ -119,7 +123,6 @@ export class TreeModel {
 
   loadNodes(targetNode: TreeNodeObject, refresh: boolean) {
     let path: string = <string>(targetNode ? targetNode.id : this.treeData.id);
-    let buildAjaxRequest = this.rfp.buildAjaxRequest;
     let expandFolderDefault = this.expandFolderDefault;
 
     if(targetNode)

@@ -1,12 +1,12 @@
 import {
-  formatBytes, getExtension, getParentDirname, handleAjaxError, handleAjaxResponseErrors, isFile,
-  log
+  buildAjaxRequest, formatBytes, getExtension, getParentDirname, handleAjaxError, handleAjaxResponseErrors, isFile, log
 } from './Utils';
-import { ComputedDataObject, Params, ReadableObject } from './Types';
+import { ComputedDataObject, QueryParams, ReadableObject } from './Types';
 import { TreeNodeObject } from './TreeModel';
 import { RenderModel } from './RenderModel';
-import { config, richFilemanagerPlugin } from './filemanager';
+import { richFilemanagerPlugin } from './filemanager';
 import { FmModel } from './FmModel';
+import { _url_, config } from './Config';
 
 export class ItemsModel {
   objects: KnockoutObservableArray<ItemObject>;
@@ -122,12 +122,10 @@ export class ItemsModel {
 
   loadList(path: string) {
     let model: FmModel = this.rfp.fmModel;
-    let rfp = this.rfp;
-    let _url_: purl.Url = this.rfp._url_;
 
     model.loadingView(true);
 
-    let queryParams: Params = {
+    let queryParams: QueryParams = {
       mode: 'getfolder',
       path: path,
       type: undefined
@@ -135,7 +133,7 @@ export class ItemsModel {
     if(_url_.param('type'))
       queryParams.type = _url_.param('type');
 
-    rfp.buildAjaxRequest('GET', queryParams).done(response => {
+    buildAjaxRequest('GET', queryParams).done(response => {
       if(response.data) {
         model.currentPath(path);
         model.breadcrumbsModel.splitCurrent();

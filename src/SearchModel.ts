@@ -1,5 +1,6 @@
 import { richFilemanagerPlugin } from './filemanager';
 import { FmModel } from './FmModel';
+import { delayCallback } from './Utils';
 
 export class SearchModel {
   // let search_model = this;
@@ -14,11 +15,10 @@ export class SearchModel {
     let delay = 200;
     let insensitive = true;
     let model: FmModel = this.rfp.fmModel;
-    let rfp = this.rfp;
 
     this.value(event.target.value);
 
-    rfp.delayCallback(() => {
+    delayCallback(() => {
       let searchString = insensitive ? this.value().toLowerCase() : this.value();
 
       $.each(model.itemsModel.objects(), (_i, itemObject) => {

@@ -1,11 +1,11 @@
-import { config, richFilemanagerPlugin } from './filemanager';
+import { richFilemanagerPlugin } from './filemanager';
 import {
-  error, getDirname, getParentDirname, handleAjaxError, handleAjaxResponseErrors, lg, log,
-  success
+  buildAjaxRequest, error, getDirname, getParentDirname, handleAjaxError, handleAjaxResponseErrors, lg, log, success
 } from './Utils';
 import { FmModel } from './FmModel';
 import { PreviewModel } from './PreviewModel';
 import { getLang } from './LangModel';
+import { _url_, config } from './Config';
 
 export class HeaderModel {
   closeButton: KnockoutObservable<boolean>;
@@ -73,7 +73,6 @@ export class HeaderModel {
   switchLang(e: Event) {
     let langNew = (<any>e.target).value; // todo: check this
     let langCurrent: string = getLang();
-    let _url_ = this.rfp._url_;
 
     if(langNew && langNew.toLowerCase() !== langCurrent.toLowerCase()) {
       let newUrl;
@@ -92,7 +91,6 @@ export class HeaderModel {
   createFolder() {
     let rfp = this.rfp;
     let fmModel = this.rfp.fmModel;
-    let buildAjaxRequest = this.rfp.buildAjaxRequest;
 
     let makeFolder = function(_e: Event, ui: AleritfyDialogUI) {
       let folderName = ui.getInputValue();
