@@ -1,54 +1,39 @@
 import { NodeItem } from './Types';
 import { richFilemanagerPlugin } from './filemanager';
-import { FmModel } from './FmModel';
 import { lg, success, warning } from './Utils';
 
 export class ClipboardModel {
-  // let clipboard_model = this;
-  cbMode: string;
-  cbObjects: NodeItem[];
+  cbMode: string = null;
+  cbObjects: NodeItem[] = [];
   active: boolean;
   itemsNum: KnockoutObservable<number>;
   enabled: KnockoutObservable<boolean>;
 
   constructor(private rfp: richFilemanagerPlugin) {
-    this.cbMode = null;
-    this.cbObjects = [];
-    let active = this.active = rfp.capabilities.indexOf('copy') > -1 || rfp.capabilities.indexOf('move') > -1;
-    let model: FmModel = rfp.fmModel;
-
+    this.active = rfp.capabilities.indexOf('copy') > -1 || rfp.capabilities.indexOf('move') > -1;
     this.itemsNum = ko.observable(0);
-    this.enabled = ko.observable(model.config().clipboard.enabled && active);
+    this.enabled = ko.observable(rfp.fmModel.config().clipboard.enabled && this.active);
   }
 
-  copy() {
-    let model = this.rfp.fmModel;
-
+  copy(): void {
     if(!this.hasCapability('copy'))
       return;
 
     this.cbMode = 'copy';
-    this.cbObjects = model.fetchSelectedItems();
+    this.cbObjects = this.rfp.fmModel.fetchSelectedItems();
     this.itemsNum(this.cbObjects.length);
   }
 
-  cut() {
-    let model = this.rfp.fmModel;
-
+  cut(): void {
     if(!this.hasCapability('cut'))
       return;
 
     this.cbMode = 'cut';
-    this.cbObjects = model.fetchSelectedItems();
+    this.cbObjects = this.rfp.fmModel.fetchSelectedItems();
     this.itemsNum(this.cbObjects.length);
   }
 
-  paste() {
-    let model = this.rfp.fmModel;
-    let processMultipleActions = this.rfp.processMultipleActions;
-    let moveItem = this.rfp.moveItem;
-    let copyItem = this.rfp.copyItem;
-
+  paste(): void {
     if(!this.hasCapability('paste') || this.isEmpty())
       return;
 
@@ -57,14 +42,16 @@ export class ClipboardModel {
       return;
     }
 
-    let targetPath = model.currentPath();
+    let targetPath = this.rfp.fmModel.currentPath();
 
-    processMultipleActions(this.cbObjects, (_i, itemObject: NodeItem): any => {
+    this.rfp.processMultipleActions(this.cbObjects, (_i: number, itemObject: NodeItem): JQuery.jqXHR => {
       if(this.cbMode === 'cut')
-        return moveItem(itemObject, targetPath);
+        return this.rfp.moveItem(itemObject.rdo, targetPath);
 
       if(this.cbMode === 'copy')
-        return copyItem(itemObject, targetPath);
+        return this.rfp.copyItem(itemObject.rdo, targetPath);
+
+      return undefined;
 
     }, this.clearClipboard.bind(this)); // todo:
   }
@@ -82,16 +69,14 @@ export class ClipboardModel {
   }
 
   hasCapability(capability: string): boolean {
-    let rfp = this.rfp;
-
     if(!this.enabled)
       return false;
 
     switch(capability) {
       case 'copy':
-        return rfp.capabilities.indexOf('copy') > -1;
+        return this.rfp.capabilities.indexOf('copy') > -1;
       case 'cut':
-        return rfp.capabilities.indexOf('move') > -1;
+        return this.rfp.capabilities.indexOf('move') > -1;
       default:
         return true;
     }

@@ -13,6 +13,8 @@ import {
 } from './Utils';
 import { FmModel } from './FmModel';
 import { PreviewModel } from './PreviewModel';
+import { TreeNodeObject } from './TreeModel';
+import { ItemObject } from './ItemModel';
 
 /// <reference types="alertify"/>
 /// <reference types="jquery"/>
@@ -522,13 +524,12 @@ export class richFilemanagerPlugin {
    * Get the string/number to be sorted by checking the array value with the criterium.
    * @item KO or treeNode object
    */
-  private getSortSubject(item: NodeItem, sortParams: any) {
-    let fmModel = this.fmModel;
-    let sortBy;
+  private getSortSubject(item: NodeItem, sortParams: any): any {
+    let sortBy: any;
     let sortField: string = this.configSortField;
 
-    if(fmModel.viewMode() === 'list')
-      sortField = fmModel.itemsModel.listSortField();
+    if(this.fmModel.viewMode() === 'list')
+      sortField = this.fmModel.itemsModel.listSortField();
 
     switch(sortField) {
       case 'type':
@@ -553,16 +554,15 @@ export class richFilemanagerPlugin {
         sortBy = sortBy.toLowerCase();
 
       // spaces/newlines
-      sortBy = sortBy.replace(/\s+/g, ' ');
+      sortBy = sortBy.toString().replace(/\s+/g, ' ');
     }
     return sortBy;
   }
 
 
-  public sortItems(items: NodeItem[]) {
-    let fmModel = this.fmModel;
-    let parentItem;
-    let sortOrder = (fmModel.viewMode() === 'list') ? fmModel.itemsModel.listSortOrder() : this.configSortOrder;
+  public sortItems(items: NodeItem[]): NodeItem[] {
+    let parentItem: NodeItem;
+    let sortOrder = (this.fmModel.viewMode() === 'list') ? this.fmModel.itemsModel.listSortOrder() : this.configSortOrder;
     let sortParams = {
       natural: true,
       order: sortOrder === 'asc' ? 1 : -1,
@@ -573,10 +573,10 @@ export class richFilemanagerPlugin {
     if(items.length > 0 && items[ 0 ].rdo.type === 'parent')
       parentItem = items.shift();
 
-    items.sort((a: any, b: any) => {
-      let sortReturnNumber;
-      let aa = this.getSortSubject(a, sortParams);
-      let bb = this.getSortSubject(b, sortParams);
+    items.sort((a: NodeItem, b: NodeItem): number => {
+      let sortReturnNumber: number;
+      let aa: any = this.getSortSubject(a, sortParams);
+      let bb: any = this.getSortSubject(b, sortParams);
 
       if(aa === bb)
         sortReturnNumber = 0;
@@ -584,7 +584,7 @@ export class richFilemanagerPlugin {
         if(aa === undefined || bb === undefined)
           sortReturnNumber = 0;
         else {
-          if(!sortParams.natural || (!isNaN(aa) && !isNaN(bb)))
+          if(!sortParams.natural || (typeof aa !== 'number' && typeof bb !== 'number'))
             sortReturnNumber = aa < bb ? -1 : (aa > bb ? 1 : 0);
           else
             sortReturnNumber = naturalCompare(aa, bb);
@@ -597,8 +597,8 @@ export class richFilemanagerPlugin {
     });
 
     // handle folders position
-    let folderItems = [];
-    let i = items.length;
+    let folderItems: NodeItem[] = [];
+    let i: number = items.length;
 
     while(i--) {
       if(items[ i ].rdo.type === 'folder') {
@@ -609,12 +609,11 @@ export class richFilemanagerPlugin {
     if(config.options.folderPosition !== 'top')
       folderItems.reverse();
 
-    for(let k = 0, fl = folderItems.length; k < fl; k++) {
+    for(let k: number = 0, fl = folderItems.length; k < fl; k++) {
       if(config.options.folderPosition === 'top')
         items.unshift(folderItems[ k ]);
       else
         items.push(folderItems[ k ]);
-
     }
 
     if(parentItem)
@@ -624,9 +623,9 @@ export class richFilemanagerPlugin {
   }
 
   // Loads a given js/css files dynamically into header
-  public loadAssets(assets: any[]) {
+  public loadAssets(assets: any[]): void {
 
-    for(let i = 0, l = assets.length; i < l; i++) {
+    for(let i: number = 0, l = assets.length; i < l; i++) {
       if(typeof assets[ i ] === 'string')
         assets[ i ] = settings.baseUrl + assets[ i ];
     }
@@ -634,8 +633,9 @@ export class richFilemanagerPlugin {
     toast.apply(this, assets);
   }
 
+  // todo: this could be moved
   // Loads a given js template file into header if not already included
-  public loadTemplate(id: string/*, data*/) {
+  public loadTemplate(id: string): JQuery.jqXHR {
 
     return $.ajax({
       type: 'GET',
@@ -644,10 +644,10 @@ export class richFilemanagerPlugin {
     });
   }
 
-
+  // todo: this could be moved
   // noinspection JSUnusedGlobalSymbols
-  public getFilteredFileExtensions() {
-    let shownExtensions;
+  public getFilteredFileExtensions(): string[] {
+    let shownExtensions: string[];
 
     if(_url_.param('filter')) {
       if(config.filter[ _url_.param('filter') ] !== undefined)
@@ -658,8 +658,8 @@ export class richFilemanagerPlugin {
   }
 
     // Build url to preview files
-  public createPreviewUrl(resourceObject: ReadableObject, encode: boolean) {
-    let previewUrl;
+  public createPreviewUrl(resourceObject: ReadableObject, encode: boolean): string {
+    let previewUrl: string;
     let objectPath = resourceObject.attributes.path;
 
     if(config.viewer.absolutePath && objectPath) {
@@ -740,12 +740,12 @@ export class richFilemanagerPlugin {
   }
 
   // Handle multiple actions in loop with deferred object
-  public processMultipleActions(items: NodeItem[], callbackFunction: (a: number, b: NodeItem) => any, finishCallback?: Function) {
+  public processMultipleActions(items: any[], callbackFunction:(a: number, b: any) => any, finishCallback?: Function) { // callback function causes "no compatible call signatures" error
     let successCounter: number = 0;
     let totalCounter: number = items.length;
     let deferred: any = $.Deferred().resolve();
 
-    $.each(items, (i: number, item: NodeItem) => {
+    $.each(items, (i: number, item: any): void => {
       deferred = deferred
         .then(() => callbackFunction(i, item))
         .then((result: any) => {
@@ -809,7 +809,7 @@ export class richFilemanagerPlugin {
   // Triggered by clicking the "Select" button in detail views
   // or choosing the "Select" contextual menu option in list views.
   // NOTE: closes the window when finished.
-  public selectItem(resourceObject: ReadableObject) {
+  public selectItem(resourceObject: ReadableObject): void {
     let contextWindow: any = null;
     let previewUrl = this.createPreviewUrl(resourceObject, true);
 
@@ -913,10 +913,10 @@ export class richFilemanagerPlugin {
   // Called by clicking the "Rename" button in detail views
   // or choosing the "Rename" contextual menu option in list views.
   public renameItem(resourceObject: ReadableObject) {
-    let fmModel = this.fmModel;
-    let doRename = (_e: any, ui: AleritfyDialogUI) => {
-      let oldPath = resourceObject.id;
-      let givenName = ui.getInputValue();
+
+    let doRename = (_e: any, ui: AleritfyDialogUI): void => {
+      let oldPath: string = resourceObject.id;
+      let givenName: string = ui.getInputValue();
 
       if(!givenName) {
         // TODO: file/folder message depending on file type
@@ -925,22 +925,22 @@ export class richFilemanagerPlugin {
       }
 
       if(!config.options.allowChangeExtensions) {
-        let suffix = getExtension(resourceObject.attributes.name);
+        let suffix: string = getExtension(resourceObject.attributes.name);
 
         if(suffix.length > 0)
-          givenName = givenName + '.' + suffix;
+          givenName = `${givenName}.${suffix}`;
 
       }
 
       // File only - Check if file extension is allowed
       if(isFile(oldPath) && !isAuthorizedFile(givenName)) {
-        let str = '<p>' + lg('INVALID_FILE_TYPE') + '</p>';
+        let str: string = `<p>${lg('INVALID_FILE_TYPE')}</p>`;
 
         if(config.security.extensions.policy == 'ALLOW_LIST')
-          str += '<p>' + lg('ALLOWED_FILE_TYPE').replace('%s', config.security.extensions.restrictions.join(', ')) + '.</p>';
+          str += `<p>${lg('ALLOWED_FILE_TYPE').replace('%s', config.security.extensions.restrictions.join(', '))}.</p>`;
 
         if(config.security.extensions.policy == 'DISALLOW_LIST')
-          str += '<p>' + lg('DISALLOWED_FILE_TYPE').replace('%s', config.security.extensions.restrictions.join(', ')) + '.</p>';
+          str += `<p>${lg('DISALLOWED_FILE_TYPE').replace('%s', config.security.extensions.restrictions.join(', '))}.</p>`;
 
         $('#filepath').val('');
         error(str);
@@ -952,49 +952,49 @@ export class richFilemanagerPlugin {
         mode: 'rename',
         old: oldPath,
         new: givenName
-      }).done(response => {
+      }).done((response: any): void => {
         if(response.data) {
-          let newItem = response.data;
+          let newItem: ReadableObject = <ReadableObject>response.data; // todo: what is response?
 
           // handle tree nodes
-          let sourceNode = fmModel.treeModel.findByParam('id', oldPath);
+          let sourceNode: TreeNodeObject = this.fmModel.treeModel.findByParam('id', oldPath);
 
           if(sourceNode) {
             if(sourceNode.rdo.type === 'folder') {
               sourceNode.nodeTitle(newItem.attributes.name);
               // update object data for the current and all child nodes
-              fmModel.treeModel.actualizeNodeObject(sourceNode, oldPath, newItem.id);
+              this.fmModel.treeModel.actualizeNodeObject(sourceNode, oldPath, newItem.id);
             }
             if(sourceNode.rdo.type === 'file') {
-              let parentNode = sourceNode.parentNode();
-              let newNode = fmModel.treeModel.createNode(newItem);
+              let parentNode: TreeNodeObject = sourceNode.parentNode();
+              let newNode: TreeNodeObject = this.fmModel.treeModel.createNode(newItem);
 
               sourceNode.remove();
 
               if(parentNode)
-                fmModel.treeModel.addNodes(parentNode, newNode);
+                this.fmModel.treeModel.addNodes(parentNode, newNode);
 
             }
           }
 
           // handle view objects
-          let sourceItem = fmModel.itemsModel.findByParam('id', oldPath);
+          let sourceItem: ItemObject = this.fmModel.itemsModel.findByParam('id', oldPath);
 
           if(sourceItem) {
             if(sourceItem.rdo.type === 'parent')
               sourceItem.id = newItem.id;
             else {
               sourceItem.remove();
-              fmModel.itemsModel.addNew(newItem);
+              this.fmModel.itemsModel.addNew(newItem);
             }
           }
           // ON rename currently open folder
-          if(fmModel.currentPath() === oldPath)
-            fmModel.itemsModel.loadList(newItem.id);
+          if(this.fmModel.currentPath() === oldPath)
+            this.fmModel.itemsModel.loadList(newItem.id);
 
           // ON rename currently previewed file
-          if(fmModel.previewFile() && (<PreviewModel>fmModel.previewModel).rdo().id === oldPath)
-            (<PreviewModel>fmModel.previewModel).applyObject(newItem);
+          if(this.fmModel.previewFile() && (<PreviewModel>this.fmModel.previewModel).rdo().id === oldPath)
+            (<PreviewModel>this.fmModel.previewModel).applyObject(newItem);
 
           ui.closeDialog();
           if(config.options.showConfirmation)
@@ -1022,19 +1022,18 @@ export class richFilemanagerPlugin {
   // Move the current item to specified dir and returns the new name.
   // Called by clicking the "Move" button in de tail views
   // or choosing the "Move" contextual menu option in list views.
-  public moveItemPrompt(objects: NodeItem[], successCallback: Function) {
-    let fmModel = this.fmModel;
+  public moveItemPrompt(objects: ReadableObject[], successCallback: (p: string) => void) {
     let objectsTotal: number = objects.length;
     let message: string = (objectsTotal > 1) ? lg('prompt_move_multiple').replace('%s', <any>objectsTotal) : lg('prompt_move');
 
     prompt(<any>{
       message: message,
-      value: fmModel.currentPath(),
+      value: this.fmModel.currentPath(),
       okBtn: {
         label: lg('action_move'),
         autoClose: false,
-        click: (_e: any, ui: AleritfyDialogUI) => {
-          let targetPath = ui.getInputValue();
+        click: (_e: JQuery.Event, ui: AleritfyDialogUI): void => {
+          let targetPath: string = ui.getInputValue();
 
           if(!targetPath) {
             error(lg('prompt_foldername'));
@@ -1055,18 +1054,16 @@ export class richFilemanagerPlugin {
 
   // Copy the current item to specified dir and returns the new name.
   // Called upon paste copied items via clipboard.
-  public copyItem(resourceObject: ReadableObject | NodeItem, targetPath: string) {
-    let fmModel = this.fmModel;
-
+  public copyItem(resourceObject: ReadableObject, targetPath: string): JQuery.jqXHR  {
     return buildAjaxRequest('GET', {
       mode: 'copy',
       source: resourceObject.id,
       target: targetPath
-    }).done(response => {
+    }).done((response: any): void => {
       if(response.data) {
         let newItem = response.data;
 
-        fmModel.addItem(newItem, targetPath);
+        this.fmModel.addItem(newItem, targetPath);
 
         alertify.clearDialogs();
         if(config.options.showConfirmation)
@@ -1080,8 +1077,7 @@ export class richFilemanagerPlugin {
   // Move the current item to specified dir and returns the new name.
   // Called by clicking the "Move" button in detail views
   // or choosing the "Move" contextual menu option in list views.
-  public moveItem(resourceObject: ReadableObject | NodeItem, targetPath: string) {
-    let fmModel = this.fmModel;
+  public moveItem(resourceObject: ReadableObject, targetPath: string): JQuery.jqXHR  {
 
     // noinspection ReservedWordAsName
     return buildAjaxRequest('GET', {
@@ -1092,16 +1088,16 @@ export class richFilemanagerPlugin {
       if(response.data) {
         let newItem = response.data;
 
-        fmModel.removeItem(resourceObject);
-        fmModel.addItem(newItem, targetPath);
+        this.fmModel.removeItem(resourceObject);
+        this.fmModel.addItem(newItem, targetPath);
 
         // ON move currently open folder to another folder
-        if(fmModel.currentPath() === resourceObject.id)
-          fmModel.itemsModel.loadList(newItem.id);
+        if(this.fmModel.currentPath() === resourceObject.id)
+          this.fmModel.itemsModel.loadList(newItem.id);
 
         // ON move currently previewed file
-        if(fmModel.previewFile() && (<PreviewModel>fmModel.previewModel).rdo().id === resourceObject.id)
-          fmModel.previewFile(false);
+        if(this.fmModel.previewFile() && (<PreviewModel>this.fmModel.previewModel).rdo().id === resourceObject.id)
+          this.fmModel.previewFile(false);
 
         alertify.clearDialogs();
         if(config.options.showConfirmation)
@@ -1113,15 +1109,15 @@ export class richFilemanagerPlugin {
   }
 
   // Prompts for confirmation, then deletes the current item.
-  public deleteItemPrompt(objects: NodeItem[], successCallback: Function) {
+  public deleteItemPrompt(objects: ReadableObject[], successCallback: () => void): void {
     let objectsTotal: number = objects.length;
-    let message = (objectsTotal > 1) ? lg('confirm_delete_multiple').replace('%s', <any>objectsTotal) : lg('confirm_delete');
+    let message: string = (objectsTotal > 1) ? lg('confirm_delete_multiple').replace('%s', <any>objectsTotal) : lg('confirm_delete');
 
     confirm(<any>{
       message: message,
       okBtn: {
         label: lg('yes'),
-        click: (/*e, ui: AleritfyDialogUI*/) => {
+        click: (): void => {
           successCallback();
         }
       },
@@ -1133,8 +1129,6 @@ export class richFilemanagerPlugin {
 
   // Delete item by path
   public deleteItem(path: string) {
-    let fmModel = this.fmModel;
-
     return buildAjaxRequest('GET', {
       mode: 'delete',
       path: path
@@ -1142,11 +1136,11 @@ export class richFilemanagerPlugin {
       if(response.data) {
         let targetItem = response.data;
 
-        fmModel.removeItem(targetItem);
+        this.fmModel.removeItem(targetItem);
 
         // ON delete currently previewed file
-        if(fmModel.previewFile() && (<PreviewModel>fmModel.previewModel).rdo().id === targetItem.id)
-          fmModel.previewFile(false);
+        if(this.fmModel.previewFile() && (<PreviewModel>this.fmModel.previewModel).rdo().id === targetItem.id)
+          this.fmModel.previewFile(false);
 
         if(config.options.showConfirmation)
           success(lg('successful_delete'));
@@ -1159,7 +1153,7 @@ export class richFilemanagerPlugin {
   // Starts file download process.
   // Called by clicking the "Download" button in detail views
   // or choosing the "Download" contextual menu item in list views.
-  public downloadItem(resourceObject: ReadableObject) {
+  public downloadItem(resourceObject: ReadableObject): JQuery.jqXHR {
     let queryParams = {
       mode: 'download',
       path: resourceObject.id
@@ -1175,7 +1169,7 @@ export class richFilemanagerPlugin {
   }
 
   // Creates CodeMirror instance to let user change the content of the file
-  public previewItem(resourceObject: ReadableObject) {
+  public previewItem(resourceObject: ReadableObject): JQuery.jqXHR {
     return buildAjaxRequest('GET', {
       mode: 'editfile',
       path: resourceObject.id
@@ -1186,15 +1180,14 @@ export class richFilemanagerPlugin {
 
   // Save CodeMirror editor content to file
   // noinspection JSUnusedLocalSymbols
-  public saveItem(_resourceObject: ReadableObject) {
-    let fmModel = this.fmModel;
+  public saveItem(_resourceObject: ReadableObject): void {
     let formParams = $('#fm-js-editor-form').serializeArray();
 
     buildAjaxRequest('POST', formParams).done(response => {
       if(response.data) {
-        let dataObject = response.data;
-        let preview_model: PreviewModel = <PreviewModel>fmModel.previewModel;
-        let content = preview_model.editor.content();
+        let dataObject: any = response.data;
+        let preview_model: PreviewModel = <PreviewModel>this.fmModel.previewModel;
+        let content: any = preview_model.editor.content();
 
         // update preview object data
         preview_model.rdo(dataObject);
@@ -1204,10 +1197,10 @@ export class richFilemanagerPlugin {
         preview_model.closeEditor();
 
         // replace original item with a new one to adjust observable items
-        let newItem = fmModel.itemsModel.createObject(dataObject);
-        let originalItem = fmModel.itemsModel.findByParam('id', dataObject.id);
+        let newItem: ItemObject = this.fmModel.itemsModel.createObject(dataObject);
+        let originalItem: ItemObject = this.fmModel.itemsModel.findByParam('id', dataObject.id);
 
-        fmModel.itemsModel.objects.replace(originalItem, newItem);
+        this.fmModel.itemsModel.objects.replace(originalItem, newItem);
 
         success(lg('successful_edit'));
       }
@@ -1216,32 +1209,30 @@ export class richFilemanagerPlugin {
   }
 
   // Display storage summary info
-  public summarizeItems() {
-    let fmModel = this.fmModel;
-
+  public summarizeItems(): JQuery.jqXHR {
     return buildAjaxRequest('GET', {
       mode: 'summarize'
-    }).done(response => {
+    }).done((response: any): void => {
       if(response.data) {
-        let data = response.data.attributes;
-        let size = formatBytes(data.size, true);
+        let data: any = (<ReadableObject>response.data).attributes; // todo: ReadableObject attributes type
+        let size: string = formatBytes(data.size, true);
 
         if(data.sizeLimit > 0) {
-          let sizeTotal = formatBytes(data.sizeLimit, true);
-          let ratio = data.size * 100 / data.sizeLimit;
-          let percentage = Math.round(ratio * 100) / 100;
+          let sizeTotal: string = formatBytes(data.sizeLimit, true);
+          let ratio: number = data.size * 100 / data.sizeLimit;
+          let percentage: number = Math.round(ratio * 100) / 100;
 
-          size += ' (' + percentage + '%) ' + lg('of') + ' ' + sizeTotal;
+          size += ` (${percentage}%) ${lg('of')} ${sizeTotal}`;
         }
 
-        fmModel.summaryModel.files(data.files);
-        fmModel.summaryModel.folders(data.folders);
-        fmModel.summaryModel.size(size);
+        this.fmModel.summaryModel.files(data.files);
+        this.fmModel.summaryModel.folders(data.folders);
+        this.fmModel.summaryModel.size(size);
 
-        fmModel.summaryModel.enabled(true);
+        this.fmModel.summaryModel.enabled(true);
         let $summary = $('#summary-popup').clone().show();
 
-        fmModel.summaryModel.enabled(false);
+        this.fmModel.summaryModel.enabled(false);
 
         alert((<HTMLElement>$summary[ 0 ]).outerHTML);
       }
@@ -1250,23 +1241,21 @@ export class richFilemanagerPlugin {
   }
 
   // Prompts for confirmation, then extracts the current archive.
-  public extractItemPrompt(resourceObject: ReadableObject) {
-    let fmModel = this.fmModel;
-
+  public extractItemPrompt(resourceObject: ReadableObject): void {
     prompt(<any>{
       message: lg('prompt_extract'),
-      value: fmModel.currentPath(),
+      value: this.fmModel.currentPath(),
       okBtn: {
         label: lg('action_extract'),
         autoClose: false,
-        click: (_e: any, ui: AleritfyDialogUI) => {
-          let targetPath = ui.getInputValue();
+        click: (_e: any, ui: AleritfyDialogUI): void => {
+          let targetPath: string = ui.getInputValue();
 
           if(!targetPath) {
             error(lg('prompt_foldername'));
             return;
           }
-          targetPath = rtrim(targetPath, '/') + '/';
+          targetPath = `${rtrim(targetPath, '/')}/`;
 
           this.extractItem(resourceObject, targetPath);
         }
@@ -1279,18 +1268,16 @@ export class richFilemanagerPlugin {
 
   // Extract files and folders from archive.
   // Called by choosing the "Extract" contextual menu option in list views.
-  public extractItem(resourceObject: ReadableObject, targetPath: string) {
-    let fmModel = this.fmModel;
-
+  public extractItem(resourceObject: ReadableObject, targetPath: string): void {
     buildAjaxRequest('POST', {
       mode: 'extract',
       source: resourceObject.id,
       target: targetPath
-    }).done(response => {
+    }).done((response: any): void => {
       if(response.data) {
         // TODO: implement "addItems", add in batches
-        $.each(response.data, (_i, resourceObject: ReadableObject) => {
-          fmModel.addItem(resourceObject, targetPath);
+        $.each(response.data, (_i: number, resourceObject: ReadableObject) => {
+          this.fmModel.addItem(resourceObject, targetPath);
         });
 
         alertify.clearDialogs();
@@ -1307,28 +1294,26 @@ export class richFilemanagerPlugin {
  ---------------------------------------------------------*/
 
   // Retrieves file or folder info based on the path provided.
-  public getDetailView(resourceObject: ReadableObject): any {
-    let fmModel = this.fmModel;
-
+  public getDetailView(resourceObject: ReadableObject): boolean {
     if(!resourceObject.attributes.readable) {
       error(lg('NOT_ALLOWED_SYSTEM'));
       return false;
     }
     if(resourceObject.type === 'file')
-      (<PreviewModel>fmModel.previewModel).applyObject(resourceObject);
+      (<PreviewModel>this.fmModel.previewModel).applyObject(resourceObject);
 
     if(resourceObject.type === 'folder' || resourceObject.type === 'parent') {
-      fmModel.previewFile(false);
-      fmModel.itemsModel.loadList(resourceObject.id);
+      this.fmModel.previewFile(false);
+      this.fmModel.itemsModel.loadList(resourceObject.id);
     }
+    return undefined;
   }
 
   // Options for context menu plugin
-  public getContextMenuItems(resourceObject: ReadableObject) {
-    let fmModel = this.fmModel;
-    let clipboardDisabled = !fmModel.clipboardModel.enabled();
+  public getContextMenuItems(resourceObject: ReadableObject): any { // todo: contextMenuItems type
+    let clipboardDisabled: boolean = !this.fmModel.clipboardModel.enabled();
     // noinspection ReservedWordAsName
-    let contextMenuItems = {
+    let contextMenuItems: any = {
       select: { name: lg('action_select'), className: 'select' },
       download: { name: lg('action_download'), className: 'download' },
       rename: { name: lg('action_rename'), className: 'rename' },
@@ -1341,12 +1326,24 @@ export class richFilemanagerPlugin {
       copyUrl: { name: lg('copy_to_clipboard'), className: 'copy-url' }
     };
 
-    if(!this.has_capability(resourceObject, 'download')) delete contextMenuItems.download;
-    if(!this.has_capability(resourceObject, 'select') || !this.hasContext()) delete contextMenuItems.select;
-    if(!this.has_capability(resourceObject, 'rename') || config.options.browseOnly === true) delete contextMenuItems.rename;
-    if(!this.has_capability(resourceObject, 'delete') || config.options.browseOnly === true) delete contextMenuItems.delete;
-    if(!this.has_capability(resourceObject, 'extract') || config.options.browseOnly === true) delete contextMenuItems.extract;
-    if(!this.has_capability(resourceObject, 'copy') || config.options.browseOnly === true || clipboardDisabled) delete contextMenuItems.copy;
+    if(!this.has_capability(resourceObject, 'download'))
+      delete contextMenuItems.download;
+
+    if(!this.has_capability(resourceObject, 'select') || !this.hasContext())
+      delete contextMenuItems.select;
+
+    if(!this.has_capability(resourceObject, 'rename') || config.options.browseOnly === true)
+      delete contextMenuItems.rename;
+
+    if(!this.has_capability(resourceObject, 'delete') || config.options.browseOnly === true)
+      delete contextMenuItems.delete;
+
+    if(!this.has_capability(resourceObject, 'extract') || config.options.browseOnly === true)
+      delete contextMenuItems.extract;
+
+    if(!this.has_capability(resourceObject, 'copy') || config.options.browseOnly === true || clipboardDisabled)
+      delete contextMenuItems.copy;
+
     if(!this.has_capability(resourceObject, 'move') || config.options.browseOnly === true || clipboardDisabled) {
       delete contextMenuItems.cut;
       delete contextMenuItems.move;
@@ -1356,10 +1353,9 @@ export class richFilemanagerPlugin {
   }
 
   // Binds contextual menu to items in list and grid views.
-  public performAction(action: string, options: any, targetObject: ReadableObject, selectedObjects?: NodeItem[] | ReadableObject[]) {
-    let fmModel = this.fmModel;
+  public performAction(action: string, options: any, targetObject: ReadableObject, selectedObjects?: ReadableObject[]) {
     // suppose that target object is part of selected objects while multiple selection
-    let objects: NodeItem[] | ReadableObject[] = selectedObjects ? selectedObjects : [ targetObject ];
+    let objects: ReadableObject[] = selectedObjects ? selectedObjects : [ targetObject ];
 
     switch(action) {
       case 'select':
@@ -1367,8 +1363,8 @@ export class richFilemanagerPlugin {
         break;
 
       case 'download':
-        $.each(objects, (_i: number, itemObject: ReadableObject | NodeItem) => {
-          this.downloadItem(<ReadableObject>itemObject);
+        $.each(objects, (_i: number, itemObject: ReadableObject): void => {
+          this.downloadItem(itemObject);
         });
         break;
 
@@ -1377,14 +1373,14 @@ export class richFilemanagerPlugin {
         break;
 
       case 'move':
-        this.moveItemPrompt(<NodeItem[]>objects, (targetPath: string) => {
-          this.processMultipleActions(<NodeItem[]>objects, (_i: number, itemObject: NodeItem) => this.moveItem(itemObject, targetPath));
+        this.moveItemPrompt(objects, (targetPath: string): void => {
+          this.processMultipleActions(objects, (_i: number, itemObject: ReadableObject): JQuery.jqXHR => this.moveItem(itemObject, targetPath));
         });
         break;
 
       case 'delete':
-        this.deleteItemPrompt(<NodeItem[]>objects, () => {
-          this.processMultipleActions(<NodeItem[]>objects, (_i: number, itemObject: NodeItem) => this.deleteItem(<string>itemObject.id));
+        this.deleteItemPrompt(objects, (): void => {
+          this.processMultipleActions(objects, (_i: number, itemObject: ReadableObject): JQuery.jqXHR => this.deleteItem(itemObject.id));
         });
         break;
 
@@ -1393,11 +1389,11 @@ export class richFilemanagerPlugin {
         break;
 
       case 'copy':
-        fmModel.clipboardModel.copy(/*objects*/); // todo: this doesn't take an argument
+        this.fmModel.clipboardModel.copy(/*objects*/); // todo: this doesn't take an argument
         break;
 
       case 'cut':
-        fmModel.clipboardModel.cut(/*objects*/); // todo: this doesn't take an argument
+        this.fmModel.clipboardModel.cut(/*objects*/); // todo: this doesn't take an argument
         break;
 
       case 'copyUrl':
@@ -1415,8 +1411,6 @@ export class richFilemanagerPlugin {
 
   // Handling file uploads
   public setupUploader(): any {
-    let fmModel = this.fmModel;
-
     if(config.options.browseOnly)
       return false;
 
@@ -1425,15 +1419,15 @@ export class richFilemanagerPlugin {
       // remove simple file upload element
       $('#file-input-container').remove();
 
-      this.$uploadButton.unbind().click((): any => {
+      this.$uploadButton.off('click').click((): boolean => {
         if(this.capabilities.indexOf('upload') === -1) {
           error(lg('NOT_ALLOWED'));
           return false;
         }
 
-        let allowedFileTypes = null;
-        let currentPath = fmModel.currentPath();
-        let templateContainer = tmpl('tmpl-fileupload-container', {
+        let allowedFileTypes: RegExp = null;
+        let currentPath: string = this.fmModel.currentPath();
+        let templateContainer: string = tmpl('tmpl-fileupload-container', {
           folder: lg('current_folder') + currentPath,
           info: lg('upload_files_number_limit').replace('%s', <any>config.upload.maxNumberOfFiles) + ' ' + lg('upload_file_size_limit').replace('%s', formatBytes(config.upload.fileSizeLimit, true)),
           lang: getTranslations()
@@ -1449,7 +1443,7 @@ export class richFilemanagerPlugin {
             type: 'ok',
             label: lg('action_upload'),
             autoClose: false,
-            click: (/*e, ui: AleritfyDialogUI*/) => {
+            click: (/*e, ui: AleritfyDialogUI*/): void => {
               if($dropzone.children('.upload-item').length > 0)
                 $dropzone.find('.button-start').trigger('click');
               else
@@ -1458,7 +1452,7 @@ export class richFilemanagerPlugin {
           }, {
             label: lg('action_select'),
             closeOnClick: false,
-            click: (/*e, ui: AleritfyDialogUI*/) => {
+            click: (/*e, ui: AleritfyDialogUI*/): void => {
               $('#fileupload', $uploadContainer).trigger('click');
             }
           }, {
@@ -1467,10 +1461,10 @@ export class richFilemanagerPlugin {
           } ]
         });
 
-        let $uploadContainer = $('.fm-fileupload-container');
-        let $dropzone = $('.dropzone', $uploadContainer);
-        let $dropzoneWrapper = $('.dropzone-wrapper', $uploadContainer);
-        let $totalProgressBar = $('#total-progress', $uploadContainer).children();
+        let $uploadContainer: JQuery = $('.fm-fileupload-container');
+        let $dropzone: JQuery = $('.dropzone', $uploadContainer);
+        let $dropzoneWrapper: JQuery = $('.dropzone-wrapper', $uploadContainer);
+        let $totalProgressBar: JQuery = $('#total-progress', $uploadContainer).children();
 
         if(config.customScrollbar.enabled) {
           (<any>$dropzoneWrapper).mCustomScrollbar({
@@ -1498,7 +1492,7 @@ export class richFilemanagerPlugin {
           });
         }
 
-        $dropzoneWrapper.on('click', function(e) {
+        $dropzoneWrapper.click(function(e: JQuery.Event): void { // todo: messy
           if(e.target === this || $(e.target).parent()[ 0 ] === this || e.target === $dropzone[ 0 ] || $(e.target).parent().hasClass('default-message'))
             $('#fileupload', $uploadContainer).trigger('click');
 
@@ -1507,7 +1501,7 @@ export class richFilemanagerPlugin {
         /**
          * Start uploading process.
          */
-        $dropzone.on('click', '.button-start', function(/*e*/) {
+        $dropzone.on('click', '.button-start', function(/*e*/) {// todo: messy
           let $target = $(this);
           let $buttons = $target.parent().parent();
           let data = $buttons.data();
@@ -1519,7 +1513,7 @@ export class richFilemanagerPlugin {
         /**
          * Abort uploading process.
          */
-        $dropzone.on('click', '.button-abort', function(/*e*/) {
+        $dropzone.on('click', '.button-abort', function(/*e*/) {// todo: messy
           let $target = $(this);
           let $buttons = $target.parent().parent();
           let data = $buttons.data();
@@ -1534,7 +1528,7 @@ export class richFilemanagerPlugin {
          * Resume uploading if at least one chunk was uploaded.
          * Otherwise start upload from the very beginning of file.
          */
-        $dropzone.on('click', '.button-resume', (e: any): any => {
+        $dropzone.on('click', '.button-resume', (e: any): any => {// todo: messy
           let $target = $(e.target);
           let $buttons = $target.parent().parent();
           let data = $buttons.data();
@@ -1579,7 +1573,7 @@ export class richFilemanagerPlugin {
           updateDropzoneView();
         });
 
-        $dropzone.on('click', '.button-info', function(/*e*/) {
+        $dropzone.on('click', '.button-info', function(/*e*/) {// todo: messy
           let $target = $(this);
           let $node = $target.closest('.upload-item');
 
@@ -1597,7 +1591,7 @@ export class richFilemanagerPlugin {
             $dropzone.removeClass('started');
         };
 
-        let shownExtensions = fmModel.filterModel.getExtensions();
+        let shownExtensions = this.fmModel.filterModel.getExtensions();
 
         if(shownExtensions) {
           $('#fileupload').attr('accept', shownExtensions.map(function(el) {
@@ -1703,8 +1697,8 @@ export class richFilemanagerPlugin {
               if(response && response.data && response.data[ index ]) {
                 let resourceObject = response.data[ index ];
 
-                fmModel.removeItem(resourceObject);
-                fmModel.addItem(resourceObject, fmModel.currentPath());
+                this.fmModel.removeItem(resourceObject);
+                this.fmModel.addItem(resourceObject, this.fmModel.currentPath());
               }
             });
 
@@ -1733,8 +1727,8 @@ export class richFilemanagerPlugin {
               if(response.data && response.data[ index ]) {
                 let resourceObject = response.data[ index ];
 
-                fmModel.removeItem(resourceObject);
-                fmModel.addItem(resourceObject, fmModel.currentPath());
+                this.fmModel.removeItem(resourceObject);
+                this.fmModel.addItem(resourceObject, this.fmModel.currentPath());
 
                 // get filename from server, it may differ from original
                 file.serverName = resourceObject.attributes.name;
@@ -1781,6 +1775,7 @@ export class richFilemanagerPlugin {
 
             $totalProgressBar.css('width', progress + '%');
           });
+        return undefined;
       });
 
       // Simple Upload
@@ -1817,7 +1812,7 @@ export class richFilemanagerPlugin {
         .on('fileuploadsubmit', (_e: any, data: any) => {
           data.formData = extendRequestParams('POST', {
             mode: 'upload',
-            path: fmModel.currentPath()
+            path: this.fmModel.currentPath()
           });
           this.$uploadButton.addClass('loading').prop('disabled', true);
           this.$uploadButton.children('span').text(lg('loading_data'));
@@ -1836,8 +1831,8 @@ export class richFilemanagerPlugin {
           if(response && response.data) {
             let resourceObject = response.data[ 0 ];
 
-            fmModel.removeItem(resourceObject);
-            fmModel.addItem(resourceObject, fmModel.currentPath());
+            this.fmModel.removeItem(resourceObject);
+            this.fmModel.addItem(resourceObject, this.fmModel.currentPath());
 
             if(config.options.showConfirmation)
               success(lg('upload_successful_file'));
@@ -1851,8 +1846,8 @@ export class richFilemanagerPlugin {
           if(response.data && response.data[ 0 ]) {
             let resourceObject = response.data[ 0 ];
 
-            fmModel.removeItem(resourceObject);
-            fmModel.addItem(resourceObject, fmModel.currentPath());
+            this.fmModel.removeItem(resourceObject);
+            this.fmModel.addItem(resourceObject, this.fmModel.currentPath());
           }
         })
 
@@ -1861,6 +1856,7 @@ export class richFilemanagerPlugin {
           error(lg('upload_failed'));
         });
     }
+    return undefined;
   }
 
   // Test if item has the 'cap' capability
@@ -1884,10 +1880,10 @@ export class richFilemanagerPlugin {
 
   // Forces columns to fill the layout vertically.
   // Called on initial page load and on resize.
-  public setDimensions() {
-    let padding = this.$wrapper.outerHeight(true) - this.$wrapper.height();
-    let newH = $(window).height() - this.$header.height() - this.$footer.height() - padding;
-    let newW = this.$splitter.width() - this.$splitter.children('.splitter-bar-vertical').outerWidth() - this.$filetree.outerWidth();
+  public setDimensions(): void {
+    let padding: number = this.$wrapper.outerHeight(true) - this.$wrapper.height();
+    let newH: number = $(window).height() - this.$header.height() - this.$footer.height() - padding;
+    let newW: number = this.$splitter.width() - this.$splitter.children('.splitter-bar-vertical').outerWidth() - this.$filetree.outerWidth();
 
     this.$splitter.height(newH);
     this.$fileinfo.width(newW);

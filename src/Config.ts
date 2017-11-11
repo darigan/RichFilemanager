@@ -49,7 +49,7 @@ function loadConfigFile(type: string) {
   });
 }
 
-export function configure(pluginOptions: any) {
+export function configure(pluginOptions?: any) {
   settings = $.extend(true, defaults, pluginOptions);
 
   return $.when(loadConfigFile('default'), loadConfigFile('user'))

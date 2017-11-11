@@ -1,6 +1,6 @@
 import { richFilemanagerPlugin } from './filemanager';
-import { FmModel } from './FmModel';
 import { delayCallback } from './Utils';
+import { ItemObject } from './ItemModel';
 
 export class SearchModel {
   // let search_model = this;
@@ -11,26 +11,25 @@ export class SearchModel {
   }
 
   // noinspection JSUnusedLocalSymbols
-  findAll(_data: any, event: any) { // todo: event type?
-    let delay = 200;
-    let insensitive = true;
-    let model: FmModel = this.rfp.fmModel;
+  findAll(_data: any, event: any): void { // todo: event type?
+    let delay: number = 200;
+    let insensitive: boolean = true;
 
     this.value(event.target.value);
 
-    delayCallback(() => {
-      let searchString = insensitive ? this.value().toLowerCase() : this.value();
+    delayCallback((): void => {
+      let searchString: string = insensitive ? this.value().toLowerCase() : this.value();
 
-      $.each(model.itemsModel.objects(), (_i, itemObject) => {
+      $.each(this.rfp.fmModel.itemsModel.objects(), (_i: number, itemObject: ItemObject): void => {
         if(itemObject.rdo.type === 'parent' || itemObject.cdo.hiddenByType)
           return;
 
-        let itemName = itemObject.rdo.attributes.name;
+        let itemName: string = itemObject.rdo.attributes.name;
 
         if(insensitive)
           itemName = itemName.toLowerCase();
 
-        let visibility = (itemName.indexOf(searchString) === 0);
+        let visibility: boolean = (itemName.indexOf(searchString) === 0);
 
         itemObject.cdo.hiddenBySearch = !visibility;
         itemObject.visible(visibility);
@@ -38,11 +37,9 @@ export class SearchModel {
     }, delay);
   }
 
-  reset(/*data?, event?*/) {
-    let model: FmModel = this.rfp.fmModel;
-
+  reset(): void {
     this.value('');
-    $.each(model.itemsModel.objects(), (_i, itemObject) => {
+    $.each(this.rfp.fmModel.itemsModel.objects(), (_i: number, itemObject: ItemObject): void => {
       if(itemObject.rdo.type === 'parent')
         return;
 

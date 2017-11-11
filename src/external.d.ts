@@ -207,7 +207,7 @@ declare const tinyMCEPopup: tinyMCEPopupClass;
 
 declare function toast(...args: any[]): void;
 
-declare function tmpl(str: string, data?: any): Function;
+declare function tmpl(str: string, data?: any): string;
 
 interface tmpl {
   cache: { [key: string]: string };

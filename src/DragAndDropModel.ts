@@ -4,32 +4,23 @@ import { getClosestNode, getExtension, startsWith } from './Utils';
 import { ItemObject } from './ItemModel';
 
 export class DragAndDropModel {
-  restrictedCssClass: string;
+  restrictedCssClass: string = 'drop-restricted';
   $dragHelperTemplate: JQuery;
 
-  items: NodeItem[];
-  hoveredItem: NodeItem;
-  dragHelper: JQuery;
-  isScrolling: boolean;
-  isScrolled: boolean;
-  hoveredCssClass: string;
+  items: NodeItem[] = [];
+  hoveredItem: NodeItem = null;
+  dragHelper: JQuery = null;
+  isScrolling: boolean = false;
+  isScrolled: boolean = false;
+  hoveredCssClass: string = 'drop-hover';
 
   constructor(private rfp: richFilemanagerPlugin) {
-    this.restrictedCssClass = 'drop-restricted';
     this.$dragHelperTemplate = $('#drag-helper-template');
-    this.items = [];
-    this.hoveredItem = null;
-    this.dragHelper = null;
-    this.isScrolling = false;
-    this.isScrolled = false;
-    this.hoveredCssClass = 'drop-hover';
   }
 
-  makeDraggable(item: NodeItem, element: Element) {
-    let fetchSelectedItems = this.rfp.fmModel.fetchSelectedItems;
-
+  makeDraggable(item: NodeItem, element: Element): void {
     if(item.rdo.type === 'file' || item.rdo.type === 'folder') {
-      $(element).draggable({
+      $(element).draggable(<any>{
         distance: 3,
         cursor: 'pointer',
         cursorAt: {
@@ -44,7 +35,7 @@ export class DragAndDropModel {
           let $cloned: JQuery;
           let iconClass: string;
 
-          if(fetchSelectedItems((<any>item.constructor).name).length > 1)
+          if(this.rfp.fmModel.fetchSelectedItems((<any>item.constructor).name).length > 1)
             iconClass = 'ico_multiple';
           else
             iconClass = (item.rdo.type === 'folder')
@@ -58,9 +49,9 @@ export class DragAndDropModel {
           return $cloned;
         },
         start: () => {
-          this.items = fetchSelectedItems((<any>item.constructor).name);
+          this.items = this.rfp.fmModel.fetchSelectedItems((<any>item.constructor).name);
         },
-        drag: (e: JQueryEventObject) => {
+        drag: (e: Event) => {
           $(e.target).draggable('option', 'refreshPositions', this.isScrolling || this.isScrolled);
           this.isScrolled = false;
         },
@@ -72,20 +63,18 @@ export class DragAndDropModel {
     }
   }
 
-  makeDroppable(targetItem: NodeItem, element: Element) {
-    let rfp = this.rfp;
-
+  makeDroppable(targetItem: NodeItem, element: Element): void {
     if(targetItem.rdo.type === 'folder' || targetItem.rdo.type === 'parent') {
       $(element).droppable(<any>{
         tolerance: 'pointer',
         enableExtendedEvents: targetItem instanceof ItemObject, // todo: this isn't in jqueryui.d.ts
         accept: ($draggable: JQuery) => {
-          let dragItem = ko.dataFor($draggable[ 0 ]);
-          let type = dragItem ? dragItem.rdo.type : null;
+          let dragItem: NodeItem = ko.dataFor($draggable[ 0 ]);
+          let type: string = dragItem ? dragItem.rdo.type : null;
 
           return (type === 'file' || type === 'folder');
         },
-        over: (_event: JQueryEventObject, ui: JQueryUI.DroppableEventUIParam) => {
+        over: (_event: JQueryUI.DroppableEvent, ui: JQueryUI.DroppableEventUIParam) => {
           // prevent "over" event fire before "out" event
           // http://stackoverflow.com/a/28457286/7095038
           setTimeout(() => {
@@ -98,25 +87,26 @@ export class DragAndDropModel {
             this.markHovered(targetItem);
           }, 0);
         },
-        out: (_event: JQueryEventObject, ui: JQueryUI.DroppableEventUIParam) => {
+        out: (_event: JQueryUI.DroppableEvent, ui: JQueryUI.DroppableEventUIParam) => {
           this.markHovered(null);
           this.markRestricted(ui.helper, false);
         },
-        drop: (/*event, ui*/): any => {
+        drop: (): any => {
           this.markHovered(null);
 
           if(!this.isDropAllowed(targetItem))
             return false;
 
-          rfp.processMultipleActions(this.items, (_i, itemObject) => rfp.moveItem(itemObject.rdo, <string>targetItem.id));
+          this.rfp.processMultipleActions(this.items, (_i, itemObject) => this.rfp.moveItem(itemObject.rdo, <string>targetItem.id));
         }
       });
     }
   }
 
   // check whether draggable items can be accepted by target item
-  isDropAllowed(targetItem: NodeItem) {
-    let matches = $.grep(this.items, (itemObject/*, i*/) => {
+  isDropAllowed(targetItem: NodeItem): boolean {
+    // noinspection JSMismatchedCollectionQueryUpdate
+    let matches: NodeItem[] = $.grep(this.items, (itemObject: NodeItem): boolean => {
       if(targetItem.rdo.type === 'folder' || targetItem.rdo.type === 'parent') {
         // drop folder inside descending folders (filetree)
         if(startsWith(targetItem.rdo.id, itemObject.rdo.id))
@@ -136,7 +126,7 @@ export class DragAndDropModel {
   }
 
   // mark item as hovered if it accepts draggable item
-  markHovered(item: NodeItem) {
+  markHovered(item: NodeItem): void {
     if(this.hoveredItem !== null)
       this.hoveredItem.dragHovered(false);
 
@@ -147,11 +137,7 @@ export class DragAndDropModel {
   }
 
   // mark helper as restricted if target item doesn't accept draggable item
-  markRestricted($helper: JQuery, flag: boolean) {
-    if(flag)
-      $helper.addClass(this.restrictedCssClass);
-    else
-      $helper.removeClass(this.restrictedCssClass);
-
+  markRestricted($helper: JQuery, flag: boolean): void {
+    $helper.toggleClass(this.restrictedCssClass, flag);
   }
 }

@@ -12,13 +12,10 @@ import {
 import { config, settings } from './Config';
 
 export class PreviewModel {
-  // let preview_model: PreviewModel = this;
-  // let clipboard: Clipboard = null;
-
   clipboard: Clipboard;
   rdo: KnockoutObservable<ReadableObject>;
   cdo: KnockoutObservable<ComputedDataObject>;
-  viewer: KnockoutObservableViewer;
+  viewer: KnockoutObservableViewer; // This is a type
   renderer: RenderModel;
   editor: EditorModel;
   previewIconClass: KnockoutComputed<string>;
@@ -41,8 +38,8 @@ export class PreviewModel {
     this.renderer = new RenderModel(rfp);
     this.editor = new EditorModel(rfp);
 
-    this.rdo.subscribe((resourceObject: ReadableObject) => {
-      this.cdo(<ComputedDataObject>{
+    this.rdo.subscribe((resourceObject: ReadableObject): void => {
+      this.cdo(<any>{
         isFolder: (resourceObject.type === 'folder'),
         sizeFormatted: formatBytes(resourceObject.attributes.size),
         extension: (resourceObject.type === 'file') ? getExtension(resourceObject.id) : null,
@@ -50,12 +47,13 @@ export class PreviewModel {
       });
     });
 
-    this.editor.content.subscribe(content => {
+    this.editor.content.subscribe((content: any): void => {
       // instantly render changes of editor content
       if(this.editor.isInteractive())
         this.renderer.render(content);
     });
 
+    // todo: this looks familiar (see ItemModel)
     this.previewIconClass = ko.pureComputed((): string => {
       let cssClass: string[] = [];
       let extraClass: string[] = [ 'ico' ];
@@ -85,17 +83,11 @@ export class PreviewModel {
     });
   }
 
-  applyObject(resourceObject: ReadableObject) {
-    let createCopyUrl = this.rfp.createCopyUrl;
-    let createImageUrl = this.rfp.createImageUrl;
-    let createPreviewUrl = this.rfp.createPreviewUrl;
-    let previewItem = this.rfp.previewItem;
-    let previewFile = this.rfp.fmModel.previewFile;
-
+  applyObject(resourceObject: ReadableObject): void {
     if(this.clipboard)
       this.clipboard.destroy();
 
-    previewFile(false);
+    this.rfp.fmModel.previewFile(false);
 
     let filename: string = resourceObject.attributes.name;
     let editorObject: Editor = {
@@ -111,17 +103,17 @@ export class PreviewModel {
 
     if(isImageFile(filename)) {
       viewerObject.type = 'image';
-      viewerObject.url = createImageUrl(resourceObject, false, true);
+      viewerObject.url = this.rfp.createImageUrl(resourceObject, false, true);
     }
 
     if(isAudioFile(filename) && config.viewer.audio.enabled === true) {
       viewerObject.type = 'audio';
-      viewerObject.url = createPreviewUrl(resourceObject, true);
+      viewerObject.url = this.rfp.createPreviewUrl(resourceObject, true);
     }
 
     if(isVideoFile(filename) && config.viewer.video.enabled === true) {
       viewerObject.type = 'video';
-      viewerObject.url = createPreviewUrl(resourceObject, true);
+      viewerObject.url = this.rfp.createPreviewUrl(resourceObject, true);
       viewerObject.options = {
         width: config.viewer.video.playerWidth,
         height: config.viewer.video.playerHeight
@@ -130,7 +122,7 @@ export class PreviewModel {
 
     if(isOpenDocFile(filename) && config.viewer.opendoc.enabled === true) {
       viewerObject.type = 'opendoc';
-      viewerObject.url = `${settings.baseUrl}/scripts/ViewerJS/index.html#${createPreviewUrl(resourceObject, true)}`;
+      viewerObject.url = `${settings.baseUrl}/scripts/ViewerJS/index.html#${this.rfp.createPreviewUrl(resourceObject, true)}`;
       viewerObject.options = {
         width: config.viewer.opendoc.readerWidth,
         height: config.viewer.opendoc.readerHeight
@@ -139,7 +131,7 @@ export class PreviewModel {
 
     if(isGoogleDocsFile(filename) && config.viewer.google.enabled === true) {
       viewerObject.type = 'google';
-      viewerObject.url = `https://docs.google.com/viewer?url=${encodeURIComponent(createPreviewUrl(resourceObject, false))}&embedded=true`;
+      viewerObject.url = `https://docs.google.com/viewer?url=${encodeURIComponent(this.rfp.createPreviewUrl(resourceObject, false))}&embedded=true`;
       viewerObject.options = {
         width: config.viewer.google.readerWidth,
         height: config.viewer.google.readerHeight
@@ -148,7 +140,7 @@ export class PreviewModel {
 
     if(isIFrameFile(filename) && config.viewer.iframe.enabled === true) {
       viewerObject.type = 'iframe';
-      viewerObject.url = createPreviewUrl(resourceObject, true);
+      viewerObject.url = this.rfp.createPreviewUrl(resourceObject, true);
       viewerObject.options = {
         width: config.viewer.iframe.readerWidth,
         height: config.viewer.iframe.readerHeight
@@ -169,21 +161,21 @@ export class PreviewModel {
     this.viewer.type(viewerObject.type);
     this.viewer.url(viewerObject.url);
     this.viewer.options(viewerObject.options);
-    this.viewer.pureUrl(createCopyUrl(resourceObject));
+    this.viewer.pureUrl(this.rfp.createCopyUrl(resourceObject));
     this.viewer.isEditable(isEditableFile(filename) && config.editor.enabled === true);
     this.editor.isInteractive(editorObject.interactive);
 
     if(viewerObject.type === 'renderer' || this.viewer.isEditable()) {
-      previewItem(resourceObject).then((response) => {
+      this.rfp.previewItem(resourceObject).then((response): void => {
         if(response.data) {
-          let content = response.data.attributes.content;
+          let content: any = response.data.attributes.content;
 
           this.viewer.content(content);
-          previewFile(true);
+          this.rfp.fmModel.previewFile(true);
         }
       });
     } else
-      previewFile(true);
+      this.rfp.fmModel.previewFile(true);
 
   };
 
@@ -201,58 +193,51 @@ export class PreviewModel {
     });
   }
 
-  initiateEditor(/*elements*/) {
-    let $previewWrapper = this.rfp.$previewWrapper;
+  initiateEditor(): void {
+    let textarea: HTMLTextAreaElement = <HTMLTextAreaElement>this.rfp.$previewWrapper.find('.fm-cm-editor-content')[ 0 ];
 
-    let textarea: HTMLTextAreaElement = <HTMLTextAreaElement>$previewWrapper.find('.fm-cm-editor-content')[ 0 ];
-
-    this.editor.createInstance(<string>(<ComputedDataObject>this.cdo()).extension, textarea, {
+    this.editor.createInstance(this.cdo().extension, textarea, {
       readOnly: false,
       styleActiveLine: true
     });
   }
 
   // fires specific action by clicking toolbar buttons in detail view
-  bindToolbar(action: string) {
-    let has_capability = this.rfp.has_capability;
-    let performAction = this.rfp.performAction;
+  bindToolbar(action: string): void {
 
-    if(has_capability(this.rdo(), action)) {
-      performAction(action, {}, this.rdo());
+    if(this.rfp.has_capability(this.rdo(), action)) {
+      this.rfp.performAction(action, {}, this.rdo());
     }
   }
 
-  editFile() {
-    let content = this.viewer.content();
+  editFile(): void {
+    let content: any = this.viewer.content();
 
     this.renderer.render(content);
     this.editor.render(content);
   }
 
-  saveFile() {
-    let saveItem = this.rfp.saveItem;
-
-    saveItem(this.rdo());
+  saveFile(): void {
+    this.rfp.saveItem(this.rdo());
   }
 
-  closeEditor() {
+  closeEditor(): void {
     this.editor.enabled(false);
     // re-render viewer content
     this.renderer.render(this.viewer.content());
   }
 
-  buttonVisibility(action: string) {
-    let has_capability = this.rfp.has_capability;
-    let hasContext = this.rfp.hasContext;
+  buttonVisibility(action: string): boolean {
 
     switch(action) {
       case 'select':
-        return (has_capability(this.rdo(), action) && hasContext());
+        return (this.rfp.has_capability(this.rdo(), action) && this.rfp.hasContext());
       case 'move':
       case 'rename':
       case 'delete':
       case 'download':
-        return (has_capability(this.rdo(), action));
+        return (this.rfp.has_capability(this.rdo(), action));
     }
+    return undefined;
   }
 }

@@ -13,28 +13,26 @@ export class TreeModel {
   fullexpandedFolder: any; // todo: find where this came from
 
   constructor(private rfp: richFilemanagerPlugin) {
-    let fileRoot = rfp.fileRoot;
-
     this.selectedNode = ko.observable(null);
 
     this.treeData = <TreeNodeObject>{
-      id: fileRoot,
+      id: rfp.fileRoot,
       level: ko.observable(-1),
       children: ko.observableArray([])
     };
 
-    this.treeData.children.subscribe((/*value*/) => {
-      this.arrangeNode(<TreeNodeObject>this.treeData);
+    this.treeData.children.subscribe((): void => {
+      this.arrangeNode(this.treeData);
     });
   }
 
-  expandFolderDefault(parentNode: TreeNodeObject) {
+  expandFolderDefault(parentNode: TreeNodeObject): void {
     if(this.fullexpandedFolder !== null) {
       if(!parentNode)
         parentNode = <TreeNodeObject>this.treeData;
 
       // looking for node that starts with specified path
-      let node = this.findByFilter((node: TreeNodeObject) => (this.fullexpandedFolder.indexOf(node.id) === 0), parentNode);
+      let node: TreeNodeObject = this.findByFilter((node: TreeNodeObject): boolean => (this.fullexpandedFolder.indexOf(node.id) === 0), parentNode);
 
       if(node) {
         config.filetree.expandSpeed = 10;
@@ -46,7 +44,7 @@ export class TreeModel {
     }
   }
 
-  mapNodes(filter: Function, contextNode?: TreeNodeObject): any {
+  mapNodes(filter: Function, contextNode?: TreeNodeObject): any { // todo: look into why there is a return value
     if(!contextNode)
       contextNode = <TreeNodeObject>this.treeData;
 
@@ -54,12 +52,12 @@ export class TreeModel {
     if(contextNode.id !== this.treeData.id)
       filter.call(this, contextNode);
 
-    let nodes = contextNode.children();
+    let nodes: TreeNodeObject[] = contextNode.children();
 
     if(!nodes || nodes.length === 0)
       return null;
 
-    for(let i = 0, l = nodes.length; i < l; i++) {
+    for(let i: number = 0, l = nodes.length; i < l; i++) {
       filter.call(this, nodes[ i ]);
       this.findByFilter(filter, nodes[ i ]);
     }
@@ -71,16 +69,17 @@ export class TreeModel {
       if((<any>contextNode)[ key ] === value)
         return contextNode;
     }
+
     let nodes: TreeNodeObject[] = contextNode.children();
 
     if(!nodes || nodes.length === 0)
       return null;
 
-    for(let i = 0, l = nodes.length; i < l; i++) {
+    for(let i: number = 0, l = nodes.length; i < l; i++) {
       if((<any>nodes[ i ])[ key ] === value)
         return nodes[ i ];
 
-      let result = this.findByParam(key, value, nodes[ i ]);
+      let result: TreeNodeObject = this.findByParam(key, value, nodes[ i ]);
 
       if(result)
         return result;
@@ -123,7 +122,6 @@ export class TreeModel {
 
   loadNodes(targetNode: TreeNodeObject, refresh: boolean) {
     let path: string = <string>(targetNode ? targetNode.id : this.treeData.id);
-    let expandFolderDefault = this.expandFolderDefault;
 
     if(targetNode)
       targetNode.isLoaded(false);
@@ -150,7 +148,7 @@ export class TreeModel {
           targetNode.isLoaded(true);
           expandNode(targetNode);
         }
-        expandFolderDefault(targetNode);
+        this.expandFolderDefault(targetNode);
       }
       handleAjaxResponseErrors(response);
     }).fail(handleAjaxError);
@@ -201,23 +199,19 @@ export class TreeModel {
   }
 
   nodeRendered(elements: Element[], node: TreeNodeObject): void {
-    let getContextMenuItems = this.rfp.getContextMenuItems;
-    let performAction = this.rfp.performAction;
-    let model: FmModel = this.rfp.fmModel;
-
     // attach context menu
     $(elements[ 1 ]).contextMenu({
       selector: '.file, .directory',
       zIndex: 100,
       // wrap options with "build" allows to get item element
-      build: (/*$triggerElement, e*/) => {
+      build: (): any => {
         node.selected(true);
 
         return {
           appendTo: '.fm-container',
-          items: getContextMenuItems(node.rdo),
+          items: this.rfp.getContextMenuItems(node.rdo),
           callback: (itemKey: string, options: any) => {
-            performAction(itemKey, options, node.rdo, model.fetchSelectedObjects(node));
+            this.rfp.performAction(itemKey, options, node.rdo, this.rfp.fmModel.fetchSelectedObjects(node));
           }
         };
       }

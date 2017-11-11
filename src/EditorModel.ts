@@ -18,7 +18,7 @@ export class EditorModel {
     this.mode = ko.observable(null);
     this.isInteractive = ko.observable(false);
 
-    this.mode.subscribe(mode => {
+    this.mode.subscribe((mode: any): void => {
       if(mode) {
         (<CodeMirror.EditorFromTextArea>this.instance).setOption('mode', mode);
         if(this.delayedContent) {
@@ -29,7 +29,7 @@ export class EditorModel {
     });
   }
 
-  render(content: any) {
+  render(content: any): void {
     if(this.mode())
       this.drawContent(content);
     else
@@ -40,7 +40,7 @@ export class EditorModel {
   createInstance(extension: string, element: HTMLTextAreaElement, options: any): void { // todo: options
     let cm: CodeMirror.EditorFromTextArea;
 
-    let defaults = {
+    let defaults: any = {
       readOnly: 'nocursor',
       styleActiveLine: false,
       viewportMargin: Infinity,
@@ -61,7 +61,7 @@ export class EditorModel {
 
     cm = CodeMirror.fromTextArea(element, $.extend({}, defaults, options));
 
-    cm.on('changes', (instance: CodeMirror.Editor, _change: CodeMirror.EditorChangeLinkedList[]): void => {
+    cm.on('changes', (instance: CodeMirror.Editor): void => {
       this.content(instance.getValue());
     });
 
@@ -70,19 +70,18 @@ export class EditorModel {
     this.includeAssets(extension);
   }
 
-  drawContent(content: any) {
+  drawContent(content: any): void {
     this.enabled(true);
-    (<CodeMirror.EditorFromTextArea>this.instance).setValue(content);
+    this.instance.setValue(content);
     // to make sure DOM is ready to render content
-    setTimeout(() => {
-      (<CodeMirror.EditorFromTextArea>this.instance).refresh();
+    setTimeout((): void => {
+      this.instance.refresh();
     }, 0);
   }
 
-  includeAssets(extension: string) {
-    let assets: any[] = [];
-    let currentMode = 'default';
-    let loadAssets = this.rfp.loadAssets;
+  includeAssets(extension: string): void {
+    let assets: any[];
+    let currentMode: string = 'default';
 
     // highlight code according to extension file
     if(config.editor.codeHighlight) {
@@ -106,12 +105,12 @@ export class EditorModel {
       }
       if(extension === 'php') {
         assets.push(...[
-          cm + 'mode/htmlmixed/htmlmixed.js',
-          cm + 'mode/xml/xml.js',
-          cm + 'mode/javascript/javascript.js',
-          cm + 'mode/css/css.js',
-          cm + 'mode/clike/clike.js',
-          cm + 'mode/php/php.js'
+          `${cm}mode/htmlmixed/htmlmixed.js`,
+          `${cm}mode/xml/xml.js`,
+          `${cm}mode/javascript/javascript.js`,
+          `${cm}mode/css/css.js`,
+          `${cm}mode/clike/clike.js`,
+          `${cm}mode/php/php.js`
         ]);
         currentMode = 'application/x-httpd-php';
       }
@@ -125,30 +124,30 @@ export class EditorModel {
       }
       if(extension === 'md') {
         assets.push(...[
-          cm + 'addon/mode/overlay.js',
-          cm + 'mode/xml/xml.js',
-          cm + 'mode/markdown/markdown.js',
-          cm + 'mode/gfm/gfm.js',
-          cm + 'mode/javascript/javascript.js',
-          cm + 'mode/css/css.js',
-          cm + 'mode/htmlmixed/htmlmixed.js',
-          cm + 'mode/clike/clike.js',
-          cm + 'mode/shell/shell.js',
-          cm + 'mode/meta.js'
+          `${cm}addon/mode/overlay.js`,
+          `${cm}mode/xml/xml.js`,
+          `${cm}mode/markdown/markdown.js`,
+          `${cm}mode/gfm/gfm.js`,
+          `${cm}mode/javascript/javascript.js`,
+          `${cm}mode/css/css.js`,
+          `${cm}mode/htmlmixed/htmlmixed.js`,
+          `${cm}mode/clike/clike.js`,
+          `${cm}mode/shell/shell.js`,
+          `${cm}mode/meta.js`
         ]);
         currentMode = 'gfm';
       }
       if(extension === 'sh') {
         assets.push(...[
-          cm + 'addon/mode/overlay.js',
-          cm + 'mode/markdown/markdown.js',
-          cm + 'mode/gfm/gfm.js',
-          cm + 'mode/javascript/javascript.js',
-          cm + 'mode/css/css.js',
-          cm + 'mode/htmlmixed/htmlmixed.js',
-          cm + 'mode/clike/clike.js',
-          cm + 'mode/meta.js',
-          cm + 'mode/shell/shell.js'
+          `${cm}addon/mode/overlay.js`,
+          `${cm}mode/markdown/markdown.js`,
+          `${cm}mode/gfm/gfm.js`,
+          `${cm}mode/javascript/javascript.js`,
+          `${cm}mode/css/css.js`,
+          `${cm}mode/htmlmixed/htmlmixed.js`,
+          `${cm}mode/clike/clike.js`,
+          `${cm}mode/meta.js`,
+          `${cm}mode/shell/shell.js`
         ]);
         currentMode = 'shell';
       }
@@ -159,7 +158,7 @@ export class EditorModel {
         // after all required assets are loaded
         this.mode(currentMode);
       });
-      loadAssets(assets);
+      this.rfp.loadAssets(assets);
     } else
       this.mode(currentMode);
 

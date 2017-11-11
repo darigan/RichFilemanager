@@ -208,3 +208,8 @@ export type QueryParams = {
 export type NodeItem = TreeNodeObject | ItemObject;
 
 export type Renderer = MarkdownRenderer | CodeMirrorRenderer;
+
+export interface SortableItem {
+  rdo: ReadableObject;
+  cdo: ComputedDataObject;
+}

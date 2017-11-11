@@ -1,18 +1,18 @@
 import { richFilemanagerPlugin } from './filemanager';
 import { NodeItem } from './Types';
 import { getExtension } from './Utils';
-import { FmModel } from './FmModel';
 import { TreeNodeObject } from './TreeModel';
 import { config } from './Config';
+import { ItemObject } from './ItemModel';
 
 export class FilterModel {
-  public name: KnockoutObservable<string | null>;
+  public name: KnockoutObservable<string>;
 
   constructor(private rfp: richFilemanagerPlugin) {
     this.name = ko.observable(null);
   }
 
-  setName(filterName: string) {
+  setName(filterName: string): void {
     if(filterName && config.filter && Array.isArray(config.filter[ filterName ])) {
       this.name(filterName);
     }
@@ -21,7 +21,7 @@ export class FilterModel {
   // return extensions which are match a filter name
   getExtensions(): string[] {
     if(this.name())
-      return config.filter[ <string>this.name() ];
+      return config.filter[ this.name() ];
 
     return null;
   }
@@ -44,26 +44,24 @@ export class FilterModel {
     itemObject.visible(visibility);
   }
 
-  filter(filterName: string) {
-    let model: FmModel = this.rfp.fmModel;
-
-    model.searchModel.reset();
+  filter(filterName: string): void {
+    this.rfp.fmModel.searchModel.reset();
     this.setName(<string>filterName); // todo: could be null
 
-    $.each(model.itemsModel.objects(), (_i, itemObject) => {
+    $.each(this.rfp.fmModel.itemsModel.objects(), (_i: number, itemObject: ItemObject): void => {
       this.filterItem(itemObject);
     });
 
-    model.treeModel.mapNodes((node: TreeNodeObject) => {
+    this.rfp.fmModel.treeModel.mapNodes((node: TreeNodeObject): void => {
       this.filterItem(node);
     });
 
-    if(model.itemsModel.lazyLoad)
-      model.itemsModel.lazyLoad.update();
+    if(this.rfp.fmModel.itemsModel.lazyLoad)
+      this.rfp.fmModel.itemsModel.lazyLoad.update();
 
   }
 
-  reset() {
+  reset(): void {
     this.name(null);
     this.filter(null);
   }

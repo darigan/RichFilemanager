@@ -8,7 +8,7 @@ export let currentLang: string = null;
 export let translationsHash: LangKV = {};
 export let translationsPath: string;
 
-export function init(baseUrl: string) {
+export function init(baseUrl: string): void {
   translationsPath = `${baseUrl}/languages/`;
 }
 
@@ -16,19 +16,19 @@ export function buildLangFileUrl(code: string): string {
   return `${translationsPath + code}.json`;
 }
 
-export function setLang(code: string) {
+export function setLang(code: string): void {
   currentLang = code;
 }
 
 export function getLang(): string {
-  return <string>currentLang;
+  return currentLang;
 }
 
 export function setTranslations(json: LangKV) {
   translationsHash = json;
 }
 
-export function getTranslations() {
+export function getTranslations(): LangKV {
   return translationsHash;
 }
 

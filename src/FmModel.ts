@@ -22,7 +22,7 @@ export class FmModel {
   viewMode: KnockoutObservable<string>;
   currentPath: KnockoutObservable<string>;
   browseOnly: KnockoutObservable<boolean>;
-  previewModel: KnockoutObservable<PreviewModel> | PreviewModel;
+  previewModel: PreviewModel;
   treeModel: TreeModel;
   itemsModel: ItemsModel;
   tableViewModel: TableViewModel;
@@ -36,24 +36,23 @@ export class FmModel {
   selectionModel: SelectionModel;
 
   constructor(rfp: richFilemanagerPlugin) {
-    let fileRoot = rfp.fileRoot;
-    let previewModel: PreviewModel = (<PreviewModel>this.previewModel);
 
     this.loadingView = ko.observable(true);
     this.previewFile = ko.observable(false);
     this.viewMode = ko.observable(this.config.manager.defaultViewMode);
-    this.currentPath = ko.observable(fileRoot);
+    this.currentPath = ko.observable(rfp.fileRoot);
     this.browseOnly = ko.observable(this.config.options.browseOnly);
-    this.previewModel = ko.observable(null);
+    // todo: check this
+    // this.previewModel = ko.observable(null);
 
-    this.previewFile.subscribe((enabled: boolean) => {
+    this.previewFile.subscribe((enabled: boolean): void => {
       if(!enabled) {
         // close editor upon disabling preview
-        previewModel.closeEditor();
+        this.previewModel.closeEditor();
 
         // update content of descriptive panel
-        if(this.itemsModel.descriptivePanel.rdo().id === previewModel.rdo().id)
-          this.itemsModel.descriptivePanel.render(previewModel.viewer.content());
+        if(this.itemsModel.descriptivePanel.rdo().id === this.previewModel.rdo().id)
+          this.itemsModel.descriptivePanel.render(this.previewModel.viewer.content());
 
       }
     });
@@ -74,7 +73,7 @@ export class FmModel {
 
   addItem(resourceObject: ReadableObject, targetPath: string) {
     // handle tree nodes
-    let targetNode = this.treeModel.findByParam('id', targetPath);
+    let targetNode: TreeNodeObject = this.treeModel.findByParam('id', targetPath);
 
     if(targetNode) {
       let newNode: TreeNodeObject = this.treeModel.createNode(resourceObject);
@@ -88,17 +87,15 @@ export class FmModel {
 
   }
 
-  removeItem(resourceObject: ReadableObject | NodeItem) {
-    let fmModel = this;
-
+  removeItem(resourceObject: ReadableObject): void {
     // handle tree nodes
-    let treeNode: TreeNodeObject = fmModel.treeModel.findByParam('id', resourceObject.id);
+    let treeNode: TreeNodeObject = this.treeModel.findByParam('id', resourceObject.id);
 
     if(treeNode)
       treeNode.remove();
 
     // handle view objects
-    let viewItem: ItemObject = fmModel.itemsModel.findByParam('id', resourceObject.id);
+    let viewItem: ItemObject = this.itemsModel.findByParam('id', resourceObject.id);
 
     if(viewItem)
       viewItem.remove();
@@ -127,17 +124,16 @@ export class FmModel {
 
   // fetch resource objects out of the selected items
   fetchSelectedObjects(item: NodeItem): ReadableObject[] {
-    let fmModel = this;
     let objects: ReadableObject[] = [];
 
-    $.each(fmModel.fetchSelectedItems((<any>item.constructor).name), (_i, itemObject: NodeItem) => {
+    $.each(this.fetchSelectedItems((<any>item.constructor).name), (_i: number, itemObject: NodeItem): void => {
       objects.push(itemObject.rdo);
     });
     return objects;
   }
 
   // check whether view item can be opened based on the event and configuration options
-  isItemOpenable(event: JQueryEventObject) {
+  isItemOpenable(event: JQuery.Event): boolean {
     // selecting with Ctrl key
     if(this.config.manager.selection.enabled && this.config.manager.selection.useCtrlKey && event.ctrlKey === true)
       return false;
